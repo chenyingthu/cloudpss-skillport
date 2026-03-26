@@ -24,7 +24,7 @@ Claude Code Skill - 通过自然语言交互进行电力系统仿真
 
 ```bash
 # 下载 skill 文件
-curl -O https://github.com/your-org/cloudpss-sim-skill/releases/download/v2.0.0/cloudpss-sim-v2.skill
+curl -O https://git.tsinghua.edu.cn/chen_ying/cloudpss-sim-skill/-/raw/main/cloudpss-sim-v2.skill
 ```
 
 ### 方式2: 命令行使用
@@ -98,7 +98,7 @@ python scripts/interactive_wizard.py
 
 ## 相关项目
 
-- [cloudpss-toolkit](https://github.com/your-org/cloudpss-toolkit) - 底层 API 增强库
+- [cloudpss-toolkit](https://git.tsinghua.edu.cn/chen_ying/cloudpss-toolkit) - 底层 API 增强库
 
 ## 许可证
 
