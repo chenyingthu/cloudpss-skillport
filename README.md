@@ -2,6 +2,22 @@
 
 Claude Code Skill - 通过自然语言交互进行电力系统仿真
 
+## 快速开始
+
+```bash
+# 1. 先安装 cloudpss-toolkit（必须！）
+git clone https://git.tsinghua.edu.cn/chen_ying/cloudpss-toolkit.git
+cd cloudpss-toolkit
+export PYTHONPATH="${PYTHONPATH}:$(pwd)"
+
+# 2. 再使用 cloudpss-sim-skill
+git clone https://git.tsinghua.edu.cn/chen_ying/cloudpss-sim-skill.git
+cd cloudpss-sim-skill
+python scripts/smart_config.py "帮我跑IEEE39潮流计算"
+```
+
+**⚠️ 注意**: `cloudpss-sim-skill` 依赖 `cloudpss-toolkit`，必须先安装 toolkit！
+
 ## 简介
 
 `cloudpss-sim-skill` 是一个 Claude Code Skill，让你可以通过自然语言描述来运行 CloudPSS 电力系统仿真。
@@ -17,7 +33,37 @@ Claude Code Skill - 通过自然语言交互进行电力系统仿真
 
 ## 安装
 
-### 方式1: 通过 Claude Code 使用（推荐）
+### 依赖说明
+
+**cloudpss-sim-skill 依赖 cloudpss-toolkit，必须先安装 toolkit！**
+
+安装顺序：
+1. 先安装 [cloudpss-toolkit](https://git.tsinghua.edu.cn/chen_ying/cloudpss-toolkit)
+2. 再使用 cloudpss-sim-skill
+
+---
+
+### 步骤1: 安装 cloudpss-toolkit（必须）
+
+```bash
+# 克隆 toolkit
+git clone https://git.tsinghua.edu.cn/chen_ying/cloudpss-toolkit.git
+cd cloudpss-toolkit
+
+# 安装依赖
+pip install cloudpss>=4.5.28
+
+# 可选：将 toolkit 加入 Python 路径
+export PYTHONPATH="${PYTHONPATH}:$(pwd)"
+```
+
+详细安装说明请参考 [cloudpss-toolkit README](https://git.tsinghua.edu.cn/chen_ying/cloudpss-toolkit/-/blob/main/README.md)
+
+---
+
+### 步骤2: 使用 cloudpss-sim-skill
+
+#### 方式A: 通过 Claude Code 使用（推荐）
 
 1. 将 `.skill` 文件下载到你的项目目录
 2. 在 Claude Code 中直接描述需求即可触发
@@ -27,13 +73,17 @@ Claude Code Skill - 通过自然语言交互进行电力系统仿真
 curl -O https://git.tsinghua.edu.cn/chen_ying/cloudpss-sim-skill/-/raw/main/cloudpss-sim-v2.skill
 ```
 
-### 方式2: 命令行使用
+#### 方式B: 命令行使用
 
 ```bash
-# 安装依赖
-pip install cloudpss-sim-skill
+# 克隆 skill 项目
+git clone https://git.tsinghua.edu.cn/chen_ying/cloudpss-sim-skill.git
+cd cloudpss-sim-skill
 
-# 或直接运行脚本
+# 确保 toolkit 在 Python 路径中
+export PYTHONPATH="${PYTHONPATH}:/path/to/cloudpss-toolkit"
+
+# 运行脚本
 python scripts/smart_config.py "帮我跑IEEE39潮流计算"
 ```
 
@@ -93,8 +143,15 @@ python scripts/interactive_wizard.py
 
 ## 依赖
 
-- cloudpss-toolkit >= 0.2.0
-- pyyaml >= 5.4
+| 依赖 | 版本 | 说明 | 安装 |
+|------|------|------|------|
+| **cloudpss-toolkit** | >= 0.2.0 | **必须** - 核心 API 封装 | [安装指南](https://git.tsinghua.edu.cn/chen_ying/cloudpss-toolkit/-/blob/main/README.md) |
+| cloudpss | >= 4.5.28 | **必须** - CloudPSS 官方 SDK | `pip install cloudpss>=4.5.28` |
+| pyyaml | >= 5.4 | 必须 - YAML 配置解析 | `pip install pyyaml>=5.4` |
+| numpy | >= 1.20 | 可选 - 数值计算 | 随 toolkit 安装 |
+| pandas | >= 1.3 | 可选 - 数据处理 | 随 toolkit 安装 |
+
+**⚠️ 重要**: 必须先安装 `cloudpss-toolkit`，否则 skill 无法运行！
 
 ## 相关项目
 
