@@ -1,0 +1,15 @@
+skill: power_flow
+auth:
+  token_file: .cloudpss_token
+model:
+  rid: model/holdme/IEEE39
+  source: cloud
+output:
+  format: json
+  path: ./results/
+  prefix: power_flow
+  timestamp: true
+algorithm:
+  type: newton_raphson
+  tolerance: 1.0e-06
+  max_iterations: 100

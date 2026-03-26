@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cloudpss-sim-skill"
+version = "2.0.0"
+description = "CloudPSS 电力系统仿真 Claude Code Skill"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "CloudPSS Research Team"}
+]
+keywords = ["claude", "skill", "cloudpss", "power system", "simulation"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Physics",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "cloudpss-toolkit>=0.2.0",
+    "pyyaml>=5.4",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=6.2",
+    "black>=21.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/your-org/cloudpss-sim-skill"
+Repository = "https://github.com/your-org/cloudpss-sim-skill"
+Issues = "https://github.com/your-org/cloudpss-sim-skill/issues"
+
+[tool.setuptools]
+py-modules = []

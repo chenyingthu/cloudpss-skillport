@@ -1,0 +1,246 @@
+{
+  "skill_name": "cloudpss-sim-v2",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "帮我跑个IEEE39的潮流计算",
+      "expected_output": "生成power_flow配置，执行仿真，返回结果摘要",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "skill: power_flow"},
+        {"type": "contains", "target": "output", "value": "model/holdme/IEEE39"}
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "我想做EMT暂态仿真，模型用IEEE3，仿真5秒钟",
+      "expected_output": "生成emt_simulation配置，duration=5.0，执行并返回结果",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "skill: emt_simulation"},
+        {"type": "contains", "target": "output", "value": "duration: 5"}
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "对IEEE39做N-1安全校核，检查所有支路",
+      "expected_output": "生成n1_security配置，执行N-1校核，返回通过/失败统计",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "skill: n1_security"},
+        {"type": "contains", "target": "output", "value": "branches"}
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "批量跑IEEE39和IEEE3的潮流计算",
+      "expected_output": "生成batch_powerflow配置，包含两个模型，执行批量仿真",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "skill: batch_powerflow"},
+        {"type": "contains", "target": "output", "value": "models:"}
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "我想扫描Load_1的有功功率P，从10到50，每隔10一个点",
+      "expected_output": "生成param_scan配置，component=Load_1, parameter=P, values=[10,20,30,40,50]",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "skill: param_scan"},
+        {"type": "contains", "target": "output", "value": "component: Load_1"},
+        {"type": "contains", "target": "output", "value": "parameter: P"}
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "提取上次的EMT仿真波形",
+      "expected_output": "询问job_id，生成waveform_export配置",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "skill: waveform_export"}
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "cloudpss怎么使用？",
+      "expected_output": "介绍cloudpss_skills的使用方法，列出可用技能",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "power_flow"},
+        {"type": "contains", "target": "output", "value": "emt_simulation"}
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "可视化潮流计算结果",
+      "expected_output": "询问结果文件路径，生成visualize配置或直接绘图",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "skill: visualize"}
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "IEEE39潮流计算，收敛精度1e-4，最大迭代200次，用快速分解法",
+      "expected_output": "Issue #001: 测试智能参数填充 - 识别tolerance=1e-4, max_iterations=200, algorithm=fast_decoupled",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "tolerance: 1e-4"},
+        {"type": "contains", "target": "output", "value": "max_iterations: 200"},
+        {"type": "contains", "target": "output", "value": "type: fast_decoupled"}
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "扫描Bus7负载的有功，从10%到100%，步长10%",
+      "expected_output": "Issue #001: 测试百分比解析 - 识别values=[0.1,0.2,...,1.0]",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "scan"},
+        {"type": "regex", "target": "output", "value": "0\\.1|0\\.2|1\\.0"}
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "查询IEEE3模型的所有负载元件",
+      "expected_output": "Issue #002: 测试元件ID推断 - 使用component_mapper.py查询并返回负载元件列表",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "component"},
+        {"type": "contains", "target": "output", "value": "Load"}
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "IEEE39模型有哪些发电机？",
+      "expected_output": "Issue #002: 测试元件类型识别 - 返回发电机列表",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "发电机"},
+        {"type": "contains", "target": "output", "value": "Gen"}
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "列出所有可用模型，包括IEEE39、IEEE3、IEEE9",
+      "expected_output": "Issue #003: 测试模型列表解析 - 返回模型列表供选择",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "IEEE39"},
+        {"type": "contains", "target": "output", "value": "IEEE3"}
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "提取Bus7的三相电压波形",
+      "expected_output": "Issue #004: 测试通道名称推断 - 识别Bus7_Va, Bus7_Vb, Bus7_Vc",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "Bus7_Va"},
+        {"type": "contains", "target": "output", "value": "Bus7_Vb"},
+        {"type": "contains", "target": "output", "value": "Bus7_Vc"}
+      ]
+    },
+    {
+      "id": 15,
+      "prompt": "我要看Line2-3的电流",
+      "expected_output": "Issue #004: 测试线路电流通道推断 - 识别Line2-3_Ia, Line2-3_Ib, Line2-3_Ic",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "Line2-3_I"},
+        {"type": "contains", "target": "output", "value": "channels"}
+      ]
+    },
+    {
+      "id": 16,
+      "prompt": "对比两个仿真结果的Bus1电压",
+      "expected_output": "Issue #005: 测试结果对比通道选择 - 清晰展示如何选择和对比通道",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "result_compare"},
+        {"type": "contains", "target": "output", "value": "channels"}
+      ]
+    },
+    {
+      "id": 17,
+      "prompt": "cloudpss powerflow",
+      "expected_output": "Issue #006: 测试拼写纠错 - 识别'powerflow'→'power_flow'",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "power_flow"},
+        {"type": "contains", "target": "output", "value": "纠正"}
+      ]
+    },
+    {
+      "id": 18,
+      "prompt": "帮我跑个pf仿真",
+      "expected_output": "Issue #006: 测试别名识别 - 识别'pf'→'power_flow'",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "power_flow"}
+      ]
+    },
+    {
+      "id": 19,
+      "prompt": "验证这个配置文件: config.yaml",
+      "expected_output": "Issue #007: 测试配置验证 - 使用friendly_validator检查配置",
+      "files": ["config.yaml"],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "验证"},
+        {"type": "contains", "target": "output", "value": "配置"}
+      ]
+    },
+    {
+      "id": 20,
+      "prompt": "我的配置报错了: model not found",
+      "expected_output": "Issue #007: 测试错误信息优化 - 提供友好的错误解释和解决方案",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "模型"},
+        {"type": "contains", "target": "output", "value": "解决"}
+      ]
+    },
+    {
+      "id": 21,
+      "prompt": "创建一个新的潮流计算配置",
+      "expected_output": "Issue #008: 测试交互式向导 - 启动interactive_wizard引导配置",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "向导"},
+        {"type": "contains", "target": "output", "value": "配置"}
+      ]
+    },
+    {
+      "id": 22,
+      "prompt": "帮我配置一个N-1安全校核任务",
+      "expected_output": "Issue #008: 测试向导N-1配置流程 - 逐步引导选择模型、设置参数",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "N-1"},
+        {"type": "contains", "target": "output", "value": "步骤"}
+      ]
+    },
+    {
+      "id": 23,
+      "prompt": "emt暂态仿真是什么",
+      "expected_output": "测试中文别名识别和技能解释 - 理解'emt'别名并解释EMT仿真",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "EMT"},
+        {"type": "contains", "target": "output", "value": "暂态"}
+      ]
+    },
+    {
+      "id": 24,
+      "prompt": "扫描Bus1负载的电压设定值，从0.9到1.1，步长0.02",
+      "expected_output": "测试复杂参数扫描配置 - 识别parameter=Vset和values数组",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "Vset"},
+        {"type": "contains", "target": "output", "value": "0.9"},
+        {"type": "contains", "target": "output", "value": "0.02"}
+      ]
+    }
+  ]
+}
