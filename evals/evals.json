@@ -232,14 +232,126 @@
       ]
     },
     {
-      "id": 24,
-      "prompt": "扫描Bus1负载的电压设定值，从0.9到1.1，步长0.02",
-      "expected_output": "测试复杂参数扫描配置 - 识别parameter=Vset和values数组",
+      "id": 25,
+      "prompt": "VSI弱母线分析",
+      "expected_output": "识别vsi_weak_bus技能，生成VSI弱母线分析配置",
       "files": [],
       "assertions": [
-        {"type": "contains", "target": "output", "value": "Vset"},
-        {"type": "contains", "target": "output", "value": "0.9"},
-        {"type": "contains", "target": "output", "value": "0.02"}
+        {"type": "contains", "target": "output", "value": "vsi_weak_bus"}
+      ]
+    },
+    {
+      "id": 26,
+      "prompt": "无功补偿设计",
+      "expected_output": "识别reactive_compensation_design技能，生成无功补偿配置",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "reactive_compensation_design"}
+      ]
+    },
+    {
+      "id": 27,
+      "prompt": "谐波分析",
+      "expected_output": "识别harmonic_analysis技能，生成谐波分析配置",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "harmonic_analysis"}
+      ]
+    },
+    {
+      "id": 28,
+      "prompt": "对比可视化",
+      "expected_output": "识别compare_visualization技能，生成多场景对比配置",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "compare_visualization"}
+      ]
+    },
+    {
+      "id": 29,
+      "prompt": "导出COMTRADE格式",
+      "expected_output": "识别comtrade_export技能，生成COMTRADE导出配置",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "comtrade_export"}
+      ]
+    },
+    {
+      "id": 30,
+      "prompt": "自动配置EMT量测通道",
+      "expected_output": "识别auto_channel_setup技能，生成自动量测配置",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "auto_channel_setup"}
+      ]
+    },
+    {
+      "id": 31,
+      "prompt": "VSI弱母线分析IEEE39模型，电压阈值设10%",
+      "expected_output": "测试新技能参数解析 - 识别vsi_weak_bus技能，model=IEEE39，voltage_threshold=0.1",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "vsi_weak_bus"},
+        {"type": "contains", "target": "output", "value": "IEEE39"},
+        {"type": "regex", "target": "output", "value": "0\\.1|threshold"}
+      ]
+    },
+    {
+      "id": 32,
+      "prompt": "批量运行多个配置场景",
+      "expected_output": "识别config_batch_runner技能，生成配置批量运行配置",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "config_batch_runner"}
+      ]
+    },
+    {
+      "id": 33,
+      "prompt": "正交敏感性分析",
+      "expected_output": "识别orthogonal_sensitivity技能，生成正交敏感性分析配置",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "orthogonal_sensitivity"}
+      ]
+    },
+    {
+      "id": 34,
+      "prompt": "提取模型参数",
+      "expected_output": "识别model_parameter_extractor技能，生成模型参数提取配置",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "model_parameter_extractor"}
+      ]
+    },
+    {
+      "id": 35,
+      "prompt": "帮我跑个短路计算，IEEE39系统，三相短路",
+      "expected_output": "测试short_circuit技能 - 识别模型、故障类型参数",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "short_circuit"},
+        {"type": "contains", "target": "output", "value": "IEEE39"}
+      ]
+    },
+    {
+      "id": 36,
+      "prompt": "对IEEE3做EMT故障研究，Bus1单相接地，0.1秒开始",
+      "expected_output": "测试emt_fault_study技能 - 识别模型、故障位置、时间参数",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "emt_fault_study"},
+        {"type": "contains", "target": "output", "value": "Bus1"},
+        {"type": "regex", "target": "output", "value": "0\\.1|fault_time"}
+      ]
+    },
+    {
+      "id": 37,
+      "prompt": "检修安全校核IEEE39，检查Gen_1停运",
+      "expected_output": "测试maintenance_security技能 - 识别检修元件参数",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "maintenance_security"},
+        {"type": "contains", "target": "output", "value": "Gen_1"}
       ]
     }
   ]

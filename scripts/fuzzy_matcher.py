@@ -14,71 +14,292 @@ from typing import List, Tuple, Optional
 class FuzzyMatcher:
     """模糊匹配器"""
 
-    # 所有有效技能名称
+    # 所有有效技能名称 (37个)
     VALID_SKILLS = [
+        # 仿真执行类
         "power_flow",
         "emt_simulation",
-        "batch_powerflow",
+        "emt_fault_study",
+        "short_circuit",
+        # N-1安全分析类
         "n1_security",
+        "emt_n1_screening",
+        "contingency_analysis",
+        "maintenance_security",
+        # 批量与扫描类
+        "batch_powerflow",
         "param_scan",
-        "waveform_export",
-        "visualize",
+        "fault_clearing_scan",
+        "fault_severity_scan",
+        "batch_task_manager",
+        "config_batch_runner",
+        "orthogonal_sensitivity",
+        # 稳定性分析类
+        "voltage_stability",
+        "transient_stability",
+        "small_signal_stability",
+        "frequency_response",
+        "vsi_weak_bus",
+        "dudv_curve",
+        # 结果处理类
         "result_compare",
+        "visualize",
+        "waveform_export",
+        "hdf5_export",
+        "disturbance_severity",
+        "compare_visualization",
+        "comtrade_export",
+        # 电能质量类
+        "harmonic_analysis",
+        "power_quality_analysis",
+        "reactive_compensation_design",
+        # 模型与拓扑类
+        "ieee3_prep",
         "topology_check",
-        "ieee3_prep"
+        "parameter_sensitivity",
+        "auto_channel_setup",
+        "auto_loop_breaker",
+        "model_parameter_extractor"
     ]
 
-    # 常见别名
+    # 常见别名 - 30个技能
     ALIASES = {
+        # ========== 仿真执行类 ==========
         # 潮流计算
         "pf": "power_flow",
         "powerflow": "power_flow",
         "loadflow": "power_flow",
         "潮流": "power_flow",
+        "潮流计算": "power_flow",
 
         # EMT仿真
         "emt": "emt_simulation",
         "emtp": "emt_simulation",
         "transient": "emt_simulation",
         "暂态": "emt_simulation",
+        "暂态仿真": "emt_simulation",
 
+        # 故障研究
+        "fault_study": "emt_fault_study",
+        "故障研究": "emt_fault_study",
+        "fault": "emt_fault_study",
+
+        # 短路计算
+        "short": "short_circuit",
+        "短路": "short_circuit",
+        "短路电流": "short_circuit",
+        "短路计算": "short_circuit",
+
+        # ========== N-1安全分析类 ==========
         # N-1安全
         "n1": "n1_security",
         "n1security": "n1_security",
         "n-1": "n1_security",
         "security": "n1_security",
         "安全": "n1_security",
+        "安全校核": "n1_security",
+        "n1安全": "n1_security",
+
+        # EMT N-1筛查
+        "emt_n1": "emt_n1_screening",
+        "emt_n1_screening": "emt_n1_screening",
+        "暂态n1": "emt_n1_screening",
+        "emt安全筛查": "emt_n1_screening",
+
+        # 预想事故
+        "contingency": "contingency_analysis",
+        "预想事故": "contingency_analysis",
+        "事故分析": "contingency_analysis",
+
+        # 检修安全
+        "maintenance": "maintenance_security",
+        "检修安全": "maintenance_security",
+        "检修": "maintenance_security",
+        "检修方式": "maintenance_security",
+
+        # ========== 批量与扫描类 ==========
+        # 批量潮流
+        "batch": "batch_powerflow",
+        "batchpf": "batch_powerflow",
+        "批量": "batch_powerflow",
+        "批量潮流": "batch_powerflow",
 
         # 参数扫描
         "scan": "param_scan",
         "ps": "param_scan",
         "扫描": "param_scan",
+        "参数扫描": "param_scan",
 
-        # 批量潮流
-        "batch": "batch_powerflow",
-        "batchpf": "batch_powerflow",
-        "批量": "batch_powerflow",
+        # 故障清除扫描
+        "fault_clearing": "fault_clearing_scan",
+        "清除扫描": "fault_clearing_scan",
+        "故障清除": "fault_clearing_scan",
 
+        # 故障严重度
+        "severity_scan": "fault_severity_scan",
+        "严重度扫描": "fault_severity_scan",
+        "fault_severity": "fault_severity_scan",
+
+        # 批处理任务管理
+        "batch_manager": "batch_task_manager",
+        "批处理": "batch_task_manager",
+        "任务管理": "batch_task_manager",
+
+        # 配置批量运行器
+        "config_batch": "config_batch_runner",
+        "config_batch_runner": "config_batch_runner",
+        "配置批量": "config_batch_runner",
+        "多配置运行": "config_batch_runner",
+        "配置运行器": "config_batch_runner",
+
+        # 正交敏感性分析
+        "orthogonal": "orthogonal_sensitivity",
+        "orthogonal_sensitivity": "orthogonal_sensitivity",
+        "正交敏感": "orthogonal_sensitivity",
+        "正交分析": "orthogonal_sensitivity",
+        "DOE": "orthogonal_sensitivity",
+        "实验设计": "orthogonal_sensitivity",
+
+        # ========== 稳定性分析类 ==========
+        # 电压稳定
+        "voltage_stab": "voltage_stability",
+        "电压稳定": "voltage_stability",
+        "电压稳定性": "voltage_stability",
+
+        # 暂态稳定
+        "transient_stab": "transient_stability",
+        "暂态稳定": "transient_stability",
+        "暂态稳定性": "transient_stability",
+
+        # 小信号稳定
+        "small_signal": "small_signal_stability",
+        "小信号": "small_signal_stability",
+        "小干扰": "small_signal_stability",
+
+        # 频率响应
+        "frequency": "frequency_response",
+        "频率响应": "frequency_response",
+        "频率特性": "frequency_response",
+
+        # VSI弱母线
+        "vsi": "vsi_weak_bus",
+        "weak_bus": "vsi_weak_bus",
+        "弱母线": "vsi_weak_bus",
+        "vsi分析": "vsi_weak_bus",
+        "vsi_weak": "vsi_weak_bus",
+
+        # DUDV曲线
+        "dudv": "dudv_curve",
+        "电压特性": "dudv_curve",
+        "dudv曲线": "dudv_curve",
+
+        # ========== 结果处理类 ==========
         # 波形导出
         "export": "waveform_export",
         "waveform": "waveform_export",
         "导出": "waveform_export",
+        "波形导出": "waveform_export",
 
         # 可视化
         "viz": "visualize",
         "plot": "visualize",
         "graph": "visualize",
         "画图": "visualize",
+        "可视化": "visualize",
+        "绘图": "visualize",
 
         # 结果对比
         "compare": "result_compare",
         "diff": "result_compare",
         "对比": "result_compare",
+        "结果对比": "result_compare",
 
+        # HDF5导出
+        "hdf5": "hdf5_export",
+        "hdf5导出": "hdf5_export",
+
+        # 扰动严重度
+        "disturbance": "disturbance_severity",
+        "扰动": "disturbance_severity",
+        "扰动分析": "disturbance_severity",
+        "扰动严重度": "disturbance_severity",
+
+        # ========== 电能质量类 ==========
+        # 谐波分析
+        "harmonic": "harmonic_analysis",
+        "谐波": "harmonic_analysis",
+        "谐波分析": "harmonic_analysis",
+        "thd": "harmonic_analysis",
+
+        # 电能质量
+        "quality": "power_quality_analysis",
+        "电能质量": "power_quality_analysis",
+        "供电质量": "power_quality_analysis",
+        "power_quality": "power_quality_analysis",
+
+        # 无功补偿设计
+        "compensation": "reactive_compensation_design",
+        "无功补偿": "reactive_compensation_design",
+        "补偿设计": "reactive_compensation_design",
+        "reactive": "reactive_compensation_design",
+
+        # ========== 模型与拓扑类 ==========
         # 拓扑检查
         "topology": "topology_check",
         "check": "topology_check",
-        "检查": "topology_check"
+        "检查": "topology_check",
+        "拓扑检查": "topology_check",
+
+        # IEEE3准备
+        "prep": "ieee3_prep",
+        "准备": "ieee3_prep",
+        "预处理": "ieee3_prep",
+        "模型准备": "ieee3_prep",
+
+        # 参数灵敏度
+        "sensitivity": "parameter_sensitivity",
+        "灵敏度": "parameter_sensitivity",
+        "参数灵敏度": "parameter_sensitivity",
+        "灵敏度分析": "parameter_sensitivity",
+
+        # 自动量测配置
+        "auto_channel": "auto_channel_setup",
+        "auto_channel_setup": "auto_channel_setup",
+        "自动通道": "auto_channel_setup",
+        "自动量测": "auto_channel_setup",
+        "量测配置": "auto_channel_setup",
+        "通道设置": "auto_channel_setup",
+
+        # 模型自动解环
+        "loop_breaker": "auto_loop_breaker",
+        "auto_loop_breaker": "auto_loop_breaker",
+        "解环": "auto_loop_breaker",
+        "消除环路": "auto_loop_breaker",
+        "控制环路": "auto_loop_breaker",
+        "自动解环": "auto_loop_breaker",
+
+        # 模型参数提取器
+        "parameter_extractor": "model_parameter_extractor",
+        "model_parameter_extractor": "model_parameter_extractor",
+        "参数提取": "model_parameter_extractor",
+        "模型参数": "model_parameter_extractor",
+        "提取参数": "model_parameter_extractor",
+        "参数导出": "model_parameter_extractor",
+
+        # ========== 结果处理类 (新增) ==========
+        # 对比可视化
+        "compare_viz": "compare_visualization",
+        "compare_visualization": "compare_visualization",
+        "对比可视化": "compare_visualization",
+        "多场景对比": "compare_visualization",
+        "对比图表": "compare_visualization",
+
+        # COMTRADE导出
+        "comtrade": "comtrade_export",
+        "comtrade_export": "comtrade_export",
+        "COMTRADE": "comtrade_export",
+        "comtrade导出": "comtrade_export",
+        "标准格式导出": "comtrade_export"
     }
 
     def __init__(self):
@@ -160,17 +381,20 @@ class FuzzyMatcher:
     def print_all_skills(self):
         """打印所有技能"""
         categories = {
-            "仿真执行": ["power_flow", "emt_simulation", "batch_powerflow"],
-            "安全分析": ["n1_security", "param_scan"],
-            "后处理": ["waveform_export", "visualize", "result_compare"],
-            "模型工具": ["topology_check", "ieee3_prep"]
+            "仿真执行类": ["power_flow", "emt_simulation", "emt_fault_study", "short_circuit"],
+            "N-1安全分析类": ["n1_security", "emt_n1_screening", "contingency_analysis", "maintenance_security"],
+            "批量与扫描类": ["batch_powerflow", "param_scan", "fault_clearing_scan", "fault_severity_scan", "batch_task_manager", "config_batch_runner", "orthogonal_sensitivity"],
+            "稳定性分析类": ["voltage_stability", "transient_stability", "small_signal_stability", "frequency_response", "vsi_weak_bus", "dudv_curve"],
+            "结果处理类": ["result_compare", "visualize", "waveform_export", "hdf5_export", "disturbance_severity", "compare_visualization", "comtrade_export"],
+            "电能质量类": ["harmonic_analysis", "power_quality_analysis", "reactive_compensation_design"],
+            "模型与拓扑类": ["ieee3_prep", "topology_check", "parameter_sensitivity", "auto_channel_setup", "auto_loop_breaker", "model_parameter_extractor"]
         }
 
         for category, skills in categories.items():
             print(f"\n  {category}:")
             for skill in skills:
                 aliases = [k for k, v in self.ALIASES.items() if v == skill and k != skill]
-                alias_str = f" (别名: {', '.join(aliases)})" if aliases else ""
+                alias_str = f" (别名: {', '.join(aliases[:5])}{'...' if len(aliases) > 5 else ''})" if aliases else ""
                 print(f"    - {skill}{alias_str}")
 
     def auto_correct(self, input_str: str, interactive: bool = True) -> Optional[str]:

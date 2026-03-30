@@ -15,8 +15,9 @@ from typing import Dict, Any, List
 class InteractiveWizard:
     """交互式配置向导"""
 
-    # 技能信息
+    # 技能信息 - 37个技能
     SKILLS = {
+        # ========== 仿真执行类 ==========
         "power_flow": {
             "name": "潮流计算",
             "description": "计算系统稳态潮流分布",
@@ -29,17 +30,51 @@ class InteractiveWizard:
             "difficulty": "中等",
             "time": "约30-120秒"
         },
-        "batch_powerflow": {
-            "name": "批量潮流计算",
-            "description": "对多个模型批量运行潮流",
+        "emt_fault_study": {
+            "name": "EMT故障研究",
+            "description": "EMT故障场景仿真分析",
             "difficulty": "中等",
-            "time": "取决于模型数量"
+            "time": "约60-180秒"
         },
+        "short_circuit": {
+            "name": "短路电流计算",
+            "description": "计算系统短路电流",
+            "difficulty": "简单",
+            "time": "约5-10秒"
+        },
+
+        # ========== N-1安全分析类 ==========
         "n1_security": {
             "name": "N-1安全校核",
             "description": "停运支路检查系统稳定性",
             "difficulty": "中等",
             "time": "约5-10分钟"
+        },
+        "emt_n1_screening": {
+            "name": "EMT N-1安全筛查",
+            "description": "EMT暂态N-1安全分析",
+            "difficulty": "较难",
+            "time": "约10-30分钟"
+        },
+        "contingency_analysis": {
+            "name": "预想事故分析",
+            "description": "多故障场景分析",
+            "difficulty": "中等",
+            "time": "约5-15分钟"
+        },
+        "maintenance_security": {
+            "name": "检修方式安全校核",
+            "description": "检修期间系统安全分析",
+            "difficulty": "中等",
+            "time": "约5-10分钟"
+        },
+
+        # ========== 批量与扫描类 ==========
+        "batch_powerflow": {
+            "name": "批量潮流计算",
+            "description": "对多个模型批量运行潮流",
+            "difficulty": "中等",
+            "time": "取决于模型数量"
         },
         "param_scan": {
             "name": "参数扫描",
@@ -47,9 +82,79 @@ class InteractiveWizard:
             "difficulty": "较难",
             "time": "取决于参数点数量"
         },
-        "waveform_export": {
-            "name": "波形导出",
-            "description": "从仿真结果导出波形数据",
+        "fault_clearing_scan": {
+            "name": "故障清除时间扫描",
+            "description": "扫描故障清除时间影响",
+            "difficulty": "较难",
+            "time": "约10-30分钟"
+        },
+        "fault_severity_scan": {
+            "name": "故障严重度扫描",
+            "description": "扫描不同故障严重程度",
+            "difficulty": "较难",
+            "time": "约10-30分钟"
+        },
+        "batch_task_manager": {
+            "name": "批处理任务管理",
+            "description": "管理和执行批量任务",
+            "difficulty": "中等",
+            "time": "取决于任务数量"
+        },
+        "config_batch_runner": {
+            "name": "配置批量运行器",
+            "description": "对同一模型批量运行多个配置场景",
+            "difficulty": "中等",
+            "time": "取决于配置数量"
+        },
+        "orthogonal_sensitivity": {
+            "name": "正交敏感性分析",
+            "description": "基于正交表的参数敏感性分析",
+            "difficulty": "较难",
+            "time": "约10-30分钟"
+        },
+
+        # ========== 稳定性分析类 ==========
+        "voltage_stability": {
+            "name": "电压稳定分析",
+            "description": "分析系统电压稳定性",
+            "difficulty": "较难",
+            "time": "约5-10分钟"
+        },
+        "transient_stability": {
+            "name": "暂态稳定分析",
+            "description": "分析大扰动后系统稳定性",
+            "difficulty": "较难",
+            "time": "约10-20分钟"
+        },
+        "small_signal_stability": {
+            "name": "小信号稳定分析",
+            "description": "特征值分析小干扰稳定性",
+            "difficulty": "较难",
+            "time": "约5-10分钟"
+        },
+        "frequency_response": {
+            "name": "频率响应分析",
+            "description": "分析系统频率响应特性",
+            "difficulty": "中等",
+            "time": "约5-10分钟"
+        },
+        "vsi_weak_bus": {
+            "name": "VSI弱母线分析",
+            "description": "识别系统中薄弱母线",
+            "difficulty": "中等",
+            "time": "约5-10分钟"
+        },
+        "dudv_curve": {
+            "name": "DUDV曲线生成",
+            "description": "生成电压特性曲线",
+            "difficulty": "中等",
+            "time": "约5-10分钟"
+        },
+
+        # ========== 结果处理类 ==========
+        "result_compare": {
+            "name": "结果对比",
+            "description": "对比两次仿真结果",
             "difficulty": "简单",
             "time": "立即"
         },
@@ -59,9 +164,61 @@ class InteractiveWizard:
             "difficulty": "简单",
             "time": "立即"
         },
-        "result_compare": {
-            "name": "结果对比",
-            "description": "对比两次仿真结果",
+        "waveform_export": {
+            "name": "波形导出",
+            "description": "从仿真结果导出波形数据",
+            "difficulty": "简单",
+            "time": "立即"
+        },
+        "hdf5_export": {
+            "name": "HDF5导出",
+            "description": "导出为HDF5格式数据",
+            "difficulty": "简单",
+            "time": "立即"
+        },
+        "disturbance_severity": {
+            "name": "扰动严重度分析",
+            "description": "分析扰动严重程度",
+            "difficulty": "中等",
+            "time": "约1-2分钟"
+        },
+        "compare_visualization": {
+            "name": "对比可视化",
+            "description": "生成多场景仿真结果的对比图表",
+            "difficulty": "简单",
+            "time": "立即"
+        },
+        "comtrade_export": {
+            "name": "COMTRADE导出",
+            "description": "将EMT仿真结果导出为COMTRADE标准格式",
+            "difficulty": "简单",
+            "time": "立即"
+        },
+
+        # ========== 电能质量类 ==========
+        "harmonic_analysis": {
+            "name": "谐波分析",
+            "description": "分析系统谐波含量",
+            "difficulty": "中等",
+            "time": "约5-10分钟"
+        },
+        "power_quality_analysis": {
+            "name": "电能质量分析",
+            "description": "综合电能质量评估",
+            "difficulty": "中等",
+            "time": "约5-10分钟"
+        },
+        "reactive_compensation_design": {
+            "name": "无功补偿设计",
+            "description": "设计无功补偿方案",
+            "difficulty": "较难",
+            "time": "约5-10分钟"
+        },
+
+        # ========== 模型与拓扑类 ==========
+        "ieee3_prep": {
+            "name": "IEEE3模型准备",
+            "description": "准备IEEE3模型的EMT仿真",
             "difficulty": "简单",
             "time": "立即"
         },
@@ -71,9 +228,27 @@ class InteractiveWizard:
             "difficulty": "简单",
             "time": "立即"
         },
-        "ieee3_prep": {
-            "name": "IEEE3模型准备",
-            "description": "准备IEEE3模型的EMT仿真",
+        "parameter_sensitivity": {
+            "name": "参数灵敏度分析",
+            "description": "分析参数变化影响",
+            "difficulty": "中等",
+            "time": "约5-10分钟"
+        },
+        "auto_channel_setup": {
+            "name": "自动量测配置",
+            "description": "自动批量配置EMT仿真输出通道",
+            "difficulty": "简单",
+            "time": "立即"
+        },
+        "auto_loop_breaker": {
+            "name": "模型自动解环",
+            "description": "检测并自动消除模型中的控制环路",
+            "difficulty": "中等",
+            "time": "约1-2分钟"
+        },
+        "model_parameter_extractor": {
+            "name": "模型参数提取器",
+            "description": "提取电力系统模型中的元件参数",
             "difficulty": "简单",
             "time": "立即"
         }

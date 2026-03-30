@@ -17,18 +17,58 @@ import yaml
 class SmartConfigGenerator:
     """智能配置生成器"""
 
-    # 技能关键词映射
+    # 技能关键词映射 - 37个技能
     SKILL_KEYWORDS = {
-        "power_flow": ["潮流", "power flow", "load flow", "稳态", "pf"],
-        "emt_simulation": ["EMT", "暂态", "transient", "波形", "emtp"],
+        # 仿真执行类
+        "power_flow": ["潮流", "power flow", "load flow", "稳态", "pf", "潮流计算"],
+        "emt_simulation": ["EMT", "暂态", "transient", "波形", "emtp", "电磁暂态"],
+        "emt_fault_study": ["故障研究", "fault study", "短路研究", "故障分析"],
+        "short_circuit": ["短路", "short circuit", "短路计算", "短路电流"],
+
+        # N-1安全分析类
+        "n1_security": ["N-1", "安全校核", "N-1筛查", "安全评估", "检修", "n1安全"],
+        "emt_n1_screening": ["EMT N-1", "暂态N-1", "emt_n1", "暂态安全筛查"],
+        "contingency_analysis": ["预想事故", "contingency", "事故分析", "故障集分析"],
+        "maintenance_security": ["检修安全", "maintenance", "检修方式", "计划检修"],
+
+        # 批量与扫描类
         "batch_powerflow": ["批量", "batch", "批量潮流", "多模型"],
-        "n1_security": ["N-1", "安全校核", "N-1筛查", "安全评估", "检修"],
-        "param_scan": ["参数扫描", "param scan", "敏感性", "扫描"],
-        "waveform_export": ["波形导出", "export", "提取波形"],
-        "visualize": ["可视化", "画图", "plot", "可视化"],
-        "result_compare": ["对比", "compare", "比较结果"],
-        "topology_check": ["拓扑", "topology", "检查模型"],
-        "ieee3_prep": ["准备", "prep", "预处理"]
+        "param_scan": ["参数扫描", "param scan", "敏感性", "扫描", "参数分析"],
+        "fault_clearing_scan": ["故障清除", "fault clearing", "清除时间", "故障切除"],
+        "fault_severity_scan": ["故障严重度", "fault severity", "严重度扫描", "故障程度"],
+        "batch_task_manager": ["批处理", "batch task", "任务管理", "批量任务"],
+        "config_batch_runner": ["配置批量", "config batch", "多配置运行", "配置运行器"],
+        "orthogonal_sensitivity": ["正交敏感", "orthogonal", "正交分析", "DOE", "实验设计"],
+
+        # 稳定性分析类
+        "voltage_stability": ["电压稳定", "voltage stability", "电压稳定性", "静态电压稳定"],
+        "transient_stability": ["暂态稳定", "transient stability", "暂态稳定性", "大扰动稳定"],
+        "small_signal_stability": ["小信号", "small signal", "小干扰", "特征值分析"],
+        "frequency_response": ["频率响应", "frequency response", "频率特性", "调频"],
+        "vsi_weak_bus": ["VSI", "弱母线", "weak bus", "电压稳定指标", "vsi分析"],
+        "dudv_curve": ["DUDV", "电压特性", "dudv曲线", "无功电压特性"],
+
+        # 结果处理类
+        "result_compare": ["对比", "compare", "比较结果", "结果对比"],
+        "visualize": ["可视化", "画图", "plot", "绘图"],
+        "waveform_export": ["波形导出", "export", "提取波形", "波形提取"],
+        "hdf5_export": ["HDF5", "hdf5导出", "hdf5 export", "二进制导出"],
+        "disturbance_severity": ["扰动严重度", "disturbance", "扰动分析", "故障严重度分析"],
+        "compare_visualization": ["对比可视化", "compare visualization", "多场景对比", "对比图表"],
+        "comtrade_export": ["COMTRADE", "comtrade导出", "标准格式导出", "暂态数据导出"],
+
+        # 电能质量类
+        "harmonic_analysis": ["谐波", "harmonic", "谐波分析", "THD"],
+        "power_quality_analysis": ["电能质量", "power quality", "电能质量分析", "供电质量"],
+        "reactive_compensation_design": ["无功补偿", "reactive compensation", "补偿设计", "电容器配置"],
+
+        # 模型与拓扑类
+        "ieee3_prep": ["准备", "prep", "预处理", "模型准备"],
+        "topology_check": ["拓扑", "topology", "检查模型", "拓扑分析"],
+        "parameter_sensitivity": ["灵敏度", "sensitivity", "参数灵敏度", "灵敏度分析"],
+        "auto_channel_setup": ["自动通道", "auto channel", "量测配置", "自动量测", "通道设置"],
+        "auto_loop_breaker": ["解环", "loop breaker", "消除环路", "控制环路", "自动解环"],
+        "model_parameter_extractor": ["参数提取", "parameter extractor", "模型参数", "提取参数", "参数导出"]
     }
 
     # 算法类型映射
@@ -61,6 +101,23 @@ class SmartConfigGenerator:
 
     def __init__(self):
         self.config = {}
+        self._check_toolkit_available()
+
+    def _check_toolkit_available(self):
+        """检查 cloudpss-toolkit 是否已安装"""
+        try:
+            import cloudpss_skills
+            # 获取 toolkit 版本信息（如果可用）
+            version = getattr(cloudpss_skills, '__version__', 'unknown')
+            # 检查关键技能是否可用
+            from cloudpss_skills import PowerFlowSkill
+            return True
+        except ImportError:
+            print("⚠️  警告: 未检测到 cloudpss-toolkit")
+            print("    请先安装 toolkit:")
+            print("    git clone https://git.tsinghua.edu.cn/chen_ying/cloudpss-toolkit.git")
+            print("    cd cloudpss-toolkit && pip install -e .")
+            return False
 
     def detect_skill(self, prompt: str) -> str:
         """从用户输入中检测技能类型"""
