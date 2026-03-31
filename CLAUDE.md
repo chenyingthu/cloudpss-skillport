@@ -121,7 +121,7 @@ The skill follows a **YAML configuration → execution** pattern:
 | `interactive_wizard.py` | Step-by-step CLI for complex configurations |
 | `generate_config.py` | Basic config template generator |
 
-### Supported Simulation Types (37 Skills)
+### Supported Simulation Types (40 Skills)
 
 #### 仿真执行类
 - `power_flow` - 牛顿-拉夫逊潮流计算 (aliases: pf, 潮流, load flow)
@@ -173,6 +173,11 @@ The skill follows a **YAML configuration → execution** pattern:
 - `auto_channel_setup` - 自动量测配置 (aliases: auto_channel, 自动通道) - 批量添加EMT输出通道
 - `auto_loop_breaker` - 模型自动解环 (aliases: loop_breaker, 解环) - 消除控制环路
 - `model_parameter_extractor` - 模型参数提取器 (aliases: parameter_extractor, 参数提取) - 提取元件参数
+
+#### 分析与报告类
+- `loss_analysis` - 网损分析与优化 (aliases: loss, 网损, 损耗) - 支路损耗计算与降损优化
+- `protection_coordination` - 保护整定与配合分析 (aliases: protection, 保护, 继电保护) - 定值计算与配合校验
+- `report_generator` - 智能报告生成器 (aliases: report, 报告) - 多技能结果汇总生成DOCX/PDF/Markdown报告
 
 ### Configuration Structure
 

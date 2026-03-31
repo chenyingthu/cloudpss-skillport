@@ -15,7 +15,7 @@ from typing import Dict, Any, List
 class InteractiveWizard:
     """交互式配置向导"""
 
-    # 技能信息 - 37个技能
+    # 技能信息 - 40个技能
     SKILLS = {
         # ========== 仿真执行类 ==========
         "power_flow": {
@@ -249,6 +249,26 @@ class InteractiveWizard:
         "model_parameter_extractor": {
             "name": "模型参数提取器",
             "description": "提取电力系统模型中的元件参数",
+            "difficulty": "简单",
+            "time": "立即"
+        },
+
+        # ========== 分析与报告类 ==========
+        "loss_analysis": {
+            "name": "网损分析",
+            "description": "支路功率损耗计算与网损优化",
+            "difficulty": "中等",
+            "time": "约5-10分钟"
+        },
+        "protection_coordination": {
+            "name": "保护配合分析",
+            "description": "继电保护定值计算与配合校验",
+            "difficulty": "较难",
+            "time": "约10-20分钟"
+        },
+        "report_generator": {
+            "name": "报告生成器",
+            "description": "自动整合多技能结果生成专业报告",
             "difficulty": "简单",
             "time": "立即"
         }

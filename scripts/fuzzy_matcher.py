@@ -14,7 +14,7 @@ from typing import List, Tuple, Optional
 class FuzzyMatcher:
     """模糊匹配器"""
 
-    # 所有有效技能名称 (37个)
+    # 所有有效技能名称 (40个)
     VALID_SKILLS = [
         # 仿真执行类
         "power_flow",
@@ -59,7 +59,11 @@ class FuzzyMatcher:
         "parameter_sensitivity",
         "auto_channel_setup",
         "auto_loop_breaker",
-        "model_parameter_extractor"
+        "model_parameter_extractor",
+        # 分析与报告类
+        "loss_analysis",
+        "protection_coordination",
+        "report_generator"
     ]
 
     # 常见别名 - 30个技能
@@ -299,7 +303,32 @@ class FuzzyMatcher:
         "comtrade_export": "comtrade_export",
         "COMTRADE": "comtrade_export",
         "comtrade导出": "comtrade_export",
-        "标准格式导出": "comtrade_export"
+        "标准格式导出": "comtrade_export",
+
+        # ========== 分析与报告类 ==========
+        # 网损分析
+        "loss": "loss_analysis",
+        "loss_analysis": "loss_analysis",
+        "网损": "loss_analysis",
+        "损耗": "loss_analysis",
+        "功率损耗": "loss_analysis",
+        "网损分析": "loss_analysis",
+
+        # 保护配合
+        "protection": "protection_coordination",
+        "protection_coordination": "protection_coordination",
+        "保护": "protection_coordination",
+        "保护配合": "protection_coordination",
+        "继电保护": "protection_coordination",
+        "保护整定": "protection_coordination",
+
+        # 报告生成器
+        "report": "report_generator",
+        "report_generator": "report_generator",
+        "报告": "report_generator",
+        "生成报告": "report_generator",
+        "报告生成": "report_generator",
+        "导出报告": "report_generator"
     }
 
     def __init__(self):
@@ -387,7 +416,8 @@ class FuzzyMatcher:
             "稳定性分析类": ["voltage_stability", "transient_stability", "small_signal_stability", "frequency_response", "vsi_weak_bus", "dudv_curve"],
             "结果处理类": ["result_compare", "visualize", "waveform_export", "hdf5_export", "disturbance_severity", "compare_visualization", "comtrade_export"],
             "电能质量类": ["harmonic_analysis", "power_quality_analysis", "reactive_compensation_design"],
-            "模型与拓扑类": ["ieee3_prep", "topology_check", "parameter_sensitivity", "auto_channel_setup", "auto_loop_breaker", "model_parameter_extractor"]
+            "模型与拓扑类": ["ieee3_prep", "topology_check", "parameter_sensitivity", "auto_channel_setup", "auto_loop_breaker", "model_parameter_extractor"],
+            "分析与报告类": ["loss_analysis", "protection_coordination", "report_generator"]
         }
 
         for category, skills in categories.items():

@@ -17,7 +17,7 @@ import yaml
 class SmartConfigGenerator:
     """智能配置生成器"""
 
-    # 技能关键词映射 - 37个技能
+    # 技能关键词映射 - 40个技能
     SKILL_KEYWORDS = {
         # 仿真执行类
         "power_flow": ["潮流", "power flow", "load flow", "稳态", "pf", "潮流计算"],
@@ -68,7 +68,12 @@ class SmartConfigGenerator:
         "parameter_sensitivity": ["灵敏度", "sensitivity", "参数灵敏度", "灵敏度分析"],
         "auto_channel_setup": ["自动通道", "auto channel", "量测配置", "自动量测", "通道设置"],
         "auto_loop_breaker": ["解环", "loop breaker", "消除环路", "控制环路", "自动解环"],
-        "model_parameter_extractor": ["参数提取", "parameter extractor", "模型参数", "提取参数", "参数导出"]
+        "model_parameter_extractor": ["参数提取", "parameter extractor", "模型参数", "提取参数", "参数导出"],
+
+        # 分析与报告类
+        "loss_analysis": ["网损", "损耗", "loss", "功率损耗", "网损分析"],
+        "protection_coordination": ["保护", "保护配合", "protection", "继电保护", "保护整定"],
+        "report_generator": ["报告", "report", "生成报告", "报告生成", "导出报告"]
     }
 
     # 算法类型映射

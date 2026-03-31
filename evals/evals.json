@@ -353,6 +353,34 @@
         {"type": "contains", "target": "output", "value": "maintenance_security"},
         {"type": "contains", "target": "output", "value": "Gen_1"}
       ]
+    },
+    {
+      "id": 38,
+      "prompt": "分析IEEE39网损分布",
+      "expected_output": "识别loss_analysis技能，生成网损分析配置",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "loss_analysis"},
+        {"type": "contains", "target": "output", "value": "IEEE39"}
+      ]
+    },
+    {
+      "id": 39,
+      "prompt": "保护配合校验110kV变电站",
+      "expected_output": "识别protection_coordination技能，生成保护配合配置",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "protection_coordination"}
+      ]
+    },
+    {
+      "id": 40,
+      "prompt": "生成潮流计算分析报告",
+      "expected_output": "识别report_generator技能，生成报告配置",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "report_generator"}
+      ]
     }
   ]
 }

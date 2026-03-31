@@ -137,7 +137,7 @@ python scripts/channel_helper.py -p "Bus7的三相电压"
 python scripts/interactive_wizard.py
 ```
 
-## 支持的技能 (37个)
+## 支持的技能 (40个)
 
 ### 仿真执行类
 | 技能 | 描述 | 别名 |
@@ -204,9 +204,16 @@ python scripts/interactive_wizard.py
 | `auto_loop_breaker` | 模型自动解环 | loop_breaker |
 | `model_parameter_extractor` | 模型参数提取器 | parameter_extractor |
 
+### 分析与报告类
+| 技能 | 描述 | 别名 |
+|------|------|------|
+| `loss_analysis` | 网损分析与优化 | loss, 网损, 损耗 |
+| `protection_coordination` | 保护整定与配合分析 | protection, 保护配合, 继电保护 |
+| `report_generator` | 智能报告生成器 | report, 报告, 生成报告 |
+
 ## 脚本说明
 
-- `smart_config.py` - 智能配置生成器，支持37个技能的自然语言解析
+- `smart_config.py` - 智能配置生成器，支持40个技能的自然语言解析
 - `fuzzy_matcher.py` - 模糊匹配和拼写纠错
 - `friendly_validator.py` - 友好的配置验证和错误诊断
 - `component_mapper.py` - 元件ID查询和推断
@@ -217,7 +224,7 @@ python scripts/interactive_wizard.py
 
 | 依赖 | 版本 | 说明 | 安装 |
 |------|------|------|------|
-| **cloudpss-toolkit** | >= 0.2.0 | **必须** - 核心 API 封装和37个技能 | [安装指南](https://git.tsinghua.edu.cn/chen_ying/cloudpss-toolkit/-/blob/main/README.md) |
+| **cloudpss-toolkit** | >= 0.2.0 | **必须** - 核心 API 封装和40个技能 | [安装指南](https://git.tsinghua.edu.cn/chen_ying/cloudpss-toolkit/-/blob/main/README.md) |
 | cloudpss | >= 4.5.28 | **必须** - CloudPSS 官方 SDK | `pip install cloudpss>=4.5.28` |
 | pyyaml | >= 5.4 | 必须 - YAML 配置解析 | `pip install pyyaml>=5.4` |
 | numpy | >= 1.20 | 可选 - 数值计算 | 随 toolkit 安装 |

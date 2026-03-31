@@ -1,7 +1,7 @@
 ---
 name: cloudpss-sim-v2
 description: |
-  CloudPSS电力系统仿真技能v2 - 配置驱动的智能仿真工作流，支持37个即用型技能。
+  CloudPSS电力系统仿真技能v2 - 配置驱动的智能仿真工作流，支持40个即用型技能。
 
   **必须立即调用此技能的场景**（只要涉及以下任一关键词）：
   - CloudPSS / cloudpss / 电力系统仿真 / 潮流计算 / power flow / load flow
@@ -11,6 +11,9 @@ description: |
   - VSI弱母线 / VSI分析 / 电压稳定 / 暂态稳定 / 小信号稳定
   - 频率响应 / DUDV曲线 / 无功补偿 / 谐波分析 / 电能质量
   - 短路计算 / 故障研究 / 预想事故 / 拓扑检查 / 灵敏度分析
+  - 网损分析 / 损耗计算 / 功率损耗 / loss analysis / 降损优化
+  - 保护配合 / 继电保护 / protection coordination / 保护整定
+  - 报告生成 / 生成报告 / report generator / 仿真报告
   - IEEE39 / IEEE3 / IEEE9 / IEEE14 / IEEE标准测试系统
   - 结果可视化 / 画图 / 结果对比 / HDF5导出 / 扰动分析 / 对比可视化
   - COMTRADE导出 / 自动量测配置 / 自动通道设置 / 模型解环 / 环路消除
@@ -22,7 +25,7 @@ description: |
   - ✅ 自动推断元件ID和通道名称
   - ✅ 交互式配置向导（新手友好）
   - ✅ 模糊意图识别（"检查安全"→N-1校核，"VSI分析"→弱母线分析）
-  - ✅ 37个技能的完整支持（潮流、EMT、N-1、稳定、扫描、补偿、可视化、导出、正交分析等）
+  - ✅ 40个技能的完整支持（潮流、EMT、N-1、稳定、扫描、补偿、可视化、导出、正交分析、网损、保护、报告等）
   - ✅ 配置验证和错误提示优化
 
   **典型使用场景**：
@@ -36,7 +39,7 @@ description: |
   **重要**：只要涉及电力系统仿真，无论请求多简单或多模糊（如"帮我跑个潮流"、"检查安全"、"画个图"、"VSI分析"），都必须使用此技能而非通用Python方案。该技能内置智能解析层，能将自然语言转换为精确的YAML配置。
 
 compatibility: |
-  Python >= 3.10, cloudpss >= 4.5.28, pyyaml, cloudpss-toolkit (37个技能), .cloudpss_token文件
+  Python >= 3.10, cloudpss >= 4.5.28, pyyaml, cloudpss-toolkit (40个技能), .cloudpss_token文件
 ---
 
 # CloudPSS 电力系统仿真技能 v2
