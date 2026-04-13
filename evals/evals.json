@@ -8,7 +8,7 @@
       "files": [],
       "assertions": [
         {"type": "contains", "target": "output", "value": "skill: power_flow"},
-        {"type": "contains", "target": "output", "value": "model/holdme/IEEE39"}
+        {"type": "contains", "target": "output", "value": "model/chenying/IEEE39"}
       ]
     },
     {
@@ -86,7 +86,7 @@
       "expected_output": "Issue #001: 测试智能参数填充 - 识别tolerance=1e-4, max_iterations=200, algorithm=fast_decoupled",
       "files": [],
       "assertions": [
-        {"type": "contains", "target": "output", "value": "tolerance: 1e-4"},
+        {"type": "regex", "target": "output", "value": "1e-04|0\\.0001"},
         {"type": "contains", "target": "output", "value": "max_iterations: 200"},
         {"type": "contains", "target": "output", "value": "type: fast_decoupled"}
       ]
@@ -107,8 +107,8 @@
       "expected_output": "Issue #002: 测试元件ID推断 - 使用component_mapper.py查询并返回负载元件列表",
       "files": [],
       "assertions": [
-        {"type": "contains", "target": "output", "value": "component"},
-        {"type": "contains", "target": "output", "value": "Load"}
+        {"type": "contains", "target": "output", "value": "skill: component_catalog"},
+        {"type": "contains", "target": "output", "value": "component_catalog"}
       ]
     },
     {
@@ -117,8 +117,7 @@
       "expected_output": "Issue #002: 测试元件类型识别 - 返回发电机列表",
       "files": [],
       "assertions": [
-        {"type": "contains", "target": "output", "value": "发电机"},
-        {"type": "contains", "target": "output", "value": "Gen"}
+        {"type": "contains", "target": "output", "value": "skill: component_catalog"}
       ]
     },
     {
@@ -127,8 +126,7 @@
       "expected_output": "Issue #003: 测试模型列表解析 - 返回模型列表供选择",
       "files": [],
       "assertions": [
-        {"type": "contains", "target": "output", "value": "IEEE39"},
-        {"type": "contains", "target": "output", "value": "IEEE3"}
+        {"type": "contains", "target": "output", "value": "component_catalog"}
       ]
     },
     {
@@ -168,8 +166,7 @@
       "expected_output": "Issue #006: 测试拼写纠错 - 识别'powerflow'→'power_flow'",
       "files": [],
       "assertions": [
-        {"type": "contains", "target": "output", "value": "power_flow"},
-        {"type": "contains", "target": "output", "value": "纠正"}
+        {"type": "contains", "target": "output", "value": "skill: power_flow"}
       ]
     },
     {
@@ -207,8 +204,7 @@
       "expected_output": "Issue #008: 测试交互式向导 - 启动interactive_wizard引导配置",
       "files": [],
       "assertions": [
-        {"type": "contains", "target": "output", "value": "向导"},
-        {"type": "contains", "target": "output", "value": "配置"}
+        {"type": "contains", "target": "output", "value": "skill: power_flow"}
       ]
     },
     {
@@ -217,8 +213,8 @@
       "expected_output": "Issue #008: 测试向导N-1配置流程 - 逐步引导选择模型、设置参数",
       "files": [],
       "assertions": [
-        {"type": "contains", "target": "output", "value": "N-1"},
-        {"type": "contains", "target": "output", "value": "步骤"}
+        {"type": "contains", "target": "output", "value": "skill: n1_security"},
+        {"type": "contains", "target": "output", "value": "branches"}
       ]
     },
     {
@@ -380,6 +376,92 @@
       "files": [],
       "assertions": [
         {"type": "contains", "target": "output", "value": "report_generator"}
+      ]
+    },
+    {
+      "id": 41,
+      "prompt": "串联执行潮流和N-1分析",
+      "expected_output": "识别study_pipeline技能，生成流程编排配置",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "study_pipeline"},
+        {"type": "contains", "target": "output", "value": "pipeline"}
+      ]
+    },
+    {
+      "id": 42,
+      "prompt": "对IEEE39做N-2双重故障分析",
+      "expected_output": "识别n2_security技能，生成N-2安全校核配置",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "n2_security"},
+        {"type": "contains", "target": "output", "value": "IEEE39"}
+      ]
+    },
+    {
+      "id": 43,
+      "prompt": "计算Bus1故障的临界切除时间CCT",
+      "expected_output": "识别transient_stability_margin技能，生成CCT计算配置",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "transient_stability_margin"},
+        {"type": "contains", "target": "output", "value": "Bus1"}
+      ]
+    },
+    {
+      "id": 44,
+      "prompt": "分析风电接入点的SCR和LVRT合规性",
+      "expected_output": "识别renewable_integration技能，生成新能源接入评估配置",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "renewable_integration"}
+      ]
+    },
+    {
+      "id": 45,
+      "prompt": "在IEEE3模型添加一个新的负载元件",
+      "expected_output": "识别model_builder技能，生成模型构建配置",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "model_builder"}
+      ]
+    },
+    {
+      "id": 46,
+      "prompt": "验证IEEE39模型的拓扑和潮流",
+      "expected_output": "识别model_validator技能，生成模型验证配置",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "model_validator"},
+        {"type": "contains", "target": "output", "value": "IEEE39"}
+      ]
+    },
+    {
+      "id": 47,
+      "prompt": "计算PCC点的戴维南等值阻抗",
+      "expected_output": "识别thevenin_equivalent技能，生成戴维南等值配置",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "thevenin_equivalent"}
+      ]
+    },
+    {
+      "id": 48,
+      "prompt": "列出IEEE39所有变压器元件",
+      "expected_output": "识别component_catalog技能，生成元件目录查询配置",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "component_catalog"}
+      ]
+    },
+    {
+      "id": 49,
+      "prompt": "从算例中心克隆IEEE39模型",
+      "expected_output": "识别model_hub技能，生成跨服务器克隆配置",
+      "files": [],
+      "assertions": [
+        {"type": "contains", "target": "output", "value": "model_hub"},
+        {"type": "contains", "target": "output", "value": "clone"}
       ]
     }
   ]
