@@ -14,19 +14,12 @@ from typing import Dict, Any, List, Tuple
 import yaml
 
 
-class ScientificFloat(float):
-    """自定义浮点数类，YAML输出时保留科学计数法"""
-    def __repr__(self):
-        if self == 0:
-            return "0.0"
-        exp = int(f"{self:.0e}".split('e')[1])
-        if abs(exp) >= 4:
-            return f"{self:.0e}"
-        return str(float(self))
+class ConfigDumper(yaml.SafeDumper):
+    """Custom YAML dumper that preserves scientific notation for floats."""
+    pass
 
 
-def sci_float_representer(dumper, data):
-    """YAML浮点数representer，科学计数法格式"""
+def _sci_float_representer(dumper, data):
     if data == 0:
         return dumper.represent_float(data)
     exp = int(f"{data:.0e}".split('e')[1])
@@ -35,7 +28,7 @@ def sci_float_representer(dumper, data):
     return dumper.represent_float(data)
 
 
-yaml.add_representer(float, sci_float_representer)
+ConfigDumper.add_representer(float, _sci_float_representer)
 
 
 class SmartConfigGenerator:
@@ -44,7 +37,7 @@ class SmartConfigGenerator:
     # 技能关键词映射 - 48个技能
     SKILL_KEYWORDS = {
         # 仿真执行类
-        "power_flow": ["潮流计算", "潮流计算", "power flow", "load flow", "稳态", "pf仿真", "潮流"],
+        "power_flow": ["潮流计算", "power flow", "load flow", "稳态", "pf仿真", "潮流"],
         "emt_simulation": ["EMT", "暂态", "transient", "emtp", "电磁暂态"],
         "emt_fault_study": ["故障研究", "fault study", "短路研究", "故障分析"],
         "short_circuit": ["短路", "short circuit", "短路计算", "短路电流"],
@@ -842,7 +835,7 @@ class SmartConfigGenerator:
         Path(output_path).parent.mkdir(parents=True, exist_ok=True)
 
         with open(output_path, 'w', encoding='utf-8') as f:
-            yaml.dump(config, f, allow_unicode=True, sort_keys=False)
+            yaml.dump(config, f, Dumper=ConfigDumper, allow_unicode=True, sort_keys=False)
 
         return output_path
 
@@ -872,7 +865,7 @@ def main():
     # 显示配置
     print("📋 生成的配置:")
     print("-" * 50)
-    yaml_str = yaml.dump(config, allow_unicode=True, sort_keys=False)
+    yaml_str = yaml.dump(config, Dumper=ConfigDumper, allow_unicode=True, sort_keys=False)
     print(yaml_str)
     print("-" * 50)
 

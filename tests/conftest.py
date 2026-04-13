@@ -9,8 +9,9 @@ from unittest.mock import Mock, patch, MagicMock
 
 import pytest
 
-# Set internal API URL and token before importing cloudpss
-os.environ["CLOUDPSS_API_URL"] = "http://166.111.60.76:50001"
+# Set internal API URL if not already configured
+if "CLOUDPSS_API_URL" not in os.environ:
+    os.environ["CLOUDPSS_API_URL"] = "http://166.111.60.76:50001"
 
 # Load token from internal file (located in cloudpss-toolkit directory)
 project_root = Path(__file__).resolve().parent.parent

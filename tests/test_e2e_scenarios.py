@@ -47,6 +47,7 @@ class TestE2EScenarios:
 
         result = skill.run(config)
         assert result.status in [SkillStatus.SUCCESS, SkillStatus.FAILED]
+        assert result.data, "result.data should not be empty"
 
     def test_e2e_emt_simulation(self, config_generator, auth_token):
         """
