@@ -38,7 +38,7 @@ echo "your_token_here" > /path/to/project/.cloudpss_token
 ### CLI via cloudpss-toolkit
 
 ```bash
-# List all 37 available skills
+# List all 50 available skills
 python -m cloudpss_skills list
 
 # Initialize a skill configuration
@@ -63,8 +63,8 @@ python scripts/friendly_validator.py -c configs/power_flow_xxx.yaml
 
 ### Query Model Components
 ```bash
-python scripts/component_mapper.py --model model/holdme/IEEE39 --type Load
-python scripts/component_mapper.py --model model/holdme/IEEE3 --type Generator
+python scripts/component_mapper.py --model model/chenying/IEEE39 --type Load
+python scripts/component_mapper.py --model model/chenying/IEEE3 --type Generator
 ```
 
 ### Infer Channel Names
@@ -121,7 +121,7 @@ The skill follows a **YAML configuration → execution** pattern:
 | `interactive_wizard.py` | Step-by-step CLI for complex configurations |
 | `generate_config.py` | Basic config template generator |
 
-### Supported Simulation Types (40 Skills)
+### Supported Simulation Types (50 Skills)
 
 #### 仿真执行类
 - `power_flow` - 牛顿-拉夫逊潮流计算 (aliases: pf, 潮流, load flow)
@@ -129,8 +129,9 @@ The skill follows a **YAML configuration → execution** pattern:
 - `emt_fault_study` - EMT故障研究 (aliases: fault_study, 故障研究)
 - `short_circuit` - 短路电流计算 (aliases: short_circuit, 短路)
 
-#### N-1安全分析类
+#### N-1/N-2安全分析类
 - `n1_security` - N-1安全校核 (aliases: n1, 安全校核, 检修)
+- `n2_security` - N-2双重故障安全分析 (aliases: n2, 双重故障, n2安全)
 - `emt_n1_screening` - EMT N-1安全筛查 (aliases: emt_n1, emt安全筛查)
 - `contingency_analysis` - 预想事故分析 (aliases: contingency, 预想事故)
 - `maintenance_security` - 检修方式安全校核 (aliases: maintenance, 检修安全)
@@ -147,6 +148,7 @@ The skill follows a **YAML configuration → execution** pattern:
 #### 稳定性分析类
 - `voltage_stability` - 电压稳定分析 (aliases: voltage_stab, 电压稳定)
 - `transient_stability` - 暂态稳定分析 (aliases: transient_stab, 暂态稳定)
+- `transient_stability_margin` - 暂态稳定裕度/CCT计算 (aliases: CCT, 临界切除, 稳定裕度)
 - `small_signal_stability` - 小信号稳定分析 (aliases: small_signal, 小信号)
 - `frequency_response` - 频率响应分析 (aliases: frequency, 频率响应)
 - `vsi_weak_bus` - VSI弱母线分析 (aliases: vsi, weak_bus, 弱母线)
@@ -166,18 +168,28 @@ The skill follows a **YAML configuration → execution** pattern:
 - `power_quality_analysis` - 电能质量分析 (aliases: quality, 电能质量)
 - `reactive_compensation_design` - 无功补偿设计 (aliases: compensation, 无功补偿)
 
+#### 新能源分析类
+- `renewable_integration` - 新能源接入分析 (aliases: 新能源, SCR, LVRT, 风光) - SCR计算/LVRT合规/谐波评估
+
 #### 模型与拓扑类
-- `ieee3_prep` - IEEE3模型准备 (aliases: prep, 模型准备)
 - `topology_check` - 拓扑检查 (aliases: topology, 拓扑)
 - `parameter_sensitivity` - 参数灵敏度分析 (aliases: sensitivity, 灵敏度)
 - `auto_channel_setup` - 自动量测配置 (aliases: auto_channel, 自动通道) - 批量添加EMT输出通道
 - `auto_loop_breaker` - 模型自动解环 (aliases: loop_breaker, 解环) - 消除控制环路
 - `model_parameter_extractor` - 模型参数提取器 (aliases: parameter_extractor, 参数提取) - 提取元件参数
+- `model_builder` - 模型构建/修改 (aliases: 建模, 添加元件) - 添加/修改/删除元件
+- `model_validator` - 模型验证 (aliases: 验证模型, 模型检查) - 拓扑/潮流/EMT/参数多相验证
+- `component_catalog` - 元件目录浏览 (aliases: 元件查询, 元件库) - 组件类型浏览和搜索
+- `thevenin_equivalent` - 戴维南等值阻抗 (aliases: 戴维南, 等值阻抗) - PCC点戴维南阻抗和短路容量计算
+- `model_hub` - 算例中心管理 (aliases: 模型库, 跨服务器) - 多服务器模型管理和跨服务器克隆
 
 #### 分析与报告类
 - `loss_analysis` - 网损分析与优化 (aliases: loss, 网损, 损耗) - 支路损耗计算与降损优化
 - `protection_coordination` - 保护整定与配合分析 (aliases: protection, 保护, 继电保护) - 定值计算与配合校验
 - `report_generator` - 智能报告生成器 (aliases: report, 报告) - 多技能结果汇总生成DOCX/PDF/Markdown报告
+
+#### 流程编排类
+- `study_pipeline` - 多技能流程编排 (aliases: pipeline, 流水线, 串联) - 并行执行/条件分支/foreach循环
 
 ### Configuration Structure
 
@@ -188,7 +200,7 @@ skill: <skill_name>
 auth:
   token_file: .cloudpss_token
 model:
-  rid: model/holdme/IEEE39  # or model/holdme/IEEE3
+  rid: model/chenying/IEEE39  # or model/chenying/IEEE3
   source: cloud
 # Skill-specific config...
 output:
@@ -199,8 +211,8 @@ output:
 
 ### Default Models
 
-- **IEEE39**: `model/holdme/IEEE39` - 39-bus system for power flow, N-1, VSI, stability analysis
-- **IEEE3**: `model/holdme/IEEE3` - 3-bus system for EMT transient simulation
+- **IEEE39**: `model/chenying/IEEE39` - 39-bus system for power flow, N-1, VSI, stability analysis
+- **IEEE3**: `model/chenying/IEEE3` - 3-bus system for EMT transient simulation
 
 ### Python API (from cloudpss-toolkit)
 
@@ -210,7 +222,7 @@ from cloudpss_skills import PowerFlowSkill, EmtSimulationSkill
 # Power flow
 skill = PowerFlowSkill()
 result = skill.run(
-    model="model/holdme/IEEE39",
+    model="model/chenying/IEEE39",
     tolerance=1e-6,
     max_iterations=100
 )
@@ -219,7 +231,7 @@ print(f"收敛状态: {result.converged}")
 # EMT simulation
 emt_skill = EmtSimulationSkill()
 result = emt_skill.run(
-    model="model/holdme/IEEE3",
+    model="model/chenying/IEEE3",
     duration=5.0,
     step_size=0.0001
 )
@@ -241,13 +253,37 @@ pytest tests/test_powerflow_result.py
 pytest tests/test_emt_result.py
 ```
 
-Local evals are assertion-based (`evals/evals.json`):
+Local integration tests (`tests/`):
 
 ```bash
-# Validate configuration generation
-python scripts/smart_config.py "帮我跑IEEE39潮流" --output configs/test.yaml
-cat configs/test.yaml  # Verify skill: power_flow, model: IEEE39
+# All 122 tests (mocked + schema + parameter + boundary + skill detection)
+pytest tests/ -v
+
+# E2E integration with real API (requires --run-integration)
+pytest tests/ -v --run-integration
+
+# Specific categories
+pytest tests/test_config_schema_validity.py -v    # 48 evals validation
+pytest tests/test_parameter_extraction.py -v       # Parameter extraction accuracy
+pytest tests/test_mocked_execution.py -v           # Mocked skill.run() verification
+pytest tests/test_e2e_scenarios.py -v              # Real API scenarios
+pytest tests/test_skill_detection.py -v            # Skill detection accuracy
+pytest tests/test_boundary_conditions.py -v        # Edge cases
 ```
+
+### Test Coverage Summary
+
+| Category | File | Tests | Purpose |
+|----------|------|-------|---------|
+| Schema validity | `test_config_schema_validity.py` | 1 | All 48 evals pass `skill.validate()` |
+| Parameter extraction | `test_parameter_extraction.py` | 20 | Numeric/string extraction accuracy |
+| Mocked execution | `test_mocked_execution.py` | 20 | Config reaches `skill.run()` correctly |
+| E2E scenarios | `test_e2e_scenarios.py` | 7 | Real API execution |
+| Skill detection | `test_skill_detection.py` | 25 | Differentiation, aliases, false positives |
+| Boundary conditions | `test_boundary_conditions.py` | 46 | Edge cases, extremes, Unicode, YAML |
+| Evals | `evals/evals.json` | 48 | Eval prompt coverage |
+
+**Total: 122 tests passing**
 
 ## Project Structure
 
@@ -278,4 +314,4 @@ cloudpss-sim-skill/
 - **Results Directory**: Simulation outputs go to `results/` (gitignored)
 - **External Dependency**: This skill does NOT work without cloudpss-toolkit - always verify toolkit is accessible via PYTHONPATH
 - **Skill File**: `cloudpss-sim-v2.skill` is the Claude Code skill manifest that defines triggers and capabilities
-- **New Skills**: cloudpss-toolkit now has 37 skills - when adding support for new skills in smart_config.py, refer to the toolkit's builtin skills in `../cloudpss-toolkit/cloudpss_skills/builtin/`
+- **New Skills**: cloudpss-toolkit now has 50 skills - when adding support for new skills in smart_config.py, refer to the toolkit's builtin skills in `../cloudpss-toolkit/cloudpss_skills/builtin/`

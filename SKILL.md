@@ -1,14 +1,14 @@
 ---
 name: cloudpss-sim-v2
 description: |
-  CloudPSS电力系统仿真技能v2 - 配置驱动的智能仿真工作流，支持40个即用型技能。
+  CloudPSS电力系统仿真技能v2 - 配置驱动的智能仿真工作流，支持50个即用型技能。
 
   **必须立即调用此技能的场景**（只要涉及以下任一关键词）：
   - CloudPSS / cloudpss / 电力系统仿真 / 潮流计算 / power flow / load flow
   - EMT仿真 / 暂态仿真 / electromagnetic transient / 波形分析 / 波形提取
-  - N-1安全校核 / N-1筛查 / N-1分析 / 安全评估 / 检修校核
+  - N-1安全校核 / N-1筛查 / N-1分析 / 安全评估 / 检修校核 / N-2双重故障
   - 参数扫描 / param_scan / 批量仿真 / 批量潮流 / 故障扫描
-  - VSI弱母线 / VSI分析 / 电压稳定 / 暂态稳定 / 小信号稳定
+  - VSI弱母线 / VSI分析 / 电压稳定 / 暂态稳定 / 小信号稳定 / CCT计算
   - 频率响应 / DUDV曲线 / 无功补偿 / 谐波分析 / 电能质量
   - 短路计算 / 故障研究 / 预想事故 / 拓扑检查 / 灵敏度分析
   - 网损分析 / 损耗计算 / 功率损耗 / loss analysis / 降损优化
@@ -18,6 +18,10 @@ description: |
   - 结果可视化 / 画图 / 结果对比 / HDF5导出 / 扰动分析 / 对比可视化
   - COMTRADE导出 / 自动量测配置 / 自动通道设置 / 模型解环 / 环路消除
   - 正交敏感 / DOE / 实验设计 / 配置批量 / 参数提取 / 模型参数导出
+  - 新能源接入 / SCR计算 / LVRT合规 / 风光接入
+  - 戴维南等值 / 等值阻抗 / 短路容量
+  - 模型构建 / 建模 / 模型验证 / 元件查询 / 算例中心
+  - 流程编排 / pipeline / 串联仿真
   - "帮我跑个仿真" / "检查一下" / "画个图" / "对比结果" / "分析稳定"
 
   **该技能解决的核心问题**：
@@ -25,8 +29,12 @@ description: |
   - ✅ 自动推断元件ID和通道名称
   - ✅ 交互式配置向导（新手友好）
   - ✅ 模糊意图识别（"检查安全"→N-1校核，"VSI分析"→弱母线分析）
-  - ✅ 40个技能的完整支持（潮流、EMT、N-1、稳定、扫描、补偿、可视化、导出、正交分析、网损、保护、报告等）
+  - ✅ 50个技能的完整支持（潮流、EMT、N-1/N-2、稳定、扫描、补偿、可视化、导出、正交分析、网损、保护、报告、新能源、戴维南、流程编排等）
   - ✅ 配置验证和错误提示优化
+  - ✅ 122个自动化测试保障（配置schema、参数提取、模拟执行、E2E集成、边界条件）
+
+  compatibility: |
+  Python >= 3.10, cloudpss >= 4.5.28, pyyaml, cloudpss-toolkit (50个技能), .cloudpss_token文件
 
   **典型使用场景**：
   - "帮我跑个IEEE39的潮流计算，收敛精度1e-8" → 自动解析精度参数
@@ -39,7 +47,7 @@ description: |
   **重要**：只要涉及电力系统仿真，无论请求多简单或多模糊（如"帮我跑个潮流"、"检查安全"、"画个图"、"VSI分析"），都必须使用此技能而非通用Python方案。该技能内置智能解析层，能将自然语言转换为精确的YAML配置。
 
 compatibility: |
-  Python >= 3.10, cloudpss >= 4.5.28, pyyaml, cloudpss-toolkit (40个技能), .cloudpss_token文件
+  Python >= 3.10, cloudpss >= 4.5.28, pyyaml, cloudpss-toolkit (50个技能), .cloudpss_token文件, 122个测试
 ---
 
 # CloudPSS 电力系统仿真技能 v2
@@ -104,7 +112,7 @@ user_input = "电压阈值设成10%"
 # 解析文本中的模型
 models = extract_models("对IEEE3、IEEE9、IEEE14、IEEE39...")
 → ["IEEE3", "IEEE9", "IEEE14", "IEEE39"]
-→ 映射到 ["model/holdme/IEEE3", "model/holdme/IEEE9", ...]
+→ 映射到 ["model/chenying/IEEE3", "model/chenying/IEEE9", ...]
 → 对未缓存模型询问用户确认
 ```
 
@@ -237,7 +245,7 @@ python cloudpss-sim-v2/scripts/smart_config.py \
 ```bash
 # 列出模型中的所有负载
 python cloudpss-sim-v2/scripts/component_mapper.py \
-    --model model/holdme/IEEE3 \
+    --model model/chenying/IEEE3 \
     --type Load
 
 # 输出示例：
@@ -302,7 +310,7 @@ python cloudpss-sim-v2/scripts/fuzzy_matcher.py "n1security"
 ```yaml
 skill: power_flow
 model:
-  rid: model/holdme/IEEE39
+  rid: model/chenying/IEEE39
 ```
 
 ### 模板2：完整风格（详细配置）
@@ -312,7 +320,7 @@ skill: power_flow
 auth:
   token_file: .cloudpss_token
 model:
-  rid: model/holdme/IEEE39
+  rid: model/chenying/IEEE39
   source: cloud
 algorithm:
   type: newton_raphson
@@ -334,7 +342,7 @@ output:
 # 系统自动生成：
 skill: power_flow
 model:
-  rid: model/holdme/IEEE39
+  rid: model/chenying/IEEE39
 algorithm:
   tolerance: 1.0e-8  # "精度高点" → 提高精度
 output:
@@ -371,8 +379,8 @@ output:
 ❌ 模型未找到: model/unknown/XXX
 
 可用模型（已验证）：
-✅ model/holdme/IEEE39 - 39节点系统，适合潮流计算
-✅ model/holdme/IEEE3  - 3节点系统，适合EMT仿真
+✅ model/chenying/IEEE39 - 39节点系统，适合潮流计算
+✅ model/chenying/IEEE3  - 3节点系统，适合EMT仿真
 
 请检查：
 1. 模型RID是否正确（格式: model/owner/name）
@@ -397,7 +405,7 @@ output:
 提示：
 - 使用通配符: Load_* 匹配所有负载
 - 查看完整元件列表：
-  python cloudpss-sim-v2/scripts/component_mapper.py --model model/holdme/IEEE3
+  python cloudpss-sim-v2/scripts/component_mapper.py --model model/chenying/IEEE3
 ```
 
 ### 错误4：配置验证失败
@@ -429,7 +437,7 @@ cloudpss_skills/templates/power_flow.yaml
 
 **Claude处理**：
 1. 识别技能：power_flow
-2. 识别模型：IEEE39 → model/holdme/IEEE39
+2. 识别模型：IEEE39 → model/chenying/IEEE39
 3. 提取参数：
    - "牛顿法" → algorithm.type: newton_raphson
    - "1e-8" → algorithm.tolerance: 1.0e-8
@@ -497,11 +505,11 @@ workflow:
   steps:
     - name: 潮流计算
       skill: power_flow
-      model: model/holdme/IEEE39
+      model: model/chenying/IEEE39
 
     - name: N-1校核
       skill: n1_security
-      model: model/holdme/IEEE39
+      model: model/chenying/IEEE39
       depends_on: [潮流计算]
 
     - name: 结果可视化

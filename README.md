@@ -22,11 +22,11 @@ python scripts/smart_config.py "帮我跑IEEE39潮流计算"
 
 `cloudpss-sim-skill` 是一个 Claude Code Skill，让你可以通过自然语言描述来运行 CloudPSS 电力系统仿真。
 
-配合 `cloudpss-toolkit` 使用，支持 **37个即用型技能**，覆盖潮流计算、EMT暂态仿真、N-1安全校核、稳定性分析、参数扫描、对比可视化、COMTRADE导出、自动量测配置、正交敏感性分析、模型参数提取等完整工作流。
+配合 `cloudpss-toolkit` 使用，支持 **50个即用型技能**，覆盖潮流计算、EMT暂态仿真、N-1/N-2安全校核、稳定性分析、参数扫描、对比可视化、COMTRADE导出、自动量测配置、正交敏感性分析、模型参数提取、网损分析、保护配合、报告生成、新能源接入分析、戴维南等值、流程编排等完整工作流。
 
 ## 特性
 
-- **37个即用型技能** - 覆盖电力系统仿真完整工作流
+- **50个即用型技能** - 覆盖电力系统仿真完整工作流
 - **自然语言配置** - 用中文或英文描述你的仿真需求
 - **智能拼写纠错** - 自动纠正技能名称和参数拼写
 - **交互式向导** - 逐步引导完成复杂配置
@@ -86,7 +86,7 @@ cd cloudpss-sim-skill
 # 确保 toolkit 在 Python 路径中
 export PYTHONPATH="${PYTHONPATH}:/path/to/cloudpss-toolkit"
 
-# 列出所有37个技能
+# 列出所有50个技能
 python -m cloudpss_skills list
 
 # 运行脚本
@@ -128,7 +128,7 @@ python scripts/smart_config.py "IEEE39潮流计算" --output config.yaml
 python scripts/friendly_validator.py -c config.yaml
 
 # 查询元件
-python scripts/component_mapper.py --model model/holdme/IEEE39 --type 负载
+python scripts/component_mapper.py --model model/chenying/IEEE39 --type 负载
 
 # 推断通道
 python scripts/channel_helper.py -p "Bus7的三相电压"
@@ -137,7 +137,7 @@ python scripts/channel_helper.py -p "Bus7的三相电压"
 python scripts/interactive_wizard.py
 ```
 
-## 支持的技能 (40个)
+## 支持的技能 (50个)
 
 ### 仿真执行类
 | 技能 | 描述 | 别名 |
@@ -145,12 +145,13 @@ python scripts/interactive_wizard.py
 | `power_flow` | 牛顿-拉夫逊潮流计算 | pf, 潮流, load flow |
 | `emt_simulation` | EMT暂态仿真 | emt, 暂态 |
 | `emt_fault_study` | EMT故障研究 | fault_study |
-| `short_circuit` | 短路电流计算 | short_circuit |
+| `short_circuit` | 短路电流计算 | 短路 |
 
-### N-1安全分析类
+### N-1/N-2安全分析类
 | 技能 | 描述 | 别名 |
 |------|------|------|
 | `n1_security` | N-1安全校核 | n1, 安全校核 |
+| `n2_security` | N-2双重故障安全分析 | n2, 双重故障 |
 | `emt_n1_screening` | EMT N-1安全筛查 | emt_n1 |
 | `contingency_analysis` | 预想事故分析 | contingency |
 | `maintenance_security` | 检修方式安全校核 | maintenance |
@@ -171,6 +172,7 @@ python scripts/interactive_wizard.py
 |------|------|------|
 | `voltage_stability` | 电压稳定分析 | voltage_stab |
 | `transient_stability` | 暂态稳定分析 | transient_stab |
+| `transient_stability_margin` | 暂态稳定裕度/CCT计算 | CCT, 临界切除, 稳定裕度 |
 | `small_signal_stability` | 小信号稳定分析 | small_signal |
 | `frequency_response` | 频率响应分析 | frequency |
 | `vsi_weak_bus` | VSI弱母线分析 | vsi, weak_bus |
@@ -194,26 +196,40 @@ python scripts/interactive_wizard.py
 | `power_quality_analysis` | 电能质量分析 | quality |
 | `reactive_compensation_design` | 无功补偿设计 | compensation |
 
+### 新能源分析类
+| 技能 | 描述 | 别名 |
+|------|------|------|
+| `renewable_integration` | 新能源接入分析(SCR/LVRT) | 新能源, SCR, LVRT, 风光 |
+
 ### 模型与拓扑类
 | 技能 | 描述 | 别名 |
 |------|------|------|
-| `ieee3_prep` | IEEE3模型准备 | prep |
 | `topology_check` | 拓扑检查 | topology |
 | `parameter_sensitivity` | 参数灵敏度分析 | sensitivity |
 | `auto_channel_setup` | 自动量测配置 | auto_channel |
 | `auto_loop_breaker` | 模型自动解环 | loop_breaker |
 | `model_parameter_extractor` | 模型参数提取器 | parameter_extractor |
+| `model_builder` | 模型构建/修改 | 建模, 添加元件 |
+| `model_validator` | 模型验证 | 验证模型, 模型检查 |
+| `component_catalog` | 元件目录浏览 | 元件查询, 元件库 |
+| `thevenin_equivalent` | 戴维南等值阻抗 | 戴维南, 等值阻抗 |
+| `model_hub` | 算例中心管理 | 模型库, 跨服务器 |
 
 ### 分析与报告类
 | 技能 | 描述 | 别名 |
 |------|------|------|
-| `loss_analysis` | 网损分析与优化 | loss, 网损, 损耗 |
-| `protection_coordination` | 保护整定与配合分析 | protection, 保护配合, 继电保护 |
-| `report_generator` | 智能报告生成器 | report, 报告, 生成报告 |
+| `loss_analysis` | 网损分析与优化 | loss, 网损 |
+| `protection_coordination` | 保护整定与配合分析 | protection, 保护配合 |
+| `report_generator` | 智能报告生成器 | report, 报告 |
+
+### 流程编排类
+| 技能 | 描述 | 别名 |
+|------|------|------|
+| `study_pipeline` | 多技能流程编排 | pipeline, 流水线, 串联 |
 
 ## 脚本说明
 
-- `smart_config.py` - 智能配置生成器，支持40个技能的自然语言解析
+- `smart_config.py` - 智能配置生成器，支持50个技能的自然语言解析
 - `fuzzy_matcher.py` - 模糊匹配和拼写纠错
 - `friendly_validator.py` - 友好的配置验证和错误诊断
 - `component_mapper.py` - 元件ID查询和推断
@@ -224,7 +240,7 @@ python scripts/interactive_wizard.py
 
 | 依赖 | 版本 | 说明 | 安装 |
 |------|------|------|------|
-| **cloudpss-toolkit** | >= 0.2.0 | **必须** - 核心 API 封装和40个技能 | [安装指南](https://git.tsinghua.edu.cn/chen_ying/cloudpss-toolkit/-/blob/main/README.md) |
+| **cloudpss-toolkit** | >= 0.2.0 | **必须** - 核心 API 封装和50个技能 | [安装指南](https://git.tsinghua.edu.cn/chen_ying/cloudpss-toolkit/-/blob/main/README.md) |
 | cloudpss | >= 4.5.28 | **必须** - CloudPSS 官方 SDK | `pip install cloudpss>=4.5.28` |
 | pyyaml | >= 5.4 | 必须 - YAML 配置解析 | `pip install pyyaml>=5.4` |
 | numpy | >= 1.20 | 可选 - 数值计算 | 随 toolkit 安装 |
@@ -240,7 +256,7 @@ from cloudpss_skills import PowerFlowSkill, EmtSimulationSkill
 # 潮流计算
 skill = PowerFlowSkill()
 result = skill.run(
-    model="model/holdme/IEEE39",
+    model="model/chenying/IEEE39",
     tolerance=1e-6
 )
 print(f"收敛状态: {result.converged}")
@@ -248,14 +264,39 @@ print(f"收敛状态: {result.converged}")
 # EMT仿真
 emt = EmtSimulationSkill()
 result = emt.run(
-    model="model/holdme/IEEE3",
+    model="model/chenying/IEEE3",
     duration=5.0
 )
 ```
 
+## 测试
+
+本项目包含 122 个自动化测试，覆盖 48 个技能的自然语言配置生成、参数提取准确性、模拟执行和真实 API 集成。
+
+```bash
+# 单元测试 + 集成测试（无需网络）
+cd tests/
+pytest . -v
+
+# 真实 API 集成测试（需要 token 和 --run-integration 标志）
+pytest tests/ -v --run-integration
+```
+
+### 测试覆盖
+
+| 类别 | 测试文件 | 测试数 | 覆盖范围 |
+|------|---------|--------|---------|
+| 配置 Schema 验证 | `test_config_schema_validity.py` | 1 | 所有 48 个 evals 通过 `skill.validate()` |
+| 参数提取准确性 | `test_parameter_extraction.py` | 20 | 容差、时长、迭代次数、算法、扫描值、阈值 |
+| 模拟执行 | `test_mocked_execution.py` | 20 | 20 个技能验证 config 到达 `skill.run()` |
+| E2E 集成测试 | `test_e2e_scenarios.py` | 7 | 真实 CloudPSS API 执行（需 `--run-integration`） |
+| 技能检测精度 | `test_skill_detection.py` | 25 | 相似技能区分、别名识别、组合关键词、假阳性预防 |
+| 边界条件 | `test_boundary_conditions.py` | 46 | 空输入、极端值、Unicode、YAML 序列化、负值拒绝 |
+| 配置评估 | `evals/evals.json` | 48 | 每个 eval prompt 的 skill 检测和参数提取 |
+
 ## 相关项目
 
-- [cloudpss-toolkit](https://git.tsinghua.edu.cn/chen_ying/cloudpss-toolkit) - 底层 API 增强库（30个内置技能）
+- [cloudpss-toolkit](https://git.tsinghua.edu.cn/chen_ying/cloudpss-toolkit) - 底层 API 增强库（50+内置技能）
 
 ## 许可证
 
