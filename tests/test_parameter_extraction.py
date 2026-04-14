@@ -45,6 +45,27 @@ class TestParameterExtractionAccuracy:
         )
         assert config["algorithm"]["tolerance"] == 1e-8
 
+    def test_tolerance_power_of_ten_notation(self, config_generator):
+        """Test '10-3' style notation meaning 10^-3."""
+        cases = [
+            ("精度要求10-3", 1e-3),
+            ("精度为10-4", 1e-4),
+            ("精度要求10-6", 1e-6),
+        ]
+        for prompt, expected in cases:
+            config = config_generator.generate_config(f"IEEE39潮流计算，{prompt}")
+            actual = config["algorithm"]["tolerance"]
+            assert math.isclose(actual, expected, rel_tol=1e-10), (
+                f"Failed for '{prompt}': expected {expected}, got {actual}"
+            )
+
+    def test_tolerance_with_requirement_keyword(self, config_generator):
+        """Test '精度要求' + scientific notation."""
+        config = config_generator.generate_config(
+            "IEEE39潮流计算，精度要求1e-8"
+        )
+        assert config["algorithm"]["tolerance"] == 1e-8
+
     # ---- Iteration Extraction ----
     def test_iterations(self, config_generator):
         config = config_generator.generate_config(

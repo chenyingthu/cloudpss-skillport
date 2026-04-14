@@ -92,6 +92,8 @@ def _show_results(task):
     # ─── Artifacts ─────────────────────────────────────────
     if task.artifacts:
         st.subheader("📁 输出文件")
+        # Check format mismatch: configured vs actual
+        _check_format_mismatch(task)
         for artifact in task.artifacts:
             col1, col2 = st.columns([3, 1])
             col1.text(f"{artifact.get('type', '')}: {artifact.get('path', '')}")
@@ -199,6 +201,25 @@ def _render_generic(data: dict):
     """Fallback: show raw JSON."""
     st.subheader("原始结果数据")
     st.json(data)
+
+
+def _check_format_mismatch(task):
+    """Warn when configured output format doesn't match actual files."""
+    configured_fmt = task.config.get("output", {}).get("format", "")
+    if not configured_fmt or configured_fmt == "json":
+        return
+    # Check actual file extensions
+    actual_exts = set()
+    for artifact in task.artifacts:
+        path = artifact.get("path", "")
+        if "." in path:
+            ext = path.rsplit(".", 1)[-1]
+            actual_exts.add(ext)
+    if actual_exts and configured_fmt not in actual_exts:
+        st.warning(
+            f"⚠️ 输出格式不匹配：配置为 **{configured_fmt}**，但实际输出为 **{', '.join(sorted(actual_exts))}**\n\n"
+            f"技能当前仅支持 JSON 输出，CSV/YAML 格式尚未实现。"
+        )
 
 
 def _auto_refresh(task_id: str):

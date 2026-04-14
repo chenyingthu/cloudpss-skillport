@@ -222,10 +222,18 @@ class SmartConfigGenerator:
 
     def extract_tolerance(self, prompt: str) -> float:
         """提取收敛精度"""
-        # 匹配模式：1e-6, 1e-8, 1.0e-6, 0.000001
+        # Match "精度要求10-3" style (10 to the power of -N)
+        m = re.search(r'精度[^\d]*?(\d+)-(\d+)', prompt)
+        if m:
+            base = int(m.group(1))
+            exp = int(m.group(2))
+            if base == 10:
+                return 10.0 ** (-exp)
+
+        # Match scientific notation: 1e-6, 1e-8, 1.0e-6, 0.000001
         patterns = [
             r'收敛精度[\s]*[:为]?\s*([\d.eE-]+)',
-            r'精度[\s]*[:为]?\s*([\d.eE-]+)',
+            r'精度(?:要求)?[\s]*[:为]?\s*([\d.eE-]+)',
             r'tolerance[\s]*[:=]?\s*([\d.eE-]+)',
             r'([\d.eE-]+)\s*[的]?收敛'
         ]
@@ -233,22 +241,30 @@ class SmartConfigGenerator:
         for pattern in patterns:
             match = re.search(pattern, prompt, re.IGNORECASE)
             if match:
+                raw = match.group(1)
+                # Try direct float parse first
                 try:
-                    value = float(match.group(1))
+                    value = float(raw)
                     if value > 0:
                         return value
-                    # Reject negative/zero tolerance, fall through to default
                     continue
                 except ValueError:
-                    continue
+                    pass
+                # Try parsing "NdM" as N * 10^(-M), e.g. "10-3" → 1e-3
+                m2 = re.match(r'(\d+)-(\d+)$', raw)
+                if m2:
+                    base = int(m2.group(1))
+                    exp = int(m2.group(2))
+                    if base == 10:
+                        return 10.0 ** (-exp)
 
-        # 匹配"高精度"等模糊描述
+        # Fuzzy descriptions
         if "高精度" in prompt or "高一点" in prompt:
             return 1.0e-8
         if "低精度" in prompt or "粗略" in prompt:
             return 1.0e-4
 
-        return 1.0e-6  # 默认
+        return 1.0e-6  # default
 
     def extract_iterations(self, prompt: str) -> int:
         """提取最大迭代次数"""
