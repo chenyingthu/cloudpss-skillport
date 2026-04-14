@@ -10,6 +10,8 @@ from pathlib import Path
 # Ensure smart_config is importable
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 SCRIPTS_DIR = PROJECT_ROOT / "scripts"
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
@@ -66,6 +68,15 @@ if "current_task_id" not in st.session_state:
 if "page" not in st.session_state:
     st.session_state.page = "create"
 
+# ─── Load Saved Settings ─────────────────────────────────────────────
+try:
+    from web.components.settings import load_settings, apply_settings
+    saved_settings = load_settings()
+    if saved_settings:
+        apply_settings(saved_settings)
+except Exception:
+    pass  # Settings will be configured by user later
+
 # ─── Navigation ───────────────────────────────────────────────────────
 with st.sidebar:
     st.title("⚡ CloudPSS 仿真工作台")
@@ -98,6 +109,13 @@ with st.sidebar:
             st.session_state.page = "results"
 
     st.markdown("---")
+
+    # Settings
+    if st.button("⚙️ 设置", use_container_width=True):
+        st.session_state.page = "settings"
+        st.session_state.current_task_id = None
+
+    st.markdown("---")
     st.caption("技能状态")
     status_text = "✅ 已加载" if st.session_state.skills_loaded else "❌ 加载失败"
     st.caption(status_text)
@@ -109,6 +127,9 @@ if st.session_state.page == "create":
     render()
 elif st.session_state.page == "list":
     from web.components.task_list import render
+    render()
+elif st.session_state.page == "settings":
+    from web.components.settings import render
     render()
 elif st.session_state.page == "results":
     if st.session_state.current_task_id:

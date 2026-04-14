@@ -21,6 +21,25 @@ if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
 from web.core import task_store, skill_catalog
+from web.components.settings import load_settings, TOKEN_FILE
+
+
+def _inject_auth(config: dict) -> None:
+    """Inject auth settings from saved settings into task config."""
+    settings = load_settings()
+    auth = config.setdefault("auth", {})
+
+    # Inject server URL
+    preset = settings.get("server_preset", "internal")
+    if preset == "internal":
+        auth["server"] = "internal"
+        auth["token_file"] = str(TOKEN_FILE)
+    elif preset == "public":
+        auth["server"] = "public"
+        auth["token_file"] = str(TOKEN_FILE)
+    elif preset == "custom":
+        auth["base_url"] = settings.get("server_url", "")
+        auth["token_file"] = str(TOKEN_FILE)
 
 
 def execute_task(task_id: str) -> None:
@@ -44,6 +63,9 @@ def execute_task(task_id: str) -> None:
         task.completed_at = datetime.now().isoformat(timespec="seconds")
         task_store.save_task(task)
         return
+
+    # Inject auth settings from saved settings
+    _inject_auth(task.config)
 
     # Validate before running
     try:
