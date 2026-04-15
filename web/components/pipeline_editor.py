@@ -48,7 +48,7 @@ def render_pipeline_editor(config: dict):
             skill_map[s["name"]] = {"label": s["name"], "category": cat_name}
 
     for i, step in enumerate(pipeline_steps):
-        _render_step_card(i, step, pipeline_steps, skill_map)
+        _render_step_card(i, step, pipeline_steps, skill_map, skill_catalog)
 
     # ─── Add / Remove / Reorder ──────────────────────────
     col1, col2, col3, col4 = st.columns(4)
@@ -86,12 +86,12 @@ def render_pipeline_editor(config: dict):
 
     # ─── Step selector slider ─────────────────────────────
     if len(pipeline_steps) > 1:
+        step_labels = [s.get("name", "") or s.get("skill", "") or f"步骤{i+1}" for i, s in enumerate(pipeline_steps)]
         move_idx = st.slider(
-            "选择要移动的步骤",
+            f"选择要移动的步骤: {' → '.join(step_labels)}",
             min_value=0,
             max_value=len(pipeline_steps) - 1,
             value=0,
-            format_func=lambda x: pipeline_steps[x].get("name", pipeline_steps[x].get("skill", f"步骤{x+1}")),
             key="_step_move_idx",
         )
 
@@ -128,7 +128,7 @@ def render_pipeline_editor(config: dict):
     config["pipeline"] = pipeline_steps
 
 
-def _render_step_card(index: int, step: dict, steps: list, skill_map: dict):
+def _render_step_card(index: int, step: dict, steps: list, skill_map: dict, skill_catalog):
     """Render a single step card."""
     step_name = step.get("name", "") or step.get("skill", "") or f"步骤{index + 1}"
     is_expanded = st.session_state.get(f"_step_expanded_{index}", True)
