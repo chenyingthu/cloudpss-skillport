@@ -4,6 +4,67 @@ import streamlit as st
 from web.components.viz_skill import register_renderer
 
 
+def _fetch_job_data(job_id: str, config: dict):
+    """Fetch full bus/branch data from CloudPSS API via WebSocket replay.
+
+    Key insight: Job result data is streamed via WebSocket. After job
+    completion, the receiver's message buffer is empty. Calling
+    result._receiver.waitFor() reconnects the WebSocket and the server
+    replays all historical messages, including buses-table and
+    branches-table data.
+
+    Returns dict with 'buses' and 'branches' lists, or None on failure.
+    """
+    try:
+        from cloudpss import Job
+        from cloudpss_skills.core.auth_utils import setup_auth
+        from cloudpss_skills.core.utils import parse_cloudpss_table
+
+        # Authenticate (required for Job.fetch to work).
+        if config.get("auth"):
+            setup_auth(config)
+
+        job = Job.fetch(job_id)
+        result = job.result
+        if result is None:
+            return None
+
+        # Reconnect WebSocket and replay all historical messages.
+        # Without this, _receiver.messages is empty and getBuses/getBranches
+        # return []. The server replays the full message stream including
+        # buses-table and branches-table.
+        try:
+            result._receiver.waitFor(timeOut=10000)
+        except Exception:
+            pass  # Some servers don't support replay — buses will be empty
+
+        buses = []
+        branches = []
+
+        if hasattr(result, "getBuses"):
+            raw_buses = result.getBuses()
+            if raw_buses:
+                buses = parse_cloudpss_table(raw_buses)
+
+        if hasattr(result, "getBranches"):
+            raw_branches = result.getBranches()
+            if raw_branches:
+                branches = parse_cloudpss_table(raw_branches)
+
+        iterations = None
+        if hasattr(result, "getIterations"):
+            iterations = result.getIterations()
+
+        return {
+            "buses": buses,
+            "branches": branches,
+            "iterations": iterations,
+        }
+    except Exception as e:
+        st.warning(f"⚠️ 从 API 获取详细结果失败: {e}")
+        return None
+
+
 @register_renderer("power_flow")
 def render(data: dict, task, context=None):
     """Render power flow results with full data from API."""
@@ -18,6 +79,15 @@ def render(data: dict, task, context=None):
     # ─── System Summary ───────────────────────────────────
     buses = data.get("buses", [])
     branches = data.get("branches", [])
+
+    # Fallback: fetch detailed data via WebSocket replay.
+    enriched = None
+    if not buses and data.get("job_id"):
+        with st.spinner("正在获取详细结果..."):
+            enriched = _fetch_job_data(data["job_id"], task.config)
+            if enriched:
+                buses = enriched["buses"]
+                branches = enriched["branches"]
 
     if buses:
         # System totals
@@ -48,7 +118,7 @@ def render(data: dict, task, context=None):
         v3.metric("电压偏差", f"{max_vm - min_vm:.4f} p.u.")
 
         # Iteration count
-        iterations = data.get("iterations")
+        iterations = data.get("iterations") or (enriched.get("iterations") if enriched else None)
         if iterations is not None:
             st.caption(f"迭代次数: {iterations}")
 
@@ -109,6 +179,6 @@ def render(data: dict, task, context=None):
         cols[3].metric("时间", data.get("timestamp", "-")[:16] if data.get("timestamp") else "-")
 
         st.info(
-            "💡 CloudPSS 内部服务器不保存详细的母线/支路表格数据，仅返回汇总信息。\n"
+            "💡 CloudPSS 内部服务器不缓存详细的母线/支路表格数据，仅返回汇总信息。\n"
             "可在 CloudPSS Web 界面查看完整潮流结果。"
         )
