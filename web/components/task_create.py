@@ -9,10 +9,47 @@ Flow:
 5. User confirms → task saved as "confirmed" → trigger execution
 """
 import json
+from pathlib import Path
 import streamlit as st
 
 from web.core import task_store, skill_catalog, task_executor, favorites
 from smart_config import SmartConfigGenerator
+
+# Settings file for user_name resolution
+SETTINGS_FILE = Path(__file__).resolve().parent.parent / "web" / "data" / "settings.json"
+DEFAULT_USER = "chenying"  # Fallback if user_name not configured
+
+
+def _get_current_user() -> str:
+    """Get current user name from settings, fallback to default."""
+    if SETTINGS_FILE.exists():
+        try:
+            settings = json.loads(SETTINGS_FILE.read_text(encoding="utf-8"))
+            name = settings.get("user_name", "").strip()
+            if name:
+                return name
+        except (json.JSONDecodeError, OSError):
+            pass
+    return DEFAULT_USER
+
+
+def _normalize_model_rid(config: dict, user: str = None) -> dict:
+    """Replace holdme model RIDs with current user's equivalents."""
+    if user is None:
+        user = _get_current_user()
+    model = config.get("model", {})
+    rid = model.get("rid", "")
+    if rid.startswith("model/holdme/"):
+        model["rid"] = rid.replace("model/holdme/", f"model/{user}/")
+        config["model"] = model
+    # Also fix pipeline steps if present
+    for step in config.get("pipeline", []):
+        step_model = step.get("model", {})
+        step_rid = step_model.get("rid", "")
+        if step_rid.startswith("model/holdme/"):
+            step_model["rid"] = step_rid.replace("model/holdme/", f"model/{user}/")
+            step["model"] = step_model
+    return config
 
 
 def render():
@@ -177,6 +214,7 @@ def _generate_config(prompt: str, skill_name: str):
         st.rerun()
 
 
+
 def _load_example(skill_name: str):
     """Load a working example config for a skill into draft state."""
     if skill_name == "study_pipeline":
@@ -187,7 +225,7 @@ def _load_example(skill_name: str):
         config = {
             "skill": "study_pipeline",
             "auth": {"token_file": ".cloudpss_token"},
-            "model": {"rid": "model/holdme/IEEE39", "source": "cloud"},
+            "model": {"rid": "model/chenying/IEEE39", "source": "cloud"},
             "pipeline": tpl,
             "continue_on_failure": False,
             "max_workers": 4,
@@ -199,6 +237,7 @@ def _load_example(skill_name: str):
             st.error(f"未找到技能: {skill_name}")
             return
         config = skill.get_default_config()
+        config = _normalize_model_rid(config)
 
     st.session_state.draft_config = config
     st.session_state.draft_skill = skill_name

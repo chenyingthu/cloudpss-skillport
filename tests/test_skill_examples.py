@@ -155,3 +155,64 @@ class TestSkillExamples:
         for skill_name in self._all_skills():
             assert skill_name in skill_catalog.SKILL_DOCS, \
                 f"{skill_name}: missing doc file mapping in SKILL_DOCS"
+
+
+class TestModelRidNormalization:
+    """Verify that example configs normalize model RIDs to current user."""
+
+    def _all_skills(self):
+        """Get all skill names from CATEGORIES."""
+        skills = []
+        for names in skill_catalog.CATEGORIES.values():
+            skills.extend(names)
+        return skills
+
+    def test_normalize_holdme_to_current_user(self):
+        """holdme model RIDs are replaced with current user."""
+        from web.components.task_create import _normalize_model_rid
+        config = {"model": {"rid": "model/holdme/IEEE39", "source": "cloud"}}
+        result = _normalize_model_rid(config, user="chenying")
+        assert result["model"]["rid"] == "model/chenying/IEEE39"
+        assert "holdme" not in result["model"]["rid"]
+
+    def test_normalize_pipeline_steps(self):
+        """Pipeline step model RIDs are also normalized."""
+        from web.components.task_create import _normalize_model_rid
+        config = {
+            "model": {"rid": "model/holdme/IEEE39"},
+            "pipeline": [
+                {"model": {"rid": "model/holdme/IEEE39"}},
+                {"model": {"rid": "model/holdme/IEEE3"}},
+            ],
+        }
+        result = _normalize_model_rid(config, user="chenying")
+        assert result["model"]["rid"] == "model/chenying/IEEE39"
+        assert result["pipeline"][0]["model"]["rid"] == "model/chenying/IEEE39"
+        assert result["pipeline"][1]["model"]["rid"] == "model/chenying/IEEE3"
+
+    def test_no_holdme_in_any_skill_example(self):
+        """No skill example config should contain holdme model RID."""
+        for skill_name in self._all_skills():
+            skill = skill_catalog.get_skill(skill_name)
+            assert skill is not None, f"Skill not found: {skill_name}"
+            config = skill.get_default_config()
+            from web.components.task_create import _normalize_model_rid
+            config = _normalize_model_rid(config, "chenying")
+            rid = config.get("model", {}).get("rid", "")
+            # Some skills don't have a model RID in default config - that's OK
+            if rid:
+                assert "holdme" not in rid, f"{skill_name}: example still contains holdme: {rid}"
+
+    def test_chenying_model_unchanged(self):
+        """Already-correct model RIDs are not modified."""
+        from web.components.task_create import _normalize_model_rid
+        config = {"model": {"rid": "model/chenying/IEEE39", "source": "cloud"}}
+        result = _normalize_model_rid(config, user="chenying")
+        assert result["model"]["rid"] == "model/chenying/IEEE39"
+
+    def test_custom_user_replacement(self):
+        """Custom user name can be used for replacement."""
+        from web.components.task_create import _normalize_model_rid
+        config = {"model": {"rid": "model/holdme/IEEE39", "source": "cloud"}}
+        result = _normalize_model_rid(config, user="alice")
+        assert result["model"]["rid"] == "model/alice/IEEE39"
