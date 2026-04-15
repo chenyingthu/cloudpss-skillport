@@ -155,7 +155,8 @@ def _render_step_card(index: int, step: dict, steps: list, skill_map: dict):
             if info.get("description"):
                 st.caption(info["description"])
 
-        # Skill-specific config editor
+        # Skill-specific config editor (rendered directly, no nested expander)
+        st.markdown("**⚙️ 步骤配置**")
         _edit_step_config(step, index)
 
         # Advanced options row
@@ -189,27 +190,27 @@ def _render_step_card(index: int, step: dict, steps: list, skill_map: dict):
             key=f"_step_parallel_{index}",
         )
 
-        # foreach: expandable
-        with st.expander("🔄 foreach 循环", expanded=False):
-            foreach = step.get("foreach", {})
-            foreach_col1, foreach_col2 = st.columns(2)
-            foreach["items"] = foreach_col1.text_input(
-                "迭代数据路径",
-                value=foreach.get("items", ""),
-                key=f"_step_foreach_items_{index}",
-                placeholder="steps.scan.data.items",
-                help="前置步骤结果中的数据路径",
-            )
-            foreach["item_name"] = foreach_col2.text_input(
-                "迭代变量名",
-                value=foreach.get("item_name", "item"),
-                key=f"_step_foreach_name_{index}",
-                help="循环中当前项的变量名",
-            )
-            if foreach.get("items"):
-                step["foreach"] = foreach
-            elif "foreach" in step:
-                del step["foreach"]
+        # foreach: collapsible section (use container, not expander, to avoid nesting)
+        st.markdown("**🔄 foreach 循环**")
+        foreach = step.get("foreach", {})
+        foreach_col1, foreach_col2 = st.columns(2)
+        foreach["items"] = foreach_col1.text_input(
+            "迭代数据路径",
+            value=foreach.get("items", ""),
+            key=f"_step_foreach_items_{index}",
+            placeholder="steps.scan.data.items",
+            help="前置步骤结果中的数据路径",
+        )
+        foreach["item_name"] = foreach_col2.text_input(
+            "迭代变量名",
+            value=foreach.get("item_name", "item"),
+            key=f"_step_foreach_name_{index}",
+            help="循环中当前项的变量名",
+        )
+        if foreach.get("items"):
+            step["foreach"] = foreach
+        elif "foreach" in step:
+            del step["foreach"]
 
         # skip_on_failure
         step["skip_on_failure"] = st.checkbox(
@@ -225,73 +226,72 @@ def _edit_step_config(step: dict, index: int):
     skill_name = step.get("skill", "")
     step_config = step.get("config", {})
 
-    with st.expander("⚙️ 步骤配置", expanded=True):
-        if skill_name == "power_flow":
-            algo = step_config.get("algorithm", {})
-            col1, col2, col3 = st.columns(3)
-            algo["type"] = col1.selectbox(
-                "算法",
-                options=["newton_raphson", "fast_decoupled"],
-                index=0 if algo.get("type", "newton_raphson") == "newton_raphson" else 1,
-                key=f"_pf_algo_{index}",
-            )
-            algo["tolerance"] = col2.number_input(
-                "收敛精度",
-                value=float(algo.get("tolerance", 1e-6)),
-                format="%.0e",
-                key=f"_pf_tol_{index}",
-            )
-            algo["max_iterations"] = col3.number_input(
-                "最大迭代次数",
-                value=int(algo.get("max_iterations", 100)),
-                key=f"_pf_max_{index}",
-            )
-            step_config["algorithm"] = algo
+    if skill_name == "power_flow":
+        algo = step_config.get("algorithm", {})
+        col1, col2, col3 = st.columns(3)
+        algo["type"] = col1.selectbox(
+            "算法",
+            options=["newton_raphson", "fast_decoupled"],
+            index=0 if algo.get("type", "newton_raphson") == "newton_raphson" else 1,
+            key=f"_pf_algo_{index}",
+        )
+        algo["tolerance"] = col2.number_input(
+            "收敛精度",
+            value=float(algo.get("tolerance", 1e-6)),
+            format="%.0e",
+            key=f"_pf_tol_{index}",
+        )
+        algo["max_iterations"] = col3.number_input(
+            "最大迭代次数",
+            value=int(algo.get("max_iterations", 100)),
+            key=f"_pf_max_{index}",
+        )
+        step_config["algorithm"] = algo
 
-        elif skill_name == "emt_simulation":
-            sim = step_config.get("simulation", {})
-            col1, col2 = st.columns(2)
-            sim["duration"] = col1.number_input(
-                "仿真时长 (s)",
-                value=float(sim.get("duration", 5.0)),
-                format="%.2f",
-                key=f"_emt_dur_{index}",
-            )
-            sim["step_size"] = col2.number_input(
-                "积分步长 (s)",
-                value=float(sim.get("step_size", 0.0001)),
-                format="%.0e",
-                key=f"_emt_step_{index}",
-            )
-            step_config["simulation"] = sim
+    elif skill_name == "emt_simulation":
+        sim = step_config.get("simulation", {})
+        col1, col2 = st.columns(2)
+        sim["duration"] = col1.number_input(
+            "仿真时长 (s)",
+            value=float(sim.get("duration", 5.0)),
+            format="%.2f",
+            key=f"_emt_dur_{index}",
+        )
+        sim["step_size"] = col2.number_input(
+            "积分步长 (s)",
+            value=float(sim.get("step_size", 0.0001)),
+            format="%.0e",
+            key=f"_emt_step_{index}",
+        )
+        step_config["simulation"] = sim
 
-        elif skill_name == "n1_security":
-            analysis = step_config.get("analysis", {})
-            analysis["check_voltage"] = st.checkbox(
-                "电压越限检查",
-                value=analysis.get("check_voltage", True),
-                key=f"_n1_volt_{index}",
-            )
-            analysis["check_thermal"] = st.checkbox(
-                "热稳定检查",
-                value=analysis.get("check_thermal", True),
-                key=f"_n1_thermal_{index}",
-            )
-            step_config["analysis"] = analysis
+    elif skill_name == "n1_security":
+        analysis = step_config.get("analysis", {})
+        analysis["check_voltage"] = st.checkbox(
+            "电压越限检查",
+            value=analysis.get("check_voltage", True),
+            key=f"_n1_volt_{index}",
+        )
+        analysis["check_thermal"] = st.checkbox(
+            "热稳定检查",
+            value=analysis.get("check_thermal", True),
+            key=f"_n1_thermal_{index}",
+        )
+        step_config["analysis"] = analysis
 
-        else:
-            # Generic: editable JSON
-            st.caption("技能配置 (JSON)")
-            json_str = st.text_area(
-                "配置 JSON",
-                value=json.dumps(step_config, indent=2, ensure_ascii=False) if step_config else "{}",
-                height=120,
-                key=f"_step_cfg_{index}",
-            )
-            try:
-                step_config = json.loads(json_str)
-            except json.JSONDecodeError:
-                st.error("JSON 格式错误")
+    else:
+        # Generic: editable JSON
+        st.caption("技能配置 (JSON)")
+        json_str = st.text_area(
+            "配置 JSON",
+            value=json.dumps(step_config, indent=2, ensure_ascii=False) if step_config else "{}",
+            height=120,
+            key=f"_step_cfg_{index}",
+        )
+        try:
+            step_config = json.loads(json_str)
+        except json.JSONDecodeError:
+            st.error("JSON 格式错误")
 
     step["config"] = step_config
 
