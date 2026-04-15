@@ -1,7 +1,58 @@
 """Power flow result renderer."""
+from typing import Optional
+
 import streamlit as st
 
 from web.components.viz_skill import register_renderer
+
+
+def _fetch_job_data(job_id: str, config: dict) -> Optional[dict]:
+    """Fetch full job result data from CloudPSS API.
+
+    Returns dict with 'buses' and 'branches' lists of dicts,
+    or None if fetch fails.
+    """
+    try:
+        from cloudpss import Job
+        from cloudpss_skills.core.utils import parse_cloudpss_table
+
+        from web.components.settings import load_settings
+        settings = load_settings()
+        preset = settings.get("server_preset", "internal")
+        if preset == "internal":
+            import os
+            os.environ["CLOUDPSS_API_URL"] = "http://166.111.60.76:50001"
+
+        job = Job.fetch(job_id)
+        result = job.result
+        if result is None:
+            return None
+
+        buses = []
+        branches = []
+
+        if hasattr(result, "getBuses"):
+            raw_buses = result.getBuses()
+            if raw_buses:
+                buses = parse_cloudpss_table(raw_buses)
+
+        if hasattr(result, "getBranches"):
+            raw_branches = result.getBranches()
+            if raw_branches:
+                branches = parse_cloudpss_table(raw_branches)
+
+        iterations = None
+        if hasattr(result, "getIterations"):
+            iterations = result.getIterations()
+
+        return {
+            "buses": buses,
+            "branches": branches,
+            "iterations": iterations,
+        }
+    except Exception as e:
+        st.warning(f"⚠️ 从 API 获取详细结果失败: {e}")
+        return None
 
 
 @register_renderer("power_flow")
@@ -21,7 +72,6 @@ def render(data: dict, task, context=None):
 
     # Fallback: fetch from API if not already stored
     if not buses and data.get("job_id"):
-        from web.components.task_results import _fetch_job_data
         with st.spinner("正在获取详细结果..."):
             enriched = _fetch_job_data(data["job_id"], task.config)
             buses = enriched["buses"] if enriched else []

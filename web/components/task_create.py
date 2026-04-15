@@ -109,7 +109,11 @@ def _edit_config(skill_name: str):
         config["model"] = model
 
     # Skill-specific section - show key parameters based on skill type
-    _edit_skill_params(config, skill_name)
+    if skill_name == "study_pipeline":
+        from web.components.pipeline_editor import render_pipeline_editor
+        render_pipeline_editor(config)
+    else:
+        _edit_skill_params(config, skill_name)
 
     # Output section
     with st.expander("📤 输出配置", expanded=False):
