@@ -44,8 +44,11 @@ def render():
     if skill_info.get("description"):
         st.caption(skill_info["description"])
 
-    # Load example button
-    if st.button("📋 加载示例", help="加载一个可运行的示例配置"):
+    # Quick help panel
+    _render_quick_help(selected_skill_name)
+
+    col_a, col_b = st.columns([1, 4])
+    if col_a.button("📋 加载示例", help="加载一个可运行的示例配置"):
         _load_example(selected_skill_name)
 
     # ─── Step 2: Natural Language Input ───────────────────────────
@@ -86,6 +89,34 @@ def _generate_config(prompt: str, skill_name: str):
         st.session_state.validation_errors = []
         st.success("配置已生成，请在下方预览和编辑")
         st.rerun()
+
+
+def _render_quick_help(skill_name: str):
+    """Render a quick help expander with skill features, use cases, and doc link."""
+    from web.core import skill_catalog as sc
+
+    quick = sc.get_quick_help(skill_name)
+    doc_url = sc.get_skill_doc_url(skill_name)
+
+    with st.expander("📖 快捷说明", expanded=False):
+        # Features
+        if quick.get("features"):
+            st.markdown("**功能特性**")
+            for f in quick["features"]:
+                st.markdown(f"- {f}")
+
+        # Use cases
+        if quick.get("use_cases"):
+            st.markdown("**典型用途**")
+            for u in quick["use_cases"]:
+                st.markdown(f"- {u}")
+
+        # Example prompt
+        if quick.get("example"):
+            st.markdown(f"**自然语言示例**: `{quick['example']}`")
+
+        # Doc link
+        st.markdown(f"[📄 完整文档]({doc_url})")
 
 
 def _load_example(skill_name: str):

@@ -133,3 +133,25 @@ class TestSkillExamples:
             skill = skill_catalog.get_skill(skill_name)
             assert skill is not None, f"Skill not found: {skill_name}"
             assert hasattr(skill, "get_default_config"), f"{skill_name}: missing get_default_config"
+
+    def test_all_skills_have_quick_help(self):
+        """Every skill has quick help entries (features, use_cases, example)."""
+        for skill_name in self._all_skills():
+            quick = skill_catalog.get_quick_help(skill_name)
+            assert quick.get("features"), f"{skill_name}: missing features in quick help"
+            assert quick.get("use_cases"), f"{skill_name}: missing use_cases in quick help"
+            assert quick.get("example"), f"{skill_name}: missing example in quick help"
+
+    def test_all_skills_have_doc_url(self):
+        """Every skill has a documentation URL."""
+        for skill_name in self._all_skills():
+            url = skill_catalog.get_skill_doc_url(skill_name)
+            assert url.startswith("https://"), f"{skill_name}: invalid doc URL: {url}"
+            assert skill_name in url or skill_name.replace("_", "") in url.replace("_", ""), \
+                f"{skill_name}: doc URL doesn't reference the skill name"
+
+    def test_all_skills_have_doc_mapping(self):
+        """Every skill has a corresponding doc file in SKILL_DOCS."""
+        for skill_name in self._all_skills():
+            assert skill_name in skill_catalog.SKILL_DOCS, \
+                f"{skill_name}: missing doc file mapping in SKILL_DOCS"
