@@ -41,10 +41,9 @@ def render(task_id: str):
     col4.metric("创建时间", task.created_at[:16])
 
     # ─── Running State: Show Progress ───────────────────────
-    if task.status == "running":
+    if task.status in ("running", "confirmed"):
         st.warning("⏳ 任务执行中...")
-        st.progress(0.5, text="正在等待仿真结果...")
-        st.caption("页面将自动刷新。完成后会跳转结果页。")
+        st.caption("页面将每 3 秒自动刷新，完成后显示结果。")
         _auto_refresh(task_id)
         return
 
@@ -157,19 +156,39 @@ def _check_format_mismatch(task):
         )
 
 
+@st.fragment(run_every="3s")
 def _auto_refresh(task_id: str):
-    """Auto-refresh using st.fragment for progress polling."""
-    import time
+    """Fragment-based polling: checks task status every 3 seconds.
 
-    for _ in range(60):
-        time.sleep(2)
-        task = task_store.get_task(task_id)
-        if task is None:
-            break
-        if task.status in ("done", "failed"):
-            st.rerun()
-            break
-    st.rerun()
+    When task completes (done/failed), st.rerun() triggers a full page
+    rerun so the results are displayed.
+    While running, shows a progress indicator within the fragment.
+    """
+    task = task_store.get_task(task_id)
+    if task is None:
+        st.error("任务不存在，请返回任务列表")
+        return
+
+    if task.status in ("done", "failed"):
+        st.rerun()  # Full page rerun to show results
+        return
+
+    # Still running - show progress within fragment
+    elapsed = _elapsed(task)
+    st.progress(0.5, text=f"⏳ 任务执行中... ({elapsed})")
+
+
+def _elapsed(task) -> str:
+    """Calculate elapsed time since task started."""
+    if not task.started_at:
+        return ""
+    try:
+        start = datetime.fromisoformat(task.started_at)
+        now = datetime.now()
+        seconds = int((now - start).total_seconds())
+        return f"{seconds}s"
+    except Exception:
+        return ""
 
 
 def _status_icon(status: str) -> str:

@@ -65,8 +65,10 @@ def detect_result_type(result_data: dict) -> Optional[str]:
     if not result_data:
         return None
 
-    # Power flow: has buses and branches
+    # Power flow: has buses/branches OR bus_count/branch_count with converged flag
     if "buses" in result_data and "branches" in result_data:
+        return "power_flow"
+    if "bus_count" in result_data and "branch_count" in result_data and "converged" in result_data:
         return "power_flow"
 
     # EMT simulation: has plots
@@ -181,3 +183,18 @@ matplotlib.rcParams['font.sans-serif'] = [
     'Droid Sans Fallback', 'DejaVu Sans'
 ]
 matplotlib.rcParams['axes.unicode_minus'] = False
+
+
+# ─── Register all renderers ─────────────────────────────────────
+# Import all renderer modules to trigger @register_renderer decorators.
+# Done at module level so renderers are available immediately on import.
+from web.components.viz_renderers import (  # noqa: F401
+    power_flow,       # noqa: F401
+    emt_simulation,   # noqa: F401
+    n1_security,      # noqa: F401
+    generic,          # noqa: F401
+    pipeline,         # noqa: F401
+    vsi_weak_bus,     # noqa: F401
+    short_circuit,    # noqa: F401
+    emt_fault_study,  # noqa: F401
+)

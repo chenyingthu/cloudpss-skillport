@@ -70,46 +70,52 @@ def _make_st_mock():
 
 
 def _reload_all_with_st(st_mock):
-    """Reload viz_skill + all renderers with streamlit replaced in sys.modules."""
+    """Reload viz_skill + all renderers with streamlit replaced in sys.modules.
+
+    Key insight: Renderer modules must be removed from sys.modules BEFORE
+    reloading viz_skill, so the auto-imports during reload (module-level
+    `from web.components.viz_renderers import ...`) trigger fresh imports
+    and re-execute @register_renderer decorators.
+
+    We do NOT clear the registry after reload — the reload's auto-imports
+    populate it with fresh renderer functions.
+    """
+    import importlib
     from web.components import viz_skill
+
+    # Clear any stale registrations before reload.
     viz_skill._REGISTRY.clear()
 
-    # Remove cached renderer modules
+    # Remove cached renderer modules BEFORE reload so that viz_skill's
+    # module-level imports during reload trigger fresh decorator execution.
     for mod_name in _RENDERER_MODS:
         sys.modules.pop(mod_name, None)
     sys.modules.pop("web.components.viz_renderers", None)
 
-    # Also reload viz_skill to reset its registry
-    import importlib
-    importlib.reload(viz_skill)
-    viz_skill._REGISTRY.clear()
-
-    # Patch streamlit in sys.modules during renderer import
+    # Patch streamlit in sys.modules during reload (viz_skill module-level
+    # code imports renderers which `import streamlit`).
     original_st = sys.modules.get("streamlit")
     sys.modules["streamlit"] = st_mock
 
     try:
-        from web.components.viz_renderers import power_flow       # noqa
-        from web.components.viz_renderers import emt_simulation    # noqa
-        from web.components.viz_renderers import n1_security       # noqa
-        from web.components.viz_renderers import generic           # noqa
-        from web.components.viz_renderers import pipeline          # noqa
-        from web.components.viz_renderers import vsi_weak_bus      # noqa
-        from web.components.viz_renderers import short_circuit     # noqa
-        from web.components.viz_renderers import emt_fault_study   # noqa
+        # Reload viz_skill — re-executes all module-level code including
+        # the `from web.components.viz_renderers import ...` block at the end.
+        # Since renderer modules were popped, they're freshly imported and
+        # their @register_renderer decorators populate the registry.
+        importlib.reload(viz_skill)
     finally:
         if original_st:
             sys.modules["streamlit"] = original_st
         else:
             sys.modules.pop("streamlit", None)
 
-    # Now patch st on each renderer module so tests can inspect calls
+    # Patch streamlit mock on each renderer module so tests can inspect calls.
     for mod_name in _RENDERER_MODS:
         mod = sys.modules.get(mod_name)
         if mod:
             object.__setattr__(mod, "st", st_mock)
 
-    # Also patch st on viz_skill for render_step
+    # Also patch st on viz_skill for render_step.
     object.__setattr__(viz_skill, "st", st_mock)
 
 
@@ -462,7 +468,8 @@ class TestGenericRenderer:
         from web.components import viz_skill
         # Call power_flow renderer directly (generic would redirect to it)
         viz_skill._REGISTRY["power_flow"]({"buses": [], "branches": []}, Mock())
-        viz_skill.st.subheader.assert_not_called()
+        # With empty buses, renderer shows summary section
+        viz_skill.st.subheader.assert_any_call("📋 结果摘要")
 
     def test_list_of_dicts_renders_table(self, full_setup):
         """List of dict data renders as dataframe."""

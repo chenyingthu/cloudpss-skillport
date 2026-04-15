@@ -161,3 +161,18 @@ def render(data: dict, task, context=None):
 
     elif not branches and not data.get("bus_results"):
         st.caption("详细数据不可用（无 job_id 或 API 请求失败）。查看使用的配置了解参数详情。")
+
+    # ─── Summary when detailed data unavailable ────────────
+    if not buses:
+        st.subheader("📋 结果摘要")
+        cols = st.columns(4)
+        cols[0].metric("母线数", data.get("bus_count", "-"))
+        cols[1].metric("支路数", data.get("branch_count", "-"))
+        cols[2].metric("任务ID", data.get("job_id", "-")[:8] + "..." if data.get("job_id") else "-")
+        cols[3].metric("时间", data.get("timestamp", "-")[:16] if data.get("timestamp") else "-")
+
+        st.info(
+            "💡 详细母线电压和支路潮流数据需要从 CloudPSS API 获取。\n"
+            "如果 API 返回为空，可能是服务器端未保存详细结果，或结果已过期。\n"
+            "可尝试在 CloudPSS Web 界面查看完整结果。"
+        )
