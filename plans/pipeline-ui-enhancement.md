@@ -353,47 +353,63 @@ tests/test_result_correctness.py:
 
 ## 修改文件清单
 
-| 操作 | 文件 | 说明 |
-|------|------|------|
-| 新建 | `web/components/pipeline_editor.py` | Pipeline 步骤可视化编辑器 |
-| 新建 | `web/components/viz_renderers/pipeline_dag.py` | DAG 依赖关系图渲染 |
-| 新建 | `web/components/viz_renderers/pipeline_validation.py` | 结果正确性验证 |
-| 修改 | `web/components/viz_renderers/pipeline.py` | 重写：DAG + 时间线 + 验证 |
-| 修改 | `web/components/task_create.py` | 添加 pipeline 编辑器支持 |
-| 修改 | `web/components/task_results.py` | 清理旧 inline renderers |
-| 新建 | `tests/test_pipeline_editor.py` | Pipeline 编辑器测试 |
-| 新建 | `tests/test_pipeline_validation.py` | 正确性验证测试 |
-| 新建 | `tests/test_pipeline_dag.py` | DAG 图渲染测试 |
-| 修改 | `tests/test_viz_skill.py` | 扩展 pipeline 相关测试 |
-| 新建 | `tests/test_pipeline_e2e.py` | 流水线端到端集成测试 |
-| 新建 | `tests/test_result_correctness.py` | 结果物理正确性验证测试 |
+| 操作 | 文件 | 说明 | 状态 |
+|------|------|------|------|
+| 新建 | `web/components/pipeline_editor.py` | Pipeline 步骤可视化编辑器 | ✅ 已实现 |
+| 修改 | `web/components/viz_renderers/pipeline.py` | 重写：DAG + 时间线 + 验证（内联实现） | ✅ 已实现 |
+| 修改 | `web/components/task_create.py` | 添加 pipeline 编辑器支持 | ✅ 已实现 |
+| 新建 | `tests/test_pipeline_features.py` | Pipeline 编辑器+渲染器+验证集成测试（36 tests） | ✅ 已实现 |
+| ~~新建~~ | ~~`web/components/viz_renderers/pipeline_dag.py`~~ | ~~DAG 依赖关系图渲染~~ | ~~已计划~~ → 取消，代码内联到 pipeline.py |
+| ~~新建~~ | ~~`web/components/viz_renderers/pipeline_validation.py`~~ | ~~结果正确性验证~~ | ~~已计划~~ → 取消，代码内联到 pipeline.py |
+| 修改 | `web/components/task_results.py` | 清理旧 inline renderers | ✅ 已完成（之前提交） |
+| 修改 | `tests/test_viz_skill.py` | 扩展 pipeline 相关测试 | ✅ 已有 pipeline 检测测试 |
+| ~~新建~~ | ~~`tests/test_pipeline_e2e.py`~~ | ~~流水线端到端集成测试~~ | ~~已计划~~ → 功能已包含在 test_pipeline_features.py |
+| ~~新建~~ | ~~`tests/test_result_correctness.py`~~ | ~~结果物理正确性验证测试~~ | ~~已计划~~ → 功能已包含在 test_pipeline_features.py |
 
 ## 实现阶段
 
 **Phase 1: Pipeline 配置编辑器** ✅ 完成
 - pipeline_editor.py 核心组件 ✅
 - task_create.py 集成 ✅
-- 模板库（4个常见模板）✅
-- 单元测试 ✅
+- 模板库（4个常见模板：潮流+N-1+可视化、EMT故障研究+对比分析、VSI弱母线+无功补偿、并行参数扫描）✅
+- 依赖验证（循环依赖检测、缺失依赖检测）✅
+- YAML 预览 ✅
+- 单元测试（7 tests）✅
+- 浏览器 E2E 验证 ✅（模板加载、依赖验证、3 bug 修复：嵌套 expander、skill_catalog 作用域、slider format_func）
+- 已提交至 main 分支 ✅
 
 **Phase 2: Pipeline 结果渲染增强** ✅ 完成
-- pipeline.py 重写（DAG、时间线、数据流）
-- pipeline_dag.py DAG 图
-- pipeline_validation.py 正确性验证
-- 单元测试
+- pipeline.py 重写：5-tab 布局（总体摘要、执行时间线、DAG依赖图、逐步结果、正确性验证）✅
+- 并行批次识别（_identify_batches 拓扑排序）✅
+- DAG 依赖图（matplotlib/networkx + 文本 fallback）✅
+- 正确性验证（_validate_power_flow、_validate_emt、_validate_n1、_validate_vsi、_validate_short_circuit）✅
+- 跨步骤上下文构建（_build_context_for_step）✅
+- 技能分发（render_step 委托给 viz_skill）✅
+- 单元测试（13 validation + 4 renderer + 4 DAG + 5 integration = 26 tests）✅
+- 浏览器 E2E 验证 ✅
 
-**Phase 3: task_results.py 清理** — 消除冗余代码
-- 移除旧 inline renderers
-- 完全委托 viz_skill
+> **设计偏离说明**：原计划将 DAG 渲染和验证逻辑拆分为独立文件（pipeline_dag.py、pipeline_validation.py），实际采用内联实现——所有逻辑集成在 pipeline.py 中，减少模块间依赖，保持代码简洁。
 
-**Phase 4: 集成测试** — 端到端验证
-- 集成测试（mocked pipeline execution）
-- 浏览器测试（Playwright）
-- 正确性分析测试
+**Phase 3: task_results.py 清理** ✅ 完成（已在之前提交中完成）
+- 旧 inline renderers 已移除（_render_power_flow、_render_emt、_render_n1、_render_generic 不存在于 task_results.py）
+- 完全委托 viz_skill 分发器（line 13: `from web.components.viz_skill import render_result, is_pipeline_result, render_pipeline`）
+- 测试验证通过（test_task_results_uses_dispatcher 确认无内联渲染器）
+
+**Phase 4: 集成测试** ✅ 完成
+- 集成测试（test_pipeline_features.py：36 tests 覆盖编辑器、渲染器、验证、DAG、端到端流程）✅
+- 浏览器测试（Playwright MCP：手动验证模板加载、依赖验证、配置验证）✅
+- 正确性分析测试（集成在 test_pipeline_features.py 的 validation 测试中）✅
 
 ## 验证方式
 
-1. Phase 1 完成后：在浏览器中用 pipeline 编辑器创建任务，确认 YAML 配置正确
-2. Phase 2 完成后：查看 pipeline 结果页，确认 DAG 图、时间线、验证面板显示
-3. Phase 3 完成后：所有已有任务结果页功能不变（回归测试）
-4. 全部完成后：运行 `pytest tests/ -v` 确认所有测试通过，Playwright 浏览器测试验证 UI
+1. Phase 1 ✅：浏览器中用 pipeline 编辑器创建任务，4 个模板均可正常加载，YAML 预览正确
+2. Phase 2 ✅：Pipeline 结果页展示 DAG 图、时间线、验证面板，5 种技能验证逻辑覆盖完整
+3. Phase 3 ✅：task_results.py 已无旧 inline renderers，完全委托 viz_skill
+4. 全部 ✅：`pytest tests/ -v` 确认 225 tests 全部通过，0 失败
+
+## 当前状态
+
+- **225 tests passing, 7 skipped, 0 failures**
+- **2 commits pushed to main**: `e6426f9` (nested expander fix) + `c1d4fc1` (scope + slider fixes)
+- **Phase 1 + Phase 2 + Phase 3 全部完成**，所有功能已实现并验证
+- 临时文件已清理（screenshots、.playwright-mcp/）

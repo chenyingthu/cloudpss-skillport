@@ -44,6 +44,10 @@ def render():
     if skill_info.get("description"):
         st.caption(skill_info["description"])
 
+    # Load example button
+    if st.button("📋 加载示例", help="加载一个可运行的示例配置"):
+        _load_example(selected_skill_name)
+
     # ─── Step 2: Natural Language Input ───────────────────────────
     st.subheader("2️⃣ 描述仿真需求")
 
@@ -82,6 +86,36 @@ def _generate_config(prompt: str, skill_name: str):
         st.session_state.validation_errors = []
         st.success("配置已生成，请在下方预览和编辑")
         st.rerun()
+
+
+def _load_example(skill_name: str):
+    """Load a working example config for a skill into draft state."""
+    if skill_name == "study_pipeline":
+        # Pipeline needs a meaningful example with steps, not an empty pipeline
+        from web.components.pipeline_editor import _get_pipeline_templates
+        templates = _get_pipeline_templates()
+        tpl = templates["潮流 + N-1 + 可视化"]
+        config = {
+            "skill": "study_pipeline",
+            "auth": {"token_file": ".cloudpss_token"},
+            "model": {"rid": "model/holdme/IEEE39", "source": "cloud"},
+            "pipeline": tpl,
+            "continue_on_failure": False,
+            "max_workers": 4,
+            "output": {"format": "json", "path": "./results/", "timestamp": True},
+        }
+    else:
+        skill = skill_catalog.get_skill(skill_name)
+        if skill is None:
+            st.error(f"未找到技能: {skill_name}")
+            return
+        config = skill.get_default_config()
+
+    st.session_state.draft_config = config
+    st.session_state.draft_skill = skill_name
+    st.session_state.draft_prompt = f"示例: {skill_name}"
+    st.session_state.validation_errors = []
+    st.rerun()
 
 
 def _edit_config(skill_name: str):
