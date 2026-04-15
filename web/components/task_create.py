@@ -2,8 +2,8 @@
 Task Create: Natural language input → config draft → preview/edit → confirm.
 
 Flow:
-1. User enters natural language description
-2. SmartConfigGenerator generates draft config
+1. User selects skill from sidebar (pre-selected mode) or skill picker (fallback)
+2. SmartConfigGenerator generates draft config from NL input
 3. Config is shown in editable form
 4. Real-time validation via skill.validate()
 5. User confirms → task saved as "confirmed" → trigger execution
@@ -11,14 +11,25 @@ Flow:
 import json
 import streamlit as st
 
-from web.core import task_store, skill_catalog, task_executor
+from web.core import task_store, skill_catalog, task_executor, favorites
 from smart_config import SmartConfigGenerator
 
 
 def render():
     st.title("➕ 创建仿真任务")
 
-    # ─── Step 1: Skill Selection ──────────────────────────────────
+    # Check if skill pre-selected from sidebar
+    pre_selected = st.session_state.get("selected_skill")
+
+    if pre_selected and skill_catalog.get_skill(pre_selected) is not None:
+        _render_skill_form(pre_selected)
+    else:
+        # Fallback: show skill picker if no pre-selection
+        _render_skill_picker()
+
+
+def _render_skill_picker():
+    """Fallback skill picker when no skill is pre-selected from sidebar."""
     st.subheader("1️⃣ 选择仿真技能")
 
     categories = skill_catalog.get_categorized_skills()
@@ -74,24 +85,46 @@ def render():
         _edit_config(selected_skill_name)
 
 
-def _generate_config(prompt: str, skill_name: str):
-    """Generate config from natural language."""
-    with st.spinner("正在生成配置..."):
-        gen = SmartConfigGenerator()
-        config = gen.generate_config(prompt)
+def _render_skill_form(skill_name: str):
+    """Render task creation form for a pre-selected skill from sidebar."""
+    skill_info = skill_catalog.get_skill_info(skill_name)
 
-        # Override skill with user selection if different
-        config["skill"] = skill_name
+    # Show skill name and description
+    st.subheader(skill_info.get("name", skill_name))
+    if skill_info.get("description"):
+        st.caption(skill_info["description"])
 
-        st.session_state.draft_config = config
-        st.session_state.draft_skill = skill_name
-        st.session_state.draft_prompt = prompt
-        st.session_state.validation_errors = []
-        st.success("配置已生成，请在下方预览和编辑")
-        st.rerun()
+    # Quick help panel (includes favorite button)
+    _render_quick_help(skill_name, show_favorite=True)
+
+    col_a, col_b = st.columns([1, 4])
+    if col_a.button("📋 加载示例", help="加载一个可运行的示例配置"):
+        _load_example(skill_name)
+
+    # Natural Language Input
+    st.subheader("描述仿真需求")
+
+    nl_prompt = st.text_area(
+        "用自然语言描述仿真需求",
+        placeholder="例如：帮我跑个IEEE39潮流计算，收敛精度1e-8",
+        height=80,
+        key="nl_prompt",
+    )
+
+    col1, col2 = st.columns([1, 4])
+    if col1.button("生成配置", type="primary"):
+        if not nl_prompt:
+            st.warning("请输入仿真需求描述")
+        else:
+            _generate_config(nl_prompt, skill_name)
+
+    # Config Preview & Edit
+    if "draft_config" in st.session_state and st.session_state.get("draft_skill") == skill_name:
+        st.subheader("配置预览与编辑")
+        _edit_config(skill_name)
 
 
-def _render_quick_help(skill_name: str):
+def _render_quick_help(skill_name: str, show_favorite: bool = False):
     """Render a quick help expander with skill features, use cases, and doc link."""
     from web.core import skill_catalog as sc
 
@@ -99,6 +132,14 @@ def _render_quick_help(skill_name: str):
     doc_url = sc.get_skill_doc_url(skill_name)
 
     with st.expander("📖 快捷说明", expanded=False):
+        # Favorite toggle button
+        if show_favorite:
+            fav = favorites.is_favorite(skill_name)
+            col_fav, _ = st.columns([1, 4])
+            if col_fav.button("⭐ 收藏" if not fav else "💫 已收藏", key="fav_toggle"):
+                favorites.toggle_favorite(skill_name)
+                st.rerun()
+
         # Features
         if quick.get("features"):
             st.markdown("**功能特性**")
@@ -117,6 +158,23 @@ def _render_quick_help(skill_name: str):
 
         # Doc link
         st.markdown(f"[📄 完整文档]({doc_url})")
+
+
+def _generate_config(prompt: str, skill_name: str):
+    """Generate config from natural language."""
+    with st.spinner("正在生成配置..."):
+        gen = SmartConfigGenerator()
+        config = gen.generate_config(prompt)
+
+        # Override skill with user selection if different
+        config["skill"] = skill_name
+
+        st.session_state.draft_config = config
+        st.session_state.draft_skill = skill_name
+        st.session_state.draft_prompt = prompt
+        st.session_state.validation_errors = []
+        st.success("配置已生成，请在下方预览和编辑")
+        st.rerun()
 
 
 def _load_example(skill_name: str):
@@ -243,19 +301,20 @@ def _edit_skill_params(config: dict, skill_name: str):
     with st.expander(section_label, expanded=True):
         if skill_name == "power_flow":
             algo = config.get("algorithm", {})
-            algo["type"] = st.selectbox(
+            col1, col2, col3 = st.columns(3)
+            algo["type"] = col1.selectbox(
                 "算法",
                 options=["newton_raphson", "fast_decoupled"],
                 index=0 if algo.get("type", "newton_raphson") == "newton_raphson" else 1,
                 key="edit_algo_type",
             )
-            algo["tolerance"] = st.number_input(
+            algo["tolerance"] = col2.number_input(
                 "收敛精度",
                 value=float(algo.get("tolerance", 1e-6)),
                 format="%.0e",
                 key="edit_tolerance",
             )
-            algo["max_iterations"] = st.number_input(
+            algo["max_iterations"] = col3.number_input(
                 "最大迭代次数",
                 value=int(algo.get("max_iterations", 100)),
                 key="edit_max_iterations",
@@ -264,20 +323,21 @@ def _edit_skill_params(config: dict, skill_name: str):
 
         elif skill_name == "emt_simulation":
             sim = config.get("simulation", {})
-            sim["duration"] = st.number_input(
-                "仿真时长（秒）",
+            col1, col2 = st.columns(2)
+            sim["duration"] = col1.number_input(
+                "仿真时长 (s)",
                 value=float(sim.get("duration", 5.0)),
-                format="%.4f",
+                format="%.2f",
                 key="edit_duration",
             )
-            sim["step_size"] = st.number_input(
-                "积分步长（秒）",
+            sim["step_size"] = col2.number_input(
+                "积分步长 (s)",
                 value=float(sim.get("step_size", 0.0001)),
                 format="%.0e",
                 key="edit_step_size",
             )
-            sim["timeout"] = st.number_input(
-                "最大等待时间（秒）",
+            sim["timeout"] = col2.number_input(
+                "最大等待时间 (s)",
                 value=int(sim.get("timeout", 300)),
                 key="edit_timeout",
             )
@@ -325,5 +385,6 @@ def _confirm_and_run(config: dict, skill_name: str):
 
     st.session_state.current_task_id = task.id
     st.session_state.page = "results"
+    st.session_state.selected_skill = None  # Clear pre-selection
     st.success(f"✅ 任务已创建并开始执行: {task.id}")
     st.rerun()
