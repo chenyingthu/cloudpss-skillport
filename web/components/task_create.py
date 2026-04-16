@@ -254,7 +254,6 @@ def _load_example(skill_name: str):
         }
 
         # Also update pipeline_editor's session state
-        import streamlit as st
         st.session_state.pipeline_steps = injected_steps
     else:
         skill = skill_catalog.get_skill(skill_name)
