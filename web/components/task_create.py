@@ -13,6 +13,7 @@ from pathlib import Path
 import streamlit as st
 
 from web.core import task_store, skill_catalog, task_executor, favorites
+from web.components.settings import TOKEN_FILE
 from smart_config import SmartConfigGenerator
 
 # Settings file for user_name resolution
@@ -225,7 +226,8 @@ def _load_example(skill_name: str):
         import copy
 
         model_config = {"rid": f"model/{user}/IEEE39", "source": "cloud"}
-        auth_config = {"token_file": ".cloudpss_token"}
+        # Use absolute path for token file to ensure child steps can find it
+        auth_config = {"token_file": str(TOKEN_FILE), "server": "internal"}
 
         templates = _get_pipeline_templates()
         tpl = templates["潮流 + N-1 + 可视化"]
