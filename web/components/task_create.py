@@ -222,13 +222,31 @@ def _load_example(skill_name: str):
     if skill_name == "study_pipeline":
         # Pipeline needs a meaningful example with steps, not an empty pipeline
         from web.components.pipeline_editor import _get_pipeline_templates
+        import copy
+
+        model_config = {"rid": f"model/{user}/IEEE39", "source": "cloud"}
+        auth_config = {"token_file": ".cloudpss_token"}
+
         templates = _get_pipeline_templates()
         tpl = templates["潮流 + N-1 + 可视化"]
+
+        # Inject model and auth into each step's config
+        injected_steps = []
+        for step in tpl:
+            step_copy = copy.deepcopy(step)
+            if "config" not in step_copy:
+                step_copy["config"] = {}
+            if "model" not in step_copy["config"]:
+                step_copy["config"]["model"] = copy.deepcopy(model_config)
+            if "auth" not in step_copy["config"]:
+                step_copy["config"]["auth"] = copy.deepcopy(auth_config)
+            injected_steps.append(step_copy)
+
         config = {
             "skill": "study_pipeline",
-            "auth": {"token_file": ".cloudpss_token"},
-            "model": {"rid": f"model/{user}/IEEE39", "source": "cloud"},
-            "pipeline": tpl,
+            "auth": auth_config,
+            "model": model_config,
+            "pipeline": injected_steps,
             "continue_on_failure": False,
             "max_workers": 4,
             "output": {"format": "json", "path": "./results/", "timestamp": True},

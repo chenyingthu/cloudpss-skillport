@@ -9,7 +9,10 @@ import streamlit as st
 
 
 def render_pipeline_editor(config: dict):
-    """Interactive pipeline step builder."""
+    """Interactive pipeline step builder.
+
+    Auto-injects model and auth from parent config into each step.
+    """
     pipeline_steps = config.get("pipeline", [])
     if not pipeline_steps:
         pipeline_steps = [{"name": "", "skill": "", "config": {}, "depends_on": [], "parallel": False}]
@@ -19,6 +22,12 @@ def render_pipeline_editor(config: dict):
         st.session_state.pipeline_steps = pipeline_steps
     else:
         pipeline_steps = st.session_state.pipeline_steps
+
+    # Auto-inject model and auth into each step's config
+    parent_config = {
+        "model": config.get("model", {}),
+        "auth": config.get("auth", {}),
+    }
 
     # ─── Global Settings ──────────────────────────────────
     with st.expander("⚙️ 全局设置", expanded=False):
@@ -48,7 +57,7 @@ def render_pipeline_editor(config: dict):
             skill_map[s["name"]] = {"label": s["name"], "category": cat_name}
 
     for i, step in enumerate(pipeline_steps):
-        _render_step_card(i, step, pipeline_steps, skill_map, skill_catalog)
+        _render_step_card(i, step, pipeline_steps, skill_map, skill_catalog, parent_config)
 
     # ─── Add / Remove / Reorder ──────────────────────────
     col1, col2, col3, col4 = st.columns(4)
@@ -107,7 +116,21 @@ def render_pipeline_editor(config: dict):
     )
     if st.button("📥 应用模板"):
         tpl = templates[selected_template]
-        st.session_state.pipeline_steps = [s.copy() for s in tpl]
+        # Inject model and auth into each step's config
+        import copy
+        model_config = config.get("model", {})
+        auth_config = config.get("auth", {})
+        injected_steps = []
+        for step in tpl:
+            step_copy = copy.deepcopy(step)
+            if "config" not in step_copy:
+                step_copy["config"] = {}
+            if model_config and "model" not in step_copy["config"]:
+                step_copy["config"]["model"] = copy.deepcopy(model_config)
+            if auth_config and "auth" not in step_copy["config"]:
+                step_copy["config"]["auth"] = copy.deepcopy(auth_config)
+            injected_steps.append(step_copy)
+        st.session_state.pipeline_steps = injected_steps
         config["continue_on_failure"] = False
         config["max_workers"] = 4
         st.rerun()
@@ -128,7 +151,7 @@ def render_pipeline_editor(config: dict):
     config["pipeline"] = pipeline_steps
 
 
-def _render_step_card(index: int, step: dict, steps: list, skill_map: dict, skill_catalog):
+def _render_step_card(index: int, step: dict, steps: list, skill_map: dict, skill_catalog, parent_config: dict = None):
     """Render a single step card."""
     step_name = step.get("name", "") or step.get("skill", "") or f"步骤{index + 1}"
     is_expanded = st.session_state.get(f"_step_expanded_{index}", True)
@@ -157,7 +180,7 @@ def _render_step_card(index: int, step: dict, steps: list, skill_map: dict, skil
 
         # Skill-specific config editor (rendered directly, no nested expander)
         st.markdown("**⚙️ 步骤配置**")
-        _edit_step_config(step, index)
+        _edit_step_config(step, index, parent_config)
 
         # Advanced options row
         st.markdown("---")
@@ -221,10 +244,20 @@ def _render_step_card(index: int, step: dict, steps: list, skill_map: dict, skil
         )
 
 
-def _edit_step_config(step: dict, index: int):
-    """Edit skill-specific configuration for a step."""
+def _edit_step_config(step: dict, index: int, parent_config: dict = None):
+    """Edit skill-specific configuration for a step.
+
+    Automatically inherits model and auth from parent pipeline config.
+    """
     skill_name = step.get("skill", "")
     step_config = step.get("config", {})
+
+    # Auto-inherit model and auth from parent config if not present in step config
+    if parent_config:
+        if "model" not in step_config and "model" in parent_config:
+            step_config["model"] = parent_config["model"].copy()
+        if "auth" not in step_config and "auth" in parent_config:
+            step_config["auth"] = parent_config["auth"].copy()
 
     if skill_name == "power_flow":
         algo = step_config.get("algorithm", {})
