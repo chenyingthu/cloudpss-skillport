@@ -217,6 +217,8 @@ def _generate_config(prompt: str, skill_name: str):
 
 def _load_example(skill_name: str):
     """Load a working example config for a skill into draft state."""
+    user = _get_current_user()
+
     if skill_name == "study_pipeline":
         # Pipeline needs a meaningful example with steps, not an empty pipeline
         from web.components.pipeline_editor import _get_pipeline_templates
@@ -225,7 +227,7 @@ def _load_example(skill_name: str):
         config = {
             "skill": "study_pipeline",
             "auth": {"token_file": ".cloudpss_token"},
-            "model": {"rid": "model/chenying/IEEE39", "source": "cloud"},
+            "model": {"rid": f"model/{user}/IEEE39", "source": "cloud"},
             "pipeline": tpl,
             "continue_on_failure": False,
             "max_workers": 4,
@@ -237,7 +239,7 @@ def _load_example(skill_name: str):
             st.error(f"未找到技能: {skill_name}")
             return
         config = skill.get_default_config()
-        config = _normalize_model_rid(config)
+        config = _normalize_model_rid(config, user)
 
     st.session_state.draft_config = config
     st.session_state.draft_skill = skill_name
@@ -333,6 +335,7 @@ def _edit_skill_params(config: dict, skill_name: str):
         "emt_fault_study": "🔥 EMT故障研究参数",
         "short_circuit": "💥 短路计算参数",
         "n1_security": "🔒 N-1安全校核参数",
+        "vsi_weak_bus": "📊 VSI 弱母线分析参数",
         "param_scan": "📊 参数扫描参数",
     }
 
@@ -381,6 +384,118 @@ def _edit_skill_params(config: dict, skill_name: str):
                 key="edit_timeout",
             )
             config["simulation"] = sim
+
+        elif skill_name == "n1_security":
+            analysis = config.get("analysis", {})
+            col1, col2 = st.columns(2)
+            analysis["check_voltage"] = col1.checkbox(
+                "电压越限检查",
+                value=analysis.get("check_voltage", True),
+                key="edit_check_voltage",
+            )
+            analysis["check_thermal"] = col2.checkbox(
+                "热稳定检查",
+                value=analysis.get("check_thermal", True),
+                key="edit_check_thermal",
+            )
+            col3, col4 = st.columns(2)
+            analysis["voltage_threshold"] = col3.number_input(
+                "电压越限阈值 (p.u.)",
+                value=float(analysis.get("voltage_threshold", 0.05)),
+                format="%.3f",
+                key="edit_voltage_threshold",
+            )
+            analysis["thermal_threshold"] = col4.number_input(
+                "热稳定阈值 (p.u.)",
+                value=float(analysis.get("thermal_threshold", 1.0)),
+                format="%.2f",
+                key="edit_thermal_threshold",
+            )
+            config["analysis"] = analysis
+
+        elif skill_name == "vsi_weak_bus":
+            vsi = config.get("vsi_setup", {})
+            col1, col2 = st.columns(2)
+            injection = vsi.get("injection", {})
+            injection["v_base"] = col1.number_input(
+                "基准电压 (kV)",
+                value=float(injection.get("v_base", 220)),
+                format="%.1f",
+                key="edit_v_base",
+            )
+            injection["q_base"] = col2.number_input(
+                "注入无功 (MVar)",
+                value=float(injection.get("q_base", 100)),
+                format="%.1f",
+                key="edit_q_base",
+            )
+            injection["start_time"] = col1.number_input(
+                "开始时间 (s)",
+                value=float(injection.get("start_time", 8.0)),
+                format="%.2f",
+                key="edit_start_time",
+            )
+            injection["duration"] = col2.number_input(
+                "无功注入持续时间 (s)",
+                value=float(injection.get("duration", 0.5)),
+                format="%.2f",
+                key="edit_vsi_duration",
+            )
+            vsi["injection"] = injection
+
+            bus_filter = vsi.get("bus_filter", {})
+            col3, col4 = st.columns(2)
+            bus_filter["v_min"] = col3.number_input(
+                "母线最小电压 (kV)",
+                value=float(bus_filter.get("v_min", 0.6)),
+                format="%.1f",
+                key="edit_v_min",
+            )
+            bus_filter["v_max"] = col4.number_input(
+                "母线最大电压 (kV)",
+                value=float(bus_filter.get("v_max", 300)),
+                format="%.1f",
+                key="edit_v_max",
+            )
+            vsi["bus_filter"] = bus_filter
+            config["vsi_setup"] = vsi
+
+        elif skill_name == "short_circuit":
+            fault = config.get("fault", {})
+            col1, col2 = st.columns(2)
+            fault["location"] = col1.text_input(
+                "短路位置母线 ID",
+                value=fault.get("location", ""),
+                key="edit_fault_location",
+            )
+            fault["type"] = col2.selectbox(
+                "短路类型",
+                options=["three_phase", "line_to_ground", "line_to_line"],
+                index=["three_phase", "line_to_ground", "line_to_line"].index(
+                    fault.get("type", "three_phase")
+                ),
+                key="edit_fault_type",
+            )
+            col3, col4 = st.columns(2)
+            fault["resistance"] = col3.number_input(
+                "短路电阻 (Ω)",
+                value=float(fault.get("resistance", 0.0001)),
+                format="%.4f",
+                key="edit_fault_resistance",
+            )
+            fault["fs"] = col4.number_input(
+                "故障开始时间 (s)",
+                value=float(fault.get("fs", 2.0)),
+                format="%.2f",
+                key="edit_fault_fs",
+            )
+            fault["fe"] = col4.number_input(
+                "故障结束时间 (s)",
+                value=float(fault.get("fe", 2.1)),
+                format="%.2f",
+                key="edit_fault_fe",
+            )
+            config["fault"] = fault
 
         else:
             # Generic: show editable JSON

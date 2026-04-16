@@ -77,12 +77,14 @@ def render(data: dict, task, context=None):
         st.caption(f"模型: {data['model']} ({data.get('model_rid', '')})")
 
     # ─── System Summary ───────────────────────────────────
+    # Use skill-provided data directly (preferred for new tasks)
     buses = data.get("buses", [])
     branches = data.get("branches", [])
 
-    # Fallback: fetch detailed data via WebSocket replay.
+    # Fallback: fetch detailed data via WebSocket replay only if skill didn't provide data
     enriched = None
-    if not buses and data.get("job_id"):
+    if not buses and not branches and data.get("job_id"):
+        # Only fetch from API for historical tasks that don't have complete data
         with st.spinner("正在获取详细结果..."):
             enriched = _fetch_job_data(data["job_id"], task.config)
             if enriched:
@@ -90,18 +92,33 @@ def render(data: dict, task, context=None):
                 branches = enriched["branches"]
 
     if buses:
-        # System totals
-        total_gen_p = sum(float(b.get("Pgen", 0) or 0) for b in buses)
-        total_gen_q = sum(float(b.get("Qgen", 0) or 0) for b in buses)
-        total_load_p = sum(float(b.get("Pload", 0) or 0) for b in buses)
-        total_load_q = sum(float(b.get("Qload", 0) or 0) for b in buses)
-        loss_p = total_gen_p - total_load_p
-        loss_q = total_gen_q - total_load_q
-
-        # Find max/min voltage buses
-        vm_values = [(b.get("Bus", f"#{i}"), float(b.get("Vm", 0))) for i, b in enumerate(buses)]
-        max_bus, max_vm = max(vm_values, key=lambda x: x[1])
-        min_bus, min_vm = min(vm_values, key=lambda x: x[1])
+        # Use skill-provided summary if available (preferred), otherwise compute from buses
+        summary = data.get("summary")
+        if summary:
+            # Skill provides pre-computed summary
+            total_gen_p = summary.get("total_generation", {}).get("p_mw", 0)
+            total_gen_q = summary.get("total_generation", {}).get("q_mvar", 0)
+            total_load_p = summary.get("total_load", {}).get("p_mw", 0)
+            total_load_q = summary.get("total_load", {}).get("q_mvar", 0)
+            loss_p = summary.get("total_loss_mw", 0)
+            voltage_range = summary.get("voltage_range", {})
+            min_vm = voltage_range.get("min_pu", 0)
+            max_vm = voltage_range.get("max_pu", 0)
+            # Find max/min voltage buses for display (use skill summary for values)
+            vm_values = [(b.get("Bus", f"#{i}"), float(b.get("Vm", 0))) for i, b in enumerate(buses)]
+            max_bus, _ = max(vm_values, key=lambda x: x[1])
+            min_bus, _ = min(vm_values, key=lambda x: x[1])
+        else:
+            # Compute from buses (fallback for old tasks)
+            total_gen_p = sum(float(b.get("Pgen", 0) or 0) for b in buses)
+            total_gen_q = sum(float(b.get("Qgen", 0) or 0) for b in buses)
+            total_load_p = sum(float(b.get("Pload", 0) or 0) for b in buses)
+            total_load_q = sum(float(b.get("Qload", 0) or 0) for b in buses)
+            loss_p = total_gen_p - total_load_p
+            loss_q = total_gen_q - total_load_q
+            vm_values = [(b.get("Bus", f"#{i}"), float(b.get("Vm", 0))) for i, b in enumerate(buses)]
+            max_bus, max_vm = max(vm_values, key=lambda x: x[1])
+            min_bus, min_vm = min(vm_values, key=lambda x: x[1])
 
         st.subheader("📊 系统概览")
         m1, m2, m3, m4, m5, m6 = st.columns(6)
@@ -179,6 +196,6 @@ def render(data: dict, task, context=None):
         cols[3].metric("时间", data.get("timestamp", "-")[:16] if data.get("timestamp") else "-")
 
         st.info(
-            "💡 CloudPSS 内部服务器不缓存详细的母线/支路表格数据，仅返回汇总信息。\n"
-            "可在 CloudPSS Web 界面查看完整潮流结果。"
+            "💡 此为历史任务，详细结果数据未保存。\n"
+            "新执行的潮流计算任务将保存完整的母线/支路表格数据。"
         )
