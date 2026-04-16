@@ -71,10 +71,10 @@ def render_pipeline_editor(config: dict):
                         "format": "csv"
                     },
                     "plot": {
-                        "type": "time_series",
-                        "title": "潮流计算结果",
-                        "xlabel": "Time (s)",
-                        "ylabel": "Value"
+                        "type": "bar",
+                        "title": "母线电压分布",
+                        "xlabel": "Bus",
+                        "ylabel": "Voltage (pu)"
                     }
                 },
             "depends_on": [],
@@ -404,10 +404,10 @@ def _get_pipeline_templates() -> dict:
                         "format": "csv"
                     },
                     "plot": {
-                        "type": "time_series",
-                        "title": "潮流计算结果",
-                        "xlabel": "Time (s)",
-                        "ylabel": "Value"
+                        "type": "bar",
+                        "title": "母线电压分布",
+                        "xlabel": "Bus",
+                        "ylabel": "Voltage (pu)"
                     }
                 },
                 "depends_on": ["N-1分析"],
@@ -431,10 +431,10 @@ def _get_pipeline_templates() -> dict:
                         "format": "csv"
                     },
                     "plot": {
-                        "type": "time_series",
-                        "title": "潮流计算结果",
-                        "xlabel": "Time (s)",
-                        "ylabel": "Value"
+                        "type": "bar",
+                        "title": "母线电压分布",
+                        "xlabel": "Bus",
+                        "ylabel": "Voltage (pu)"
                     }
                 },
                 "depends_on": ["EMT仿真"],
@@ -449,10 +449,10 @@ def _get_pipeline_templates() -> dict:
                         "format": "csv"
                     },
                     "plot": {
-                        "type": "time_series",
-                        "title": "潮流计算结果",
-                        "xlabel": "Time (s)",
-                        "ylabel": "Value"
+                        "type": "bar",
+                        "title": "母线电压分布",
+                        "xlabel": "Bus",
+                        "ylabel": "Voltage (pu)"
                     }
                 },
                 "depends_on": ["故障研究"],
@@ -476,10 +476,10 @@ def _get_pipeline_templates() -> dict:
                         "format": "csv"
                     },
                     "plot": {
-                        "type": "time_series",
-                        "title": "潮流计算结果",
-                        "xlabel": "Time (s)",
-                        "ylabel": "Value"
+                        "type": "bar",
+                        "title": "母线电压分布",
+                        "xlabel": "Bus",
+                        "ylabel": "Voltage (pu)"
                     }
                 },
                 "depends_on": ["潮流计算"],
@@ -494,10 +494,10 @@ def _get_pipeline_templates() -> dict:
                         "format": "csv"
                     },
                     "plot": {
-                        "type": "time_series",
-                        "title": "潮流计算结果",
-                        "xlabel": "Time (s)",
-                        "ylabel": "Value"
+                        "type": "bar",
+                        "title": "母线电压分布",
+                        "xlabel": "Bus",
+                        "ylabel": "Voltage (pu)"
                     }
                 },
                 "depends_on": ["VSI弱母线分析"],
@@ -514,10 +514,10 @@ def _get_pipeline_templates() -> dict:
                         "format": "csv"
                     },
                     "plot": {
-                        "type": "time_series",
-                        "title": "潮流计算结果",
-                        "xlabel": "Time (s)",
-                        "ylabel": "Value"
+                        "type": "bar",
+                        "title": "母线电压分布",
+                        "xlabel": "Bus",
+                        "ylabel": "Voltage (pu)"
                     }
                 },
                 "depends_on": [],
@@ -532,10 +532,10 @@ def _get_pipeline_templates() -> dict:
                         "format": "csv"
                     },
                     "plot": {
-                        "type": "time_series",
-                        "title": "潮流计算结果",
-                        "xlabel": "Time (s)",
-                        "ylabel": "Value"
+                        "type": "bar",
+                        "title": "母线电压分布",
+                        "xlabel": "Bus",
+                        "ylabel": "Voltage (pu)"
                     }
                 },
                 "depends_on": [],
@@ -550,10 +550,10 @@ def _get_pipeline_templates() -> dict:
                         "format": "csv"
                     },
                     "plot": {
-                        "type": "time_series",
-                        "title": "潮流计算结果",
-                        "xlabel": "Time (s)",
-                        "ylabel": "Value"
+                        "type": "bar",
+                        "title": "母线电压分布",
+                        "xlabel": "Bus",
+                        "ylabel": "Voltage (pu)"
                     }
                 },
                 "depends_on": ["扫描A", "扫描B"],
