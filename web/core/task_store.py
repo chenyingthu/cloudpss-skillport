@@ -33,6 +33,7 @@ class Task:
     result_data: Dict[str, Any] = field(default_factory=dict)
     artifacts: List[Dict] = field(default_factory=list)
     metrics: Dict[str, Any] = field(default_factory=dict)
+    logs: List[Dict[str, Any]] = field(default_factory=list)  # Execution logs
 
 
 def _task_path(task_id: str) -> Path:

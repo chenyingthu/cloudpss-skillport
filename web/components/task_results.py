@@ -156,13 +156,13 @@ def _check_format_mismatch(task):
         )
 
 
-@st.fragment(run_every="3s")
+@st.fragment(run_every="2s")
 def _auto_refresh(task_id: str):
-    """Fragment-based polling: checks task status every 3 seconds.
+    """Fragment-based polling: checks task status every 2 seconds.
 
     When task completes (done/failed), st.rerun() triggers a full page
     rerun so the results are displayed.
-    While running, shows a progress indicator within the fragment.
+    While running, shows progress and execution logs.
     """
     task = task_store.get_task(task_id)
     if task is None:
@@ -173,9 +173,21 @@ def _auto_refresh(task_id: str):
         st.rerun()  # Full page rerun to show results
         return
 
-    # Still running - show progress within fragment
+    # Still running - show progress and logs
     elapsed = _elapsed(task)
     st.progress(0.5, text=f"⏳ 任务执行中... ({elapsed})")
+
+    # Show execution logs if available
+    if task.logs:
+        with st.expander(f"📋 执行日志 ({len(task.logs)} 条)", expanded=True):
+            for log in task.logs:
+                icon = {
+                    "INFO": "ℹ️",
+                    "DEBUG": "🔍",
+                    "WARNING": "⚠️",
+                    "ERROR": "❌"
+                }.get(log["level"], "•")
+                st.caption(f"{log['timestamp']} {icon} {log['message']}")
 
 
 def _elapsed(task) -> str:

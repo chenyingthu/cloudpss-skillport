@@ -101,6 +101,17 @@ def execute_task(task_id: str) -> None:
         task.metrics = getattr(result, "metrics", {})
         task.job_id = getattr(result, "job_id", None)
 
+        # Save execution logs
+        if hasattr(result, "logs") and result.logs:
+            task.logs = [
+                {
+                    "timestamp": entry.timestamp.isoformat(),
+                    "level": entry.level,
+                    "message": entry.message,
+                }
+                for entry in result.logs
+            ]
+
         if getattr(result, "success", False) or str(getattr(result, "status", "")) == "SUCCESS":
             task.status = "done"
         else:

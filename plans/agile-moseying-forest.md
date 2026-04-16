@@ -1,97 +1,115 @@
-# Skill Examples: 为每个技能提供可加载的示例配置
+# 技能执行日志可视化：让技能调用过程可见
 
 ## Context
 
-用户打开 task_create 页面后面对空白的输入框，不清楚如何使用该技能。虽然 NL prompt 输入框有 placeholder，但大多数用户仍需要具体示例才能快速理解。
+用户点击"确认执行"后，技能在后台执行，前端只显示"🔄 运行中"，用户看不到：
+- 技能是否真的开始执行了？
+- 当前执行到哪一步了？
+- 有没有出错？错在哪里？
 
-**目标**：为每个技能提供"加载示例"按钮，一键填充完整可用的配置，用户可直接"确认执行"或按需修改。
+**目标**：在技能执行过程中，实时显示日志信息，让用户看到执行进度和诊断信息。
 
-## 现有基础
+## 现状分析
 
-- 每个 skill 已有 `get_default_config()` 方法（定义在 `cloudpss-toolkit` 的 builtin 技能文件中），返回完整可运行的 YAML 配置
-- `skill_catalog.get_skill(name)` 可获取 skill 实例并调用 `get_default_config()`
-- `task_create.py` 已有 session state 管理机制（`draft_config`, `draft_skill`, `draft_prompt`）
+### 现有日志机制（已完备）
 
-## 设计方案
+**cloudpss-toolkit 已有完善的日志模式**：
+- 35+ 技能文件已有 `def log()` 模式
+- `LogEntry` 数据类：`timestamp`, `level`, `message`, `context`
+- `SkillResult.logs` 存储所有日志
 
-### 修改 `web/components/task_create.py`
+**示例日志**（power_flow.py）：
+```python
+log("INFO", "认证成功")
+log("INFO", f"模型：{model.name} ({model.rid})")
+log("INFO", "运行潮流计算...")
+log("INFO", f"潮流计算完成")
+```
 
-在 Step 1（选择技能）区域、技能描述下方，添加"📋 加载示例"按钮：
+**示例日志**（n1_security.py）：
+```python
+log("INFO", f"[{i + 1}/{len(branches)}] 停运支路：{branch['name']}")
+log("INFO", f"  -> N-1 通过")
+log("WARNING", f"  -> 发现电压/热稳定违规")
+log("ERROR", f"  -> N-1 失败：潮流不收敛")
+```
+
+### 断裂的链路
+
+**问题**：`task_executor.py` 调用 `skill.run()` 后，**丢弃了 `result.logs`**：
 
 ```python
-# After skill description, before Step 2
-if st.button("📋 加载示例"):
-    _load_example(selected_skill_name)
+result = skill.run(task.config)
+task.result_data = result.data
+task.artifacts = [...]  # 保存了
+task.metrics = getattr(result, "metrics", {})  # 保存了
+# result.logs 被丢弃了！
 ```
 
-新增 `_load_example(skill_name)` 函数：
+**Task 数据模型没有 logs 字段**
 
-```python
-def _load_example(skill_name: str):
-    """Load the default/example config for a skill into draft state."""
-    if skill_name == "study_pipeline":
-        # Pipeline needs a meaningful example with steps
-        from web.components.pipeline_editor import _get_pipeline_templates
-        templates = _get_pipeline_templates()
-        tpl = templates["潮流 + N-1 + 可视化"]
-        config = {
-            "skill": "study_pipeline",
-            "auth": {"token_file": ".cloudpss_token"},
-            "model": {"rid": "model/holdme/IEEE39", "source": "cloud"},
-            "pipeline": tpl,
-            "continue_on_failure": False,
-            "max_workers": 4,
-            "output": {"format": "json", "path": "./results/", "timestamp": True},
-        }
-    else:
-        skill = skill_catalog.get_skill(skill_name)
-        if skill is None:
-            st.error(f"未找到技能: {skill_name}")
-            return
-        config = skill.get_default_config()
+**前端轮询看不到日志**
 
-    st.session_state.draft_config = config
-    st.session_state.draft_skill = skill_name
-    st.session_state.draft_prompt = f"示例: {skill_name}"
-    st.session_state.validation_errors = []
-    st.rerun()
+## 改进方案
+
+### 方案 A: 最小改动（已实施）
+
+**核心思路**：保存技能日志到 task 文件，前端轮询显示。
+
+**修改文件**：
+1. `web/core/task_store.py` - 添加 logs 字段
+2. `web/core/task_executor.py` - 保存 result.logs
+3. `web/components/task_results.py` - 显示日志
+
+**效果示例**：
 ```
-
-### 用户体验流程
-
-```
-1. 选择技能 (e.g. power_flow)
-2. 看到技能描述 + "📋 加载示例" 按钮
-3. 点击 → 直接进入 Step 3 配置预览，已填充完整配置
-4. 用户可以选择：
-   - 直接"确认执行"（使用示例配置）
-   - 修改模型RID、参数等后再执行
-   - 回到 NL 输入框重新描述需求
+📋 执行日志 (8 条)                            [▼]
+  17:35:42 ℹ️ 认证成功
+  17:35:43 ℹ️ 模型：10 机 39 节点标准测试系统 (model/chenying/IEEE39)
+  17:35:43 ℹ️ 运行潮流计算...
+  17:35:44 ℹ️ 从 CloudPSS 获取数据...
+  17:35:47 ℹ️ 潮流计算完成
 ```
 
 ## 修改文件清单
 
 | 操作 | 文件 | 说明 |
 |------|------|------|
-| 修改 | `web/components/task_create.py` | 添加"📋 加载示例"按钮 + `_load_example()` 函数 |
-| 新建 | `tests/test_skill_examples.py` | 验证每个技能的 `get_default_config()` 返回有效配置 |
+| 修改 | `web/core/task_store.py` | 添加 `logs` 字段到 Task 数据类 |
+| 修改 | `web/core/task_executor.py` | 保存 `result.logs` 到 task.logs |
+| 修改 | `web/components/task_results.py` | 新增日志显示区域（轮询中） |
 
-## 实现阶段
+## cloudpss-toolkit 修改需求
 
-**Phase 1: 添加示例加载功能**
-- `task_create.py` 添加"加载示例"按钮（Step 1 区域，紧邻技能描述后）
-- 实现 `_load_example()` 函数
-- study_pipeline 特殊处理：使用 pipeline 编辑器已有模板（潮流+N-1+可视化），而非空 pipeline
-- 验证：选择任意技能 → 点击"加载示例" → 配置填充 → 验证通过
+**好消息：不需要修改！**
 
-**Phase 2: 测试覆盖**
-- 遍历所有 37+ 技能，验证 `get_default_config()` 返回的配置能通过 `skill.validate()`
-- 验证 study_pipeline 示例模板结构正确
-- 验证示例配置的 model RID 格式正确
+现有 35+ 技能已经有完善的 `log()` 模式，日志直接返回到 `SkillResult.logs`。
 
 ## 验证方式
 
-1. 浏览器中：选择 power_flow → 点击"加载示例" → 看到 IEEE39 潮流计算配置 → 验证通过
-2. 浏览器中：选择 study_pipeline → 点击"加载示例" → 看到 潮流+N-1+可视化 流水线（3步） → 依赖验证通过
-3. 浏览器中：选择 emt_simulation → 点击"加载示例" → 看到 IEEE3 EMT 仿真配置 → 验证通过
-4. `pytest tests/test_skill_examples.py -v` 确认所有技能示例配置有效
+1. **功能验证**：
+   - 执行 power_flow → 前端显示"认证成功"、"模型：xxx"、"运行潮流计算..."等日志
+   - 执行 n1_security → 前端显示"[1/46] 停运支路：xxx"、"N-1 通过"等日志
+   - 执行 study_pipeline → 前端显示每个步骤的开始/结束日志
+
+2. **错误诊断验证**：
+   - 故意配置错误的 token → 前端显示"❌ 认证失败：Invalid token"
+   - 配置不存在的模型 → 前端显示"❌ 模型加载失败：..."
+
+## 实现阶段
+
+**Phase 1: 基础日志显示** ✅ 已完成
+- 修改 task_store.py 添加 logs 字段
+- 修改 task_executor.py 保存日志
+- 修改 task_results.py 显示日志
+- 验证 3-5 个技能的日志显示
+
+**Phase 2 (可选): 完整覆盖**
+- 确认所有 37+ 技能都有 log() 调用
+- 补充缺失技能的日志记录
+- 验证日志格式一致性
+
+**Phase 3 (可选): 实时性增强**
+- 如果需要真正的实时日志流，修改 toolkit 添加 SkillContext
+- 添加日志级别过滤（DEBUG/INFO/WARNING/ERROR）
+- 添加日志搜索/过滤功能
