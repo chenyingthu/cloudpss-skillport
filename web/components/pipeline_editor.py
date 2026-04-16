@@ -65,7 +65,18 @@ def render_pipeline_editor(config: dict):
         pipeline_steps.append({
             "name": "",
             "skill": "",
-            "config": {},
+            "config": {
+                    "source": {
+                        "job_id": "${steps.潮流计算.data.job_id}",
+                        "format": "csv"
+                    },
+                    "plot": {
+                        "type": "time_series",
+                        "title": "潮流计算结果",
+                        "xlabel": "Time (s)",
+                        "ylabel": "Value"
+                    }
+                },
             "depends_on": [],
             "parallel": False,
         })
@@ -387,7 +398,18 @@ def _get_pipeline_templates() -> dict:
             {
                 "name": "可视化",
                 "skill": "visualize",
-                "config": {},
+                "config": {
+                    "source": {
+                        "job_id": "${steps.潮流计算.data.job_id}",
+                        "format": "csv"
+                    },
+                    "plot": {
+                        "type": "time_series",
+                        "title": "潮流计算结果",
+                        "xlabel": "Time (s)",
+                        "ylabel": "Value"
+                    }
+                },
                 "depends_on": ["N-1分析"],
                 "parallel": False,
             },
@@ -403,14 +425,36 @@ def _get_pipeline_templates() -> dict:
             {
                 "name": "故障研究",
                 "skill": "emt_fault_study",
-                "config": {},
+                "config": {
+                    "source": {
+                        "job_id": "${steps.潮流计算.data.job_id}",
+                        "format": "csv"
+                    },
+                    "plot": {
+                        "type": "time_series",
+                        "title": "潮流计算结果",
+                        "xlabel": "Time (s)",
+                        "ylabel": "Value"
+                    }
+                },
                 "depends_on": ["EMT仿真"],
                 "parallel": False,
             },
             {
                 "name": "对比分析",
                 "skill": "result_compare",
-                "config": {},
+                "config": {
+                    "source": {
+                        "job_id": "${steps.潮流计算.data.job_id}",
+                        "format": "csv"
+                    },
+                    "plot": {
+                        "type": "time_series",
+                        "title": "潮流计算结果",
+                        "xlabel": "Time (s)",
+                        "ylabel": "Value"
+                    }
+                },
                 "depends_on": ["故障研究"],
                 "parallel": False,
             },
@@ -426,14 +470,36 @@ def _get_pipeline_templates() -> dict:
             {
                 "name": "VSI弱母线分析",
                 "skill": "vsi_weak_bus",
-                "config": {},
+                "config": {
+                    "source": {
+                        "job_id": "${steps.潮流计算.data.job_id}",
+                        "format": "csv"
+                    },
+                    "plot": {
+                        "type": "time_series",
+                        "title": "潮流计算结果",
+                        "xlabel": "Time (s)",
+                        "ylabel": "Value"
+                    }
+                },
                 "depends_on": ["潮流计算"],
                 "parallel": False,
             },
             {
                 "name": "无功补偿设计",
                 "skill": "reactive_compensation_design",
-                "config": {},
+                "config": {
+                    "source": {
+                        "job_id": "${steps.潮流计算.data.job_id}",
+                        "format": "csv"
+                    },
+                    "plot": {
+                        "type": "time_series",
+                        "title": "潮流计算结果",
+                        "xlabel": "Time (s)",
+                        "ylabel": "Value"
+                    }
+                },
                 "depends_on": ["VSI弱母线分析"],
                 "parallel": False,
             },
@@ -442,21 +508,54 @@ def _get_pipeline_templates() -> dict:
             {
                 "name": "扫描A",
                 "skill": "param_scan",
-                "config": {},
+                "config": {
+                    "source": {
+                        "job_id": "${steps.潮流计算.data.job_id}",
+                        "format": "csv"
+                    },
+                    "plot": {
+                        "type": "time_series",
+                        "title": "潮流计算结果",
+                        "xlabel": "Time (s)",
+                        "ylabel": "Value"
+                    }
+                },
                 "depends_on": [],
                 "parallel": True,
             },
             {
                 "name": "扫描B",
                 "skill": "param_scan",
-                "config": {},
+                "config": {
+                    "source": {
+                        "job_id": "${steps.潮流计算.data.job_id}",
+                        "format": "csv"
+                    },
+                    "plot": {
+                        "type": "time_series",
+                        "title": "潮流计算结果",
+                        "xlabel": "Time (s)",
+                        "ylabel": "Value"
+                    }
+                },
                 "depends_on": [],
                 "parallel": True,
             },
             {
                 "name": "结果汇总",
                 "skill": "result_compare",
-                "config": {},
+                "config": {
+                    "source": {
+                        "job_id": "${steps.潮流计算.data.job_id}",
+                        "format": "csv"
+                    },
+                    "plot": {
+                        "type": "time_series",
+                        "title": "潮流计算结果",
+                        "xlabel": "Time (s)",
+                        "ylabel": "Value"
+                    }
+                },
                 "depends_on": ["扫描A", "扫描B"],
                 "parallel": False,
             },
