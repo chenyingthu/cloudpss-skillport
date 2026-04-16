@@ -238,10 +238,9 @@ def _load_example(skill_name: str):
             step_copy = copy.deepcopy(step)
             if "config" not in step_copy:
                 step_copy["config"] = {}
-            if "model" not in step_copy["config"]:
-                step_copy["config"]["model"] = copy.deepcopy(model_config)
-            if "auth" not in step_copy["config"]:
-                step_copy["config"]["auth"] = copy.deepcopy(auth_config)
+            # Always inject model and auth with absolute paths
+            step_copy["config"]["model"] = copy.deepcopy(model_config)
+            step_copy["config"]["auth"] = copy.deepcopy(auth_config)
             injected_steps.append(step_copy)
 
         config = {
@@ -253,6 +252,10 @@ def _load_example(skill_name: str):
             "max_workers": 4,
             "output": {"format": "json", "path": "./results/", "timestamp": True},
         }
+
+        # Also update pipeline_editor's session state
+        import streamlit as st
+        st.session_state.pipeline_steps = injected_steps
     else:
         skill = skill_catalog.get_skill(skill_name)
         if skill is None:
