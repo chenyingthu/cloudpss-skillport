@@ -152,12 +152,24 @@ def _render_skill_picker():
     # ─── Step 2: Natural Language Input ───────────────────────────
     st.subheader("2️⃣ 描述仿真需求")
 
-    nl_prompt = st.text_area(
-        "用自然语言描述仿真需求",
-        placeholder="例如：帮我跑个IEEE39潮流计算，收敛精度1e-8",
-        height=80,
-        key="nl_prompt",
-    )
+    # ─── Sync text_area when draft config exists (from example or NL gen) ──
+    if "draft_config" in st.session_state and st.session_state.get("draft_skill") == selected_skill_name:
+        prompt = st.session_state.get("draft_prompt", "")
+        version = st.session_state.get("draft_version", 0)
+        nl_prompt = st.text_area(
+            "用自然语言描述仿真需求",
+            value=prompt,
+            placeholder="例如：帮我跑个IEEE39潮流计算，收敛精度1e-8",
+            height=80,
+            key=f"nl_prompt_{version}",
+        )
+    else:
+        nl_prompt = st.text_area(
+            "用自然语言描述仿真需求",
+            placeholder="例如：帮我跑个IEEE39潮流计算，收敛精度1e-8",
+            height=80,
+            key="nl_prompt",
+        )
 
     col1, col2 = st.columns([1, 4])
     if col1.button("生成配置", type="primary"):
@@ -191,12 +203,24 @@ def _render_skill_form(skill_name: str):
     # Natural Language Input
     st.subheader("描述仿真需求")
 
-    nl_prompt = st.text_area(
-        "用自然语言描述仿真需求",
-        placeholder="例如：帮我跑个IEEE39潮流计算，收敛精度1e-8",
-        height=80,
-        key="nl_prompt",
-    )
+    # ─── Sync text_area when draft config exists (from example or NL gen) ──
+    if "draft_config" in st.session_state and st.session_state.get("draft_skill") == skill_name:
+        prompt = st.session_state.get("draft_prompt", "")
+        version = st.session_state.get("draft_version", 0)
+        nl_prompt = st.text_area(
+            "用自然语言描述仿真需求",
+            value=prompt,
+            placeholder="例如：帮我跑个IEEE39潮流计算，收敛精度1e-8",
+            height=80,
+            key=f"nl_prompt_v{version}",
+        )
+    else:
+        nl_prompt = st.text_area(
+            "用自然语言描述仿真需求",
+            placeholder="例如：帮我跑个IEEE39潮流计算，收敛精度1e-8",
+            height=80,
+            key="nl_prompt",
+        )
 
     col1, col2 = st.columns([1, 4])
     if col1.button("生成配置", type="primary"):
@@ -259,6 +283,7 @@ def _generate_config(prompt: str, skill_name: str):
         st.session_state.draft_config = config
         st.session_state.draft_skill = skill_name
         st.session_state.draft_prompt = prompt
+        st.session_state.draft_version = st.session_state.get("draft_version", 0) + 1
         st.session_state.validation_errors = []
         st.success("配置已生成，请在下方预览和编辑")
         st.rerun()
@@ -318,6 +343,7 @@ def _load_example(skill_name: str):
     st.session_state.draft_config = config
     st.session_state.draft_skill = skill_name
     st.session_state.draft_prompt = f"示例: {skill_name}"
+    st.session_state.draft_version = st.session_state.get("draft_version", 0) + 1
     st.session_state.validation_errors = []
     st.rerun()
 
