@@ -21,3 +21,6 @@ Thumbs.db
 
 # Web portal data
 web/data/
+
+# Playwright MCP temp files
+.playwright-mcp/
