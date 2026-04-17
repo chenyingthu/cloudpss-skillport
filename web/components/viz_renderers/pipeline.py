@@ -46,8 +46,8 @@ def _render_summary(steps: list, data: dict):
     # Metrics row
     cols = st.columns(6)
     cols[0].metric("总步骤数", total)
-    cols[1].metric("成功", success, type="off" if success == total else "normal")
-    cols[2].metric("失败", failed, type="inverse" if failed > 0 else "normal")
+    cols[1].metric("成功", success)
+    cols[2].metric("失败", failed)
     cols[3].metric("跳过", skipped)
     cols[4].metric("总耗时", f"{total_duration:.1f}s")
 
@@ -275,9 +275,9 @@ def _render_validation(steps: list):
     fails = sum(1 for f in findings if f["result"] == "fail")
 
     col1, col2, col3 = st.columns(3)
-    col1.metric("通过", passes, type="off")
-    col2.metric("警告", warnings, type="normal" if warnings else "off")
-    col3.metric("失败", fails, type="inverse" if fails else "off")
+    col1.metric("通过", passes)
+    col2.metric("警告", warnings)
+    col3.metric("失败", fails)
 
     # Detailed findings
     st.markdown("---")
