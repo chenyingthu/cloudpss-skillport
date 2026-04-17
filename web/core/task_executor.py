@@ -21,38 +21,63 @@ if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
 from web.core import task_store, skill_catalog
-from web.components.settings import load_settings, TOKEN_FILE
+from web.components import settings as settings_mod
 
 
-def _apply_server(auth: dict, preset: str, settings: dict) -> None:
-    """Apply server settings to a single auth dict."""
+SERVER_URL_MAP = {
+    "public": "https://cloudpss.net/",
+    "internal": "http://166.111.60.76:50001",
+}
+
+
+def _apply_server(auth: dict, preset: str, profile: dict) -> None:
+    """Apply server settings to a single auth dict from a profile."""
     if preset == "internal":
         auth["server"] = "internal"
-        auth["token_file"] = str(TOKEN_FILE)
+        auth["token_file"] = str(settings_mod.TOKEN_FILE)
     elif preset == "public":
         auth["server"] = "public"
-        auth["token_file"] = str(TOKEN_FILE)
+        auth["token_file"] = str(settings_mod.TOKEN_FILE)
     elif preset == "custom":
-        auth["base_url"] = settings.get("server_url", "")
-        auth["token_file"] = str(TOKEN_FILE)
+        auth["base_url"] = profile.get("server_url", "")
+        auth["token_file"] = str(settings_mod.TOKEN_FILE)
+
+
+def _resolve_profile(config: dict) -> Optional[dict]:
+    """Resolve the profile to use for auth injection.
+
+    Looks up the profile by _profile_id stored in the task config.
+    Falls back to the active profile if _profile_id is missing or the profile was deleted.
+    """
+    settings = settings_mod.load_settings()
+    profile_id = config.get("_profile_id")
+    if profile_id:
+        profile = settings_mod.get_profile_by_id(settings, profile_id)
+        if profile:
+            return profile
+    # Fallback to active profile
+    return settings_mod.get_active_profile(settings)
 
 
 def _inject_auth(config: dict) -> None:
-    """Inject auth settings from saved settings into task config.
+    """Inject auth settings from the task's profile into task config.
 
     Handles both top-level auth and nested pipeline step auth.
     """
-    settings = load_settings()
-    preset = settings.get("server_preset", "internal")
+    profile = _resolve_profile(config)
+    if not profile:
+        return
+
+    preset = profile.get("server_preset", "internal")
 
     # Top-level auth
     auth = config.setdefault("auth", {})
-    _apply_server(auth, preset, settings)
+    _apply_server(auth, preset, profile)
 
     # Pipeline step auth
     for step in config.get("pipeline", []):
         step_auth = step.get("config", {}).setdefault("auth", {})
-        _apply_server(step_auth, preset, settings)
+        _apply_server(step_auth, preset, profile)
 
 
 def execute_task(task_id: str) -> None:

@@ -31,14 +31,23 @@ st.set_page_config(
 
 # ─── Token Check ───────────────────────────────────────────────────────
 def check_token():
-    """Check if CloudPSS token is available."""
+    """Check if CloudPSS token is available (file or settings profile)."""
     token_paths = [
-        PROJECT_ROOT / ".cloudpss_token",
+        PROJECT_ROOT.parent / ".cloudpss_token",
         Path.home() / ".cloudpss_token",
     ]
     for p in token_paths:
         if p.exists() and p.read_text().strip():
             return True
+    # Also check settings profiles
+    try:
+        from web.components import settings as settings_mod
+        settings = settings_mod.load_settings()
+        for profile in settings.get("profiles", []):
+            if profile.get("token", "").strip():
+                return True
+    except Exception:
+        pass
     return False
 
 
@@ -72,12 +81,13 @@ if "page" not in st.session_state:
 if "selected_skill" not in st.session_state:
     st.session_state.selected_skill = None
 
-# ─── Load Saved Settings ─────────────────────────────────────────────
+# ─── Load Saved Settings & Apply Active Profile ─────────────────────
 try:
-    from web.components.settings import load_settings, apply_settings
-    saved_settings = load_settings()
-    if saved_settings:
-        apply_settings(saved_settings)
+    from web.components import settings as settings_mod
+    saved_settings = settings_mod.load_settings()
+    active_profile = settings_mod.get_active_profile(saved_settings)
+    if active_profile:
+        settings_mod.apply_profile(active_profile)
 except Exception:
     pass
 

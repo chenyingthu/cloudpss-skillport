@@ -10,28 +10,40 @@ Flow:
 """
 import json
 from pathlib import Path
+from typing import Optional
 import streamlit as st
 
 from web.core import task_store, skill_catalog, task_executor, favorites
-from web.components.settings import TOKEN_FILE
+from web.components import settings as settings_mod
 from smart_config import SmartConfigGenerator
 
-# Settings file for user_name resolution
+# Settings file for user_name resolution (fallback)
 SETTINGS_FILE = Path(__file__).resolve().parent.parent / "web" / "data" / "settings.json"
 DEFAULT_USER = "chenying"  # Fallback if user_name not configured
 
 
-def _get_current_user() -> str:
-    """Get current user name from settings, fallback to default."""
-    if SETTINGS_FILE.exists():
-        try:
-            settings = json.loads(SETTINGS_FILE.read_text(encoding="utf-8"))
-            name = settings.get("user_name", "").strip()
-            if name:
-                return name
-        except (json.JSONDecodeError, OSError):
-            pass
+def _get_current_user(profile_id: str = None) -> str:
+    """Get user name from a specific profile, or active profile if none specified."""
+    s = settings_mod.load_settings()
+    if profile_id:
+        profile = settings_mod.get_profile_by_id(s, profile_id)
+        if profile and profile.get("user_name", "").strip():
+            return profile["user_name"].strip()
+    # Fallback to active profile
+    active = settings_mod.get_active_profile(s)
+    if active and active.get("user_name", "").strip():
+        return active["user_name"].strip()
     return DEFAULT_USER
+
+
+def _get_selected_profile_id() -> Optional[str]:
+    """Get the profile ID selected in the task creation form, or the default profile."""
+    session_id = st.session_state.get("selected_profile_id")
+    if session_id:
+        s = settings_mod.load_settings()
+        if settings_mod.get_profile_by_id(s, session_id):
+            return session_id
+    return settings_mod.get_default_profile_id(settings_mod.load_settings())
 
 
 def _normalize_model_rid(config: dict, user: str = None) -> dict:
@@ -53,8 +65,45 @@ def _normalize_model_rid(config: dict, user: str = None) -> dict:
     return config
 
 
+def _render_profile_selector() -> Optional[str]:
+    """Render a profile selector dropdown for task creation. Returns selected profile ID."""
+    s = settings_mod.load_settings()
+    profiles = s.get("profiles", [])
+    if not profiles:
+        return None
+
+    default_id = settings_mod.get_default_profile_id(s)
+    current = st.session_state.get("selected_profile_id", default_id)
+    if not current or not settings_mod.get_profile_by_id(s, current):
+        current = default_id
+
+    # Build options list
+    options = [(p["id"], p.get("name", "未命名")) for p in profiles]
+
+    # Find current index
+    idx = 0
+    for i, (pid, _) in enumerate(options):
+        if pid == current:
+            idx = i
+            break
+
+    selected_id = st.selectbox(
+        "配置方案",
+        options=[o[0] for o in options],
+        index=idx,
+        format_func=lambda pid: next((name for pid2, name in options if pid2 == pid), pid),
+        key="profile_selector",
+    )
+
+    st.session_state.selected_profile_id = selected_id
+    return selected_id
+
+
 def render():
     st.title("➕ 创建仿真任务")
+
+    # Profile selector at top
+    _render_profile_selector()
 
     # Check if skill pre-selected from sidebar
     pre_selected = st.session_state.get("selected_skill")
@@ -218,7 +267,8 @@ def _generate_config(prompt: str, skill_name: str):
 
 def _load_example(skill_name: str):
     """Load a working example config for a skill into draft state."""
-    user = _get_current_user()
+    profile_id = _get_selected_profile_id()
+    user = _get_current_user(profile_id)
 
     if skill_name == "study_pipeline":
         # Pipeline needs a meaningful example with steps, not an empty pipeline
@@ -227,7 +277,9 @@ def _load_example(skill_name: str):
 
         model_config = {"rid": f"model/{user}/IEEE39", "source": "cloud"}
         # Use absolute path for token file to ensure child steps can find it
-        auth_config = {"token_file": str(TOKEN_FILE), "server": "public"}
+        profile = settings_mod.get_profile_by_id(settings_mod.load_settings(), profile_id) if profile_id else None
+        token_path = str(settings_mod.TOKEN_FILE)
+        auth_config = {"token_file": token_path, "server": profile.get("server_preset", "public") if profile else "public"}
 
         templates = _get_pipeline_templates()
         tpl = templates["潮流 + N-1 + 可视化"]
@@ -545,6 +597,11 @@ def _confirm_and_run(config: dict, skill_name: str):
     """Save task and trigger async execution."""
     name = st.session_state.get("draft_prompt", "")[:50] or f"{skill_name}_task"
     prompt = st.session_state.get("draft_prompt", "")
+
+    # Store the selected profile ID for auth injection at execution time
+    profile_id = _get_selected_profile_id()
+    if profile_id:
+        config["_profile_id"] = profile_id
 
     task = task_store.create_task(
         name=name,

@@ -1,115 +1,76 @@
-# 技能执行日志可视化：让技能调用过程可见
+# 多配置方案（Profiles）管理系统
 
 ## Context
 
-用户点击"确认执行"后，技能在后台执行，前端只显示"🔄 运行中"，用户看不到：
-- 技能是否真的开始执行了？
-- 当前执行到哪一步了？
-- 有没有出错？错在哪里？
+当前系统只支持单一的全局 server/token/owner 配置（`web/data/settings.json`）。实际使用中，用户需要在多个 CloudPSS 服务器之间切换（清华内部服务器 vs 公开服务器 vs 自定义），每个服务器对应不同的 token 和 owner。目前切换需要手动修改全局设置，操作繁琐。
 
-**目标**：在技能执行过程中，实时显示日志信息，让用户看到执行进度和诊断信息。
+需求：实现多配置方案管理，类似 LLM API 多 profile 管理模式。用户可以创建多个配置方案（每个方案包含 server/token/owner），在创建任务时选择一个方案使用。
 
-## 现状分析
+## 新数据模型
 
-### 现有日志机制（已完备）
-
-**cloudpss-toolkit 已有完善的日志模式**：
-- 35+ 技能文件已有 `def log()` 模式
-- `LogEntry` 数据类：`timestamp`, `level`, `message`, `context`
-- `SkillResult.logs` 存储所有日志
-
-**示例日志**（power_flow.py）：
-```python
-log("INFO", "认证成功")
-log("INFO", f"模型：{model.name} ({model.rid})")
-log("INFO", "运行潮流计算...")
-log("INFO", f"潮流计算完成")
+```json
+{
+  "profiles": [
+    {
+      "id": "prof_a1b2c3d4",
+      "name": "清华内部",
+      "server_preset": "internal",
+      "server_url": "",
+      "token": "",
+      "user_name": "chenying",
+      "is_default": true,
+      "created_at": "2026-04-17T10:00:00"
+    }
+  ],
+  "active_profile_id": "prof_a1b2c3d4"
+}
 ```
 
-**示例日志**（n1_security.py）：
-```python
-log("INFO", f"[{i + 1}/{len(branches)}] 停运支路：{branch['name']}")
-log("INFO", f"  -> N-1 通过")
-log("WARNING", f"  -> 发现电压/热稳定违规")
-log("ERROR", f"  -> N-1 失败：潮流不收敛")
-```
-
-### 断裂的链路
-
-**问题**：`task_executor.py` 调用 `skill.run()` 后，**丢弃了 `result.logs`**：
-
-```python
-result = skill.run(task.config)
-task.result_data = result.data
-task.artifacts = [...]  # 保存了
-task.metrics = getattr(result, "metrics", {})  # 保存了
-# result.logs 被丢弃了！
-```
-
-**Task 数据模型没有 logs 字段**
-
-**前端轮询看不到日志**
-
-## 改进方案
-
-### 方案 A: 最小改动（已实施）
-
-**核心思路**：保存技能日志到 task 文件，前端轮询显示。
-
-**修改文件**：
-1. `web/core/task_store.py` - 添加 logs 字段
-2. `web/core/task_executor.py` - 保存 result.logs
-3. `web/components/task_results.py` - 显示日志
-
-**效果示例**：
-```
-📋 执行日志 (8 条)                            [▼]
-  17:35:42 ℹ️ 认证成功
-  17:35:43 ℹ️ 模型：10 机 39 节点标准测试系统 (model/chenying/IEEE39)
-  17:35:43 ℹ️ 运行潮流计算...
-  17:35:44 ℹ️ 从 CloudPSS 获取数据...
-  17:35:47 ℹ️ 潮流计算完成
-```
+- `server_preset`: `internal` / `public` / `custom`
+- `is_default`: 任务创建时的默认选择
+- `active_profile_id`: 当前全局激活的方案
 
 ## 修改文件清单
 
-| 操作 | 文件 | 说明 |
-|------|------|------|
-| 修改 | `web/core/task_store.py` | 添加 `logs` 字段到 Task 数据类 |
-| 修改 | `web/core/task_executor.py` | 保存 `result.logs` 到 task.logs |
-| 修改 | `web/components/task_results.py` | 新增日志显示区域（轮询中） |
+| # | 文件 | 说明 |
+|---|------|------|
+| 1 | `web/components/settings.py` | 数据层（迁移/CRUD）+ UI 重写（左侧列表+右侧编辑） |
+| 2 | `web/components/task_create.py` | 顶部添加方案选择器，RID 规范化用选中 profile 的 user_name |
+| 3 | `web/core/task_executor.py` | auth 注入改用 task.config 中 `_profile_id` 对应的 profile |
+| 4 | `web/app.py` | 启动时 apply active profile |
 
-## cloudpss-toolkit 修改需求
+## 实施步骤
 
-**好消息：不需要修改！**
+### Phase 1: settings.py 数据层
+- `generate_profile_id()` → 8 位随机字符串
+- `migrate_settings()` → 旧 flat 格式→新 profiles 数组（幂等）
+- `get_active_profile()` / `get_default_profile_id()` / `get_profile_by_id()`
+- `save_profile()` / `delete_profile()` / `set_active_profile()` / `set_default_profile()`
+- `apply_settings()` 改为 `apply_profile(profile)` 接受 profile dict
 
-现有 35+ 技能已经有完善的 `log()` 模式，日志直接返回到 `SkillResult.logs`。
+### Phase 2: settings.py UI 重写
+- 左侧：profile 列表（名称 + 服务器图标 + default/active 标记）+ `+ 新增方案`
+- 右侧：编辑表单（名称/服务器预设/自定义URL/Token/用户名）+ 操作按钮（设为默认/激活/删除）
+- 底部：当前状态 + 连接测试
+
+### Phase 3: task_create.py 集成
+- 任务创建表单顶部添加 profile 下拉选择器（默认 `is_default` profile）
+- `_get_current_user()` 改为接受 `profile_id` 参数
+- `_load_example()` 使用选中 profile 的 token 和 user_name
+- `_confirm_and_run()` 在 task.config 中存入 `_profile_id`
+
+### Phase 4: task_executor.py 集成
+- `_inject_auth()` 从 `task.config["_profile_id"]` 查找 profile，fallback 到 active
+- `_apply_server()` 签名从 `settings: dict` 改为 `profile: dict`
+
+### Phase 5: app.py 启动
+- 启动时调用 `apply_profile(active_profile)` 写入 token 和 env vars
+
+## 迁移策略
+首次加载旧版 `settings.json` 时自动迁移为 profiles 数组，保留所有原有数据。
 
 ## 验证方式
-
-1. **功能验证**：
-   - 执行 power_flow → 前端显示"认证成功"、"模型：xxx"、"运行潮流计算..."等日志
-   - 执行 n1_security → 前端显示"[1/46] 停运支路：xxx"、"N-1 通过"等日志
-   - 执行 study_pipeline → 前端显示每个步骤的开始/结束日志
-
-2. **错误诊断验证**：
-   - 故意配置错误的 token → 前端显示"❌ 认证失败：Invalid token"
-   - 配置不存在的模型 → 前端显示"❌ 模型加载失败：..."
-
-## 实现阶段
-
-**Phase 1: 基础日志显示** ✅ 已完成
-- 修改 task_store.py 添加 logs 字段
-- 修改 task_executor.py 保存日志
-- 修改 task_results.py 显示日志
-- 验证 3-5 个技能的日志显示
-
-**Phase 2 (可选): 完整覆盖**
-- 确认所有 37+ 技能都有 log() 调用
-- 补充缺失技能的日志记录
-- 验证日志格式一致性
-
-**Phase 3 (可选): 实时性增强**
-- 如果需要真正的实时日志流，修改 toolkit 添加 SkillContext
-- 添加日志级别过滤（DEBUG/INFO/WARNING/ERROR）
-- 添加日志搜索/过滤功能
+1. 设置页创建 2 个 profile → 切换激活 → 连接测试
+2. 创建任务 → 方案选择器显示所有 profile → 选择不同方案加载示例
+3. 执行任务 → 使用任务关联 profile 的 auth
+4. 删除 profile → 关联的旧任务 fallback 到 active profile
