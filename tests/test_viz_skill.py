@@ -731,6 +731,7 @@ class TestTaskResultsDelegation:
         task.artifacts = []
         task.metrics = {}
         task.config = {"output": {"format": "json"}}
+        task.logs = []
 
         # Patch sys.modules["streamlit"]
         original_st = sys.modules.get("streamlit")
