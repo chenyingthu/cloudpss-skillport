@@ -24,13 +24,8 @@ from web.core import task_store, skill_catalog
 from web.components.settings import load_settings, TOKEN_FILE
 
 
-def _inject_auth(config: dict) -> None:
-    """Inject auth settings from saved settings into task config."""
-    settings = load_settings()
-    auth = config.setdefault("auth", {})
-
-    # Inject server URL
-    preset = settings.get("server_preset", "internal")
+def _apply_server(auth: dict, preset: str, settings: dict) -> None:
+    """Apply server settings to a single auth dict."""
     if preset == "internal":
         auth["server"] = "internal"
         auth["token_file"] = str(TOKEN_FILE)
@@ -40,6 +35,24 @@ def _inject_auth(config: dict) -> None:
     elif preset == "custom":
         auth["base_url"] = settings.get("server_url", "")
         auth["token_file"] = str(TOKEN_FILE)
+
+
+def _inject_auth(config: dict) -> None:
+    """Inject auth settings from saved settings into task config.
+
+    Handles both top-level auth and nested pipeline step auth.
+    """
+    settings = load_settings()
+    preset = settings.get("server_preset", "internal")
+
+    # Top-level auth
+    auth = config.setdefault("auth", {})
+    _apply_server(auth, preset, settings)
+
+    # Pipeline step auth
+    for step in config.get("pipeline", []):
+        step_auth = step.get("config", {}).setdefault("auth", {})
+        _apply_server(step_auth, preset, settings)
 
 
 def execute_task(task_id: str) -> None:

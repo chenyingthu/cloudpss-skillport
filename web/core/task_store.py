@@ -74,12 +74,13 @@ def get_task(task_id: str) -> Optional[Task]:
 def list_tasks(limit: int = 50, offset: int = 0) -> List[Task]:
     """List tasks sorted by creation time (newest first)."""
     tasks = []
-    for p in sorted(TASKS_DIR.glob("task_*.json"), reverse=True):
+    for p in TASKS_DIR.glob("task_*.json"):
         try:
             data = json.loads(p.read_text(encoding="utf-8"))
             tasks.append(Task(**data))
         except (json.JSONDecodeError, TypeError):
             continue
+    tasks.sort(key=lambda t: t.created_at, reverse=True)
     return tasks[offset : offset + limit]
 
 

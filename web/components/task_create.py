@@ -227,7 +227,7 @@ def _load_example(skill_name: str):
 
         model_config = {"rid": f"model/{user}/IEEE39", "source": "cloud"}
         # Use absolute path for token file to ensure child steps can find it
-        auth_config = {"token_file": str(TOKEN_FILE), "server": "internal"}
+        auth_config = {"token_file": str(TOKEN_FILE), "server": "public"}
 
         templates = _get_pipeline_templates()
         tpl = templates["潮流 + N-1 + 可视化"]

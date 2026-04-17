@@ -50,6 +50,19 @@ def render(task_id: str):
     # ─── Failed State ───────────────────────────────────────
     if task.status == "failed":
         st.error(f"❌ 执行失败: {task.error}")
+
+        # Show execution logs for failed tasks
+        if task.logs:
+            with st.expander("📋 执行日志", expanded=True):
+                for log in task.logs:
+                    icon = {
+                        "INFO": "ℹ️",
+                        "DEBUG": "🔍",
+                        "WARNING": "⚠️",
+                        "ERROR": "❌"
+                    }.get(log["level"], "•")
+                    st.caption(f"{log['timestamp']} {icon} {log['message']}")
+
         col1, col2 = st.columns(2)
         if col1.button("🔄 重新编辑"):
             st.session_state.draft_config = task.config
@@ -100,6 +113,19 @@ def _show_results(task):
         cols = st.columns(min(len(task.metrics), 4))
         for i, (k, v) in enumerate(task.metrics.items()):
             cols[i % 4].metric(k, v)
+
+    # ─── Execution Logs ───────────────────────────────────
+    if task.logs:
+        st.subheader("📋 执行日志")
+        with st.expander("查看日志详情", expanded=False):
+            for log in task.logs:
+                icon = {
+                    "INFO": "ℹ️",
+                    "DEBUG": "🔍",
+                    "WARNING": "⚠️",
+                    "ERROR": "❌"
+                }.get(log["level"], "•")
+                st.caption(f"{log['timestamp']} {icon} {log['message']}")
 
     # ─── Config Used ───────────────────────────────────────
     with st.expander("⚙️ 使用的配置", expanded=False):
