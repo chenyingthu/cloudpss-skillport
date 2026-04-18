@@ -9,6 +9,7 @@ Flow:
 5. User confirms → task saved as "confirmed" → trigger execution
 """
 import json
+import time
 from pathlib import Path
 from typing import Optional
 import streamlit as st
@@ -301,6 +302,146 @@ def _generate_config(prompt: str, skill_name: str):
 
 
 
+def _enhance_config_for_skill(config: dict, skill_name: str, user: str) -> dict:
+    """Enhance config with complete parameters for skills that fail validation."""
+
+    # 基础配置确保
+    if "auth" not in config:
+        config["auth"] = {"token_file": ".cloudpss_token"}
+    if "output" not in config:
+        config["output"] = {"format": "json", "path": "./results/", "timestamp": True}
+
+    # 根据技能类型添加特定配置
+    if skill_name == "param_scan":
+        config["scan"] = {
+            "component": "Load_1",
+            "parameter": "P",
+            "values": [0.8, 0.9, 1.0, 1.1, 1.2],
+            "simulation_type": "power_flow"
+        }
+        config["output"] = {"format": "json", "path": "./results/", "prefix": "param_scan", "timestamp": True}
+
+    elif skill_name == "parameter_sensitivity":
+        config["analysis"] = {
+            "target_parameters": [
+                {"component": "Load_1", "parameter": "P", "variation": 0.1}
+            ],
+            "metrics": ["voltage_magnitude"],
+            "method": "perturbation",
+            "perturbation_size": 0.01
+        }
+        config["output"] = {"format": "json", "path": "./results/", "prefix": "sensitivity", "timestamp": True}
+
+    elif skill_name == "maintenance_security":
+        config["maintenance"] = {
+            "branch_id": "Branch_1",
+            "check_voltage": True,
+            "check_thermal": True
+        }
+        config["analysis"] = {
+            "voltage_threshold": 0.05,
+            "thermal_threshold": 1.0
+        }
+
+    elif skill_name == "dudv_curve":
+        config["analysis"] = {
+            "target_buses": ["Bus1", "Bus8"],
+            "voltage_range": [0.8, 1.2],
+            "steps": 20,
+            "reactive_power_range": [-100, 100]
+        }
+        config["curve"] = {"type": "dudv", "plot": True, "save_data": True}
+        config["output"] = {"format": "json", "path": "./results/", "prefix": "dudv", "timestamp": True}
+
+    elif skill_name == "result_compare":
+        config["sources"] = [
+            {"job_id": "job-1", "label": "场景1", "data_file": "results/job1_result.json"},
+            {"job_id": "job-2", "label": "场景2", "data_file": "results/job2_result.json"}
+        ]
+        config["comparison"] = {
+            "channels": ["Bus8_Va", "Bus8_Vb", "Bus8_Vc"],
+            "metrics": ["max", "min", "mean"]
+        }
+
+    elif skill_name == "visualize":
+        config["source"] = {"data_file": "results/power_flow_result.json"}
+        config["visualization"] = {
+            "plot_type": "line",
+            "channels": ["Bus8_Va", "Bus8_Vb", "Bus8_Vc"],
+            "save_plot": True
+        }
+        config["output"] = {"format": "png", "path": "./results/", "prefix": "viz", "timestamp": True}
+
+    elif skill_name == "waveform_export":
+        config["source"] = {"job_id": "job-xxx", "data_file": "results/emt_result.hdf5"}
+        config["export"] = {
+            "channels": ["Bus8_Va", "Bus8_Vb", "Bus8_Vc"],
+            "format": "csv",
+            "time_range": [0, 5]
+        }
+        config["output"] = {"format": "csv", "path": "./results/", "prefix": "waveform", "timestamp": True}
+
+    elif skill_name == "compare_visualization":
+        config["sources"] = [
+            {"job_id": "job-1", "label": "基态", "data_file": "results/baseline.json"},
+            {"job_id": "job-2", "label": "故障态", "data_file": "results/fault.json"}
+        ]
+        config["visualization"] = {
+            "plot_type": "comparison",
+            "channels": ["Bus8_Va"],
+            "metrics": ["voltage_magnitude"]
+        }
+
+    elif skill_name == "comtrade_export":
+        config["source"] = {"job_id": "job-xxx", "data_file": "results/emt_result.hdf5"}
+        config["export"] = {
+            "channels": ["Bus8_Va", "Bus8_Vb", "Bus8_Vc"],
+            "format": "comtrade",
+            "station_name": "TestStation"
+        }
+
+    elif skill_name == "reactive_compensation_design":
+        config["vsi_input"] = {"target_buses": ["Bus1"], "vsi_threshold": 0.01}
+        config["compensation"] = {"type": "shunt_capacitor", "step_size": 0.1, "max_mvar": 100.0}
+        config["constraints"] = {"max_compensation_per_bus": 50.0}
+
+    elif skill_name == "auto_loop_breaker":
+        config["loop_breaker"] = {"enabled": True, "method": "state_space", "target_loops": []}
+        config["analysis"] = {"detect_loops": True}
+
+    elif skill_name == "model_parameter_extractor":
+        config["extraction"] = {"component_types": ["load", "generator"], "include_parameters": True}
+
+    elif skill_name == "model_builder":
+        config["base_model"] = {"rid": f"model/{user}/IEEE39"}
+        config["modifications"] = [{"action": "add", "component_type": "Load", "params": {}}]
+
+    elif skill_name == "model_validator":
+        config["models"] = [{"rid": f"model/{user}/IEEE39"}]
+        config["validation"] = {"phases": ["topology", "powerflow"], "timeout": 300}
+
+    elif skill_name == "report_generator":
+        config["report"] = {"title": "仿真分析报告", "skills": ["power_flow"], "format": "docx"}
+
+    elif skill_name == "renewable_integration":
+        # 修复输出路径为文件而非目录
+        config["output"] = {"format": "json", "path": f"./results/renewable_result_{int(time.time())}.json", "timestamp": True}
+
+    elif skill_name == "orthogonal_sensitivity":
+        config["parameters"] = [{"name": "P", "levels": [0.8, 1.0, 1.2]}]
+        config["target"] = {"metric": "voltage"}
+
+    elif skill_name == "component_catalog":
+        # 添加权限提示
+        config["filters"] = {}
+        config["options"] = {"page_size": 100, "include_details": True}
+
+    elif skill_name == "contingency_analysis":
+        config["analysis"] = {"contingencies": [], "check_voltage": True, "check_thermal": True}
+
+    return config
+
+
 def _load_example(skill_name: str):
     """Load a working example config for a skill into draft state."""
     profile_id = _get_selected_profile_id()
@@ -350,6 +491,9 @@ def _load_example(skill_name: str):
             return
         config = skill.get_default_config()
         config = _normalize_model_rid(config, user)
+
+        # 为配置验证失败的技能提供完整配置
+        config = _enhance_config_for_skill(config, skill_name, user)
 
     st.session_state.draft_config = config
     st.session_state.draft_skill = skill_name

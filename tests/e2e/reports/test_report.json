@@ -1,11 +1,11 @@
 {
   "total_tests": 48,
-  "passed": 22,
+  "passed": 28,
   "failed": 18,
-  "timeout": 8,
-  "total_duration": 2066.1213235855103,
-  "start_time": "2026-04-18T16:19:03.547452",
-  "end_time": "2026-04-18T16:53:29.668787",
+  "timeout": 2,
+  "total_duration": 2217.2012944221497,
+  "start_time": "2026-04-18T20:14:31.027853",
+  "end_time": "2026-04-18T20:51:28.229181",
   "base_url": "http://127.0.0.1:8702",
   "results": [
     {
@@ -13,528 +13,528 @@
       "skill_display_name": "潮流计算",
       "category": "仿真执行",
       "status": "success",
-      "duration": 27.62049913406372,
+      "duration": 27.665303230285645,
       "error_message": null,
       "has_output_files": true,
       "execution_time": "耗时",
-      "timestamp": "2026-04-18T16:19:31.168025"
+      "timestamp": "2026-04-18T20:14:58.693248"
     },
     {
       "skill_name": "emt_simulation",
       "skill_display_name": "EMT暂态仿真",
       "category": "仿真执行",
       "status": "success",
-      "duration": 33.02024292945862,
+      "duration": 33.15994191169739,
       "error_message": null,
       "has_output_files": true,
       "execution_time": "耗时",
-      "timestamp": "2026-04-18T16:20:04.188325"
+      "timestamp": "2026-04-18T20:15:31.853250"
     },
     {
       "skill_name": "emt_fault_study",
       "skill_display_name": "EMT故障研究",
       "category": "仿真执行",
       "status": "success",
-      "duration": 29.455480813980103,
+      "duration": 29.272494316101074,
       "error_message": null,
       "has_output_files": true,
       "execution_time": "耗时",
-      "timestamp": "2026-04-18T16:20:33.643864"
+      "timestamp": "2026-04-18T20:16:01.125799"
     },
     {
       "skill_name": "short_circuit",
       "skill_display_name": "短路电流计算",
       "category": "仿真执行",
-      "status": "timeout",
-      "duration": 106.5848617553711,
-      "error_message": "执行超时 (>90s)",
-      "has_output_files": false,
-      "execution_time": null,
-      "timestamp": "2026-04-18T16:22:20.228827"
+      "status": "success",
+      "duration": 51.59814739227295,
+      "error_message": null,
+      "has_output_files": true,
+      "execution_time": "耗时",
+      "timestamp": "2026-04-18T20:16:52.724014"
     },
     {
       "skill_name": "n1_security",
       "skill_display_name": "N-1安全校核",
       "category": "N-1/N-2安全",
-      "status": "timeout",
-      "duration": 198.03365302085876,
-      "error_message": "执行超时 (>180s)",
-      "has_output_files": false,
-      "execution_time": null,
-      "timestamp": "2026-04-18T16:25:38.262557"
+      "status": "success",
+      "duration": 311.84797167778015,
+      "error_message": null,
+      "has_output_files": true,
+      "execution_time": "耗时",
+      "timestamp": "2026-04-18T20:22:04.572031"
     },
     {
       "skill_name": "n2_security",
       "skill_display_name": "N-2安全分析",
       "category": "N-1/N-2安全",
-      "status": "timeout",
-      "duration": 198.31076049804688,
-      "error_message": "执行超时 (>180s)",
-      "has_output_files": false,
-      "execution_time": null,
-      "timestamp": "2026-04-18T16:28:56.573561"
+      "status": "success",
+      "duration": 311.8584306240082,
+      "error_message": null,
+      "has_output_files": true,
+      "execution_time": "耗时",
+      "timestamp": "2026-04-18T20:27:16.430532"
     },
     {
       "skill_name": "emt_n1_screening",
       "skill_display_name": "EMT N-1筛查",
       "category": "N-1/N-2安全",
       "status": "success",
-      "duration": 29.239200353622437,
+      "duration": 29.321027517318726,
       "error_message": null,
       "has_output_files": true,
       "execution_time": "耗时",
-      "timestamp": "2026-04-18T16:29:25.812934"
+      "timestamp": "2026-04-18T20:27:45.751638"
     },
     {
       "skill_name": "contingency_analysis",
       "skill_display_name": "预想事故分析",
       "category": "N-1/N-2安全",
       "status": "timeout",
-      "duration": 106.3308777809143,
-      "error_message": "执行超时 (>90s)",
+      "duration": 198.0032548904419,
+      "error_message": "执行超时 (>180s)",
       "has_output_files": false,
       "execution_time": null,
-      "timestamp": "2026-04-18T16:31:12.143867"
+      "timestamp": "2026-04-18T20:31:03.754960"
     },
     {
       "skill_name": "maintenance_security",
       "skill_display_name": "检修安全校核",
       "category": "N-1/N-2安全",
       "status": "failed",
-      "duration": 14.97385859489441,
+      "duration": 14.985849857330322,
       "error_message": "配置验证未通过: ❌配置验证失败 (1 个错误):",
       "has_output_files": false,
       "execution_time": null,
-      "timestamp": "2026-04-18T16:31:27.117787"
+      "timestamp": "2026-04-18T20:31:18.740907"
     },
     {
       "skill_name": "batch_powerflow",
       "skill_display_name": "批量潮流计算",
       "category": "批量与扫描",
       "status": "success",
-      "duration": 27.195714712142944,
+      "duration": 27.329381942749023,
       "error_message": null,
       "has_output_files": true,
       "execution_time": "耗时",
-      "timestamp": "2026-04-18T16:31:54.313712"
+      "timestamp": "2026-04-18T20:31:46.070359"
     },
     {
       "skill_name": "param_scan",
       "skill_display_name": "参数扫描分析",
       "category": "批量与扫描",
       "status": "failed",
-      "duration": 14.949951887130737,
+      "duration": 15.052448034286499,
       "error_message": "配置验证未通过: ❌配置验证失败 (6 个错误):",
       "has_output_files": false,
       "execution_time": null,
-      "timestamp": "2026-04-18T16:32:09.263708"
+      "timestamp": "2026-04-18T20:32:01.122851"
     },
     {
       "skill_name": "fault_clearing_scan",
       "skill_display_name": "故障清除扫描",
       "category": "批量与扫描",
-      "status": "timeout",
-      "duration": 106.42238664627075,
-      "error_message": "执行超时 (>90s)",
-      "has_output_files": false,
-      "execution_time": null,
-      "timestamp": "2026-04-18T16:33:55.686161"
+      "status": "success",
+      "duration": 49.73002290725708,
+      "error_message": null,
+      "has_output_files": true,
+      "execution_time": "耗时",
+      "timestamp": "2026-04-18T20:32:50.852936"
     },
     {
       "skill_name": "fault_severity_scan",
       "skill_display_name": "故障严重度扫描",
       "category": "批量与扫描",
-      "status": "timeout",
-      "duration": 106.43621587753296,
-      "error_message": "执行超时 (>90s)",
-      "has_output_files": false,
-      "execution_time": null,
-      "timestamp": "2026-04-18T16:35:42.122458"
+      "status": "success",
+      "duration": 49.630871057510376,
+      "error_message": null,
+      "has_output_files": true,
+      "execution_time": "耗时",
+      "timestamp": "2026-04-18T20:33:40.483849"
     },
     {
       "skill_name": "batch_task_manager",
       "skill_display_name": "批量任务管理",
       "category": "批量与扫描",
       "status": "success",
-      "duration": 27.14257788658142,
+      "duration": 27.26796841621399,
       "error_message": null,
       "has_output_files": true,
       "execution_time": "耗时",
-      "timestamp": "2026-04-18T16:36:09.265087"
+      "timestamp": "2026-04-18T20:34:07.751858"
     },
     {
       "skill_name": "config_batch_runner",
       "skill_display_name": "配置批量运行",
       "category": "批量与扫描",
       "status": "success",
-      "duration": 55.71430826187134,
+      "duration": 55.71369194984436,
       "error_message": null,
       "has_output_files": true,
       "execution_time": "耗时",
-      "timestamp": "2026-04-18T16:37:04.979442"
+      "timestamp": "2026-04-18T20:35:03.465593"
     },
     {
       "skill_name": "orthogonal_sensitivity",
       "skill_display_name": "正交敏感性分析",
       "category": "批量与扫描",
       "status": "failed",
-      "duration": 14.871008157730103,
+      "duration": 14.997489929199219,
       "error_message": "配置验证未通过: ❌配置验证失败 (1 个错误):",
       "has_output_files": false,
       "execution_time": null,
-      "timestamp": "2026-04-18T16:37:19.850499"
+      "timestamp": "2026-04-18T20:35:18.463124"
     },
     {
       "skill_name": "voltage_stability",
       "skill_display_name": "电压稳定分析",
       "category": "稳定性分析",
       "status": "success",
-      "duration": 63.788182973861694,
+      "duration": 57.94913458824158,
       "error_message": null,
       "has_output_files": false,
       "execution_time": "耗时",
-      "timestamp": "2026-04-18T16:38:23.638724"
+      "timestamp": "2026-04-18T20:36:16.412304"
     },
     {
       "skill_name": "transient_stability",
       "skill_display_name": "暂态稳定分析",
       "category": "稳定性分析",
       "status": "success",
-      "duration": 21.166656255722046,
+      "duration": 21.115123510360718,
       "error_message": null,
       "has_output_files": false,
       "execution_time": "耗时",
-      "timestamp": "2026-04-18T16:38:44.805417"
+      "timestamp": "2026-04-18T20:36:37.527474"
     },
     {
       "skill_name": "transient_stability_margin",
       "skill_display_name": "暂态稳定裕度",
       "category": "稳定性分析",
       "status": "success",
-      "duration": 21.12461495399475,
+      "duration": 21.135870695114136,
       "error_message": null,
       "has_output_files": false,
       "execution_time": "耗时",
-      "timestamp": "2026-04-18T16:39:05.930065"
+      "timestamp": "2026-04-18T20:36:58.663385"
     },
     {
       "skill_name": "small_signal_stability",
       "skill_display_name": "小信号稳定分析",
       "category": "稳定性分析",
       "status": "success",
-      "duration": 25.476951599121094,
+      "duration": 25.50806188583374,
       "error_message": null,
       "has_output_files": true,
       "execution_time": "耗时",
-      "timestamp": "2026-04-18T16:39:31.407065"
+      "timestamp": "2026-04-18T20:37:24.171489"
     },
     {
       "skill_name": "frequency_response",
       "skill_display_name": "频率响应分析",
       "category": "稳定性分析",
       "status": "success",
-      "duration": 53.85855269432068,
+      "duration": 51.80479550361633,
       "error_message": null,
       "has_output_files": true,
       "execution_time": "耗时",
-      "timestamp": "2026-04-18T16:40:25.265667"
+      "timestamp": "2026-04-18T20:38:15.976329"
     },
     {
       "skill_name": "vsi_weak_bus",
       "skill_display_name": "VSI弱母线分析",
       "category": "稳定性分析",
       "status": "success",
-      "duration": 55.88053584098816,
+      "duration": 57.79893732070923,
       "error_message": null,
       "has_output_files": true,
       "execution_time": "耗时",
-      "timestamp": "2026-04-18T16:41:21.146252"
+      "timestamp": "2026-04-18T20:39:13.775312"
     },
     {
       "skill_name": "dudv_curve",
       "skill_display_name": "DUDV曲线生成",
       "category": "稳定性分析",
       "status": "failed",
-      "duration": 14.929008483886719,
+      "duration": 14.97947382926941,
       "error_message": "配置验证未通过: ❌配置验证失败 (1 个错误):",
       "has_output_files": false,
       "execution_time": null,
-      "timestamp": "2026-04-18T16:41:36.075323"
+      "timestamp": "2026-04-18T20:39:28.754829"
     },
     {
       "skill_name": "result_compare",
       "skill_display_name": "结果对比分析",
       "category": "结果处理",
       "status": "failed",
-      "duration": 14.93413758277893,
+      "duration": 14.966264724731445,
       "error_message": "配置验证未通过: ❌配置验证失败 (2 个错误):",
       "has_output_files": false,
       "execution_time": null,
-      "timestamp": "2026-04-18T16:41:51.009525"
+      "timestamp": "2026-04-18T20:39:43.721145"
     },
     {
       "skill_name": "visualize",
       "skill_display_name": "结果可视化",
       "category": "结果处理",
       "status": "failed",
-      "duration": 15.01382327079773,
+      "duration": 15.031952619552612,
       "error_message": "配置验证未通过: ❌配置验证失败 (2 个错误):",
       "has_output_files": false,
       "execution_time": null,
-      "timestamp": "2026-04-18T16:42:06.023411"
+      "timestamp": "2026-04-18T20:39:58.753147"
     },
     {
       "skill_name": "waveform_export",
       "skill_display_name": "波形数据导出",
       "category": "结果处理",
       "status": "failed",
-      "duration": 15.049019813537598,
+      "duration": 15.049473285675049,
       "error_message": "配置验证未通过: ❌配置验证失败 (2 个错误):",
       "has_output_files": false,
       "execution_time": null,
-      "timestamp": "2026-04-18T16:42:21.072484"
+      "timestamp": "2026-04-18T20:40:13.802669"
     },
     {
       "skill_name": "hdf5_export",
       "skill_display_name": "HDF5数据导出",
       "category": "结果处理",
       "status": "success",
-      "duration": 19.17851686477661,
+      "duration": 19.09760594367981,
       "error_message": null,
       "has_output_files": false,
       "execution_time": "耗时",
-      "timestamp": "2026-04-18T16:42:40.251056"
+      "timestamp": "2026-04-18T20:40:32.900328"
     },
     {
       "skill_name": "disturbance_severity",
       "skill_display_name": "扰动严重度分析",
       "category": "结果处理",
       "status": "success",
-      "duration": 21.082552909851074,
+      "duration": 21.09361219406128,
       "error_message": null,
       "has_output_files": false,
       "execution_time": "耗时",
-      "timestamp": "2026-04-18T16:43:01.333655"
+      "timestamp": "2026-04-18T20:40:53.993985"
     },
     {
       "skill_name": "compare_visualization",
       "skill_display_name": "对比可视化",
       "category": "结果处理",
       "status": "failed",
-      "duration": 14.984961032867432,
+      "duration": 15.007405996322632,
       "error_message": "配置验证未通过: ❌配置验证失败 (2 个错误):",
       "has_output_files": false,
       "execution_time": null,
-      "timestamp": "2026-04-18T16:43:16.318667"
+      "timestamp": "2026-04-18T20:41:09.001441"
     },
     {
       "skill_name": "comtrade_export",
       "skill_display_name": "COMTRADE导出",
       "category": "结果处理",
       "status": "failed",
-      "duration": 14.951998710632324,
+      "duration": 14.98119068145752,
       "error_message": "配置验证未通过: ❌配置验证失败 (2 个错误):",
       "has_output_files": false,
       "execution_time": null,
-      "timestamp": "2026-04-18T16:43:31.270718"
+      "timestamp": "2026-04-18T20:41:23.982684"
     },
     {
       "skill_name": "harmonic_analysis",
       "skill_display_name": "谐波分析",
       "category": "电能质量",
       "status": "success",
-      "duration": 53.849042654037476,
+      "duration": 53.717373847961426,
       "error_message": null,
       "has_output_files": true,
       "execution_time": "耗时",
-      "timestamp": "2026-04-18T16:44:25.119813"
+      "timestamp": "2026-04-18T20:42:17.700105"
     },
     {
       "skill_name": "power_quality_analysis",
       "skill_display_name": "电能质量分析",
       "category": "电能质量",
-      "status": "timeout",
-      "duration": 106.63945436477661,
-      "error_message": "执行超时 (>90s)",
-      "has_output_files": false,
-      "execution_time": null,
-      "timestamp": "2026-04-18T16:46:11.759322"
+      "status": "success",
+      "duration": 51.98476433753967,
+      "error_message": null,
+      "has_output_files": true,
+      "execution_time": "耗时",
+      "timestamp": "2026-04-18T20:43:09.684911"
     },
     {
       "skill_name": "reactive_compensation_design",
       "skill_display_name": "无功补偿设计",
       "category": "电能质量",
       "status": "failed",
-      "duration": 15.037092685699463,
+      "duration": 14.992600440979004,
       "error_message": "配置验证未通过: ❌配置验证失败 (1 个错误):",
       "has_output_files": false,
       "execution_time": null,
-      "timestamp": "2026-04-18T16:46:26.796467"
+      "timestamp": "2026-04-18T20:43:24.677548"
     },
     {
       "skill_name": "renewable_integration",
       "skill_display_name": "新能源接入分析",
       "category": "新能源",
       "status": "failed",
-      "duration": 19.113783359527588,
+      "duration": 21.112404108047485,
       "error_message": "执行失败: ❌执行失败: Execution error: IsADirectoryError: [Errno 21] Is a directory: './results/'",
       "has_output_files": false,
       "execution_time": null,
-      "timestamp": "2026-04-18T16:46:45.910298"
+      "timestamp": "2026-04-18T20:43:45.789986"
     },
     {
       "skill_name": "topology_check",
       "skill_display_name": "拓扑检查",
       "category": "模型与拓扑",
       "status": "success",
-      "duration": 21.209221839904785,
+      "duration": 21.176298141479492,
       "error_message": null,
       "has_output_files": true,
       "execution_time": "耗时",
-      "timestamp": "2026-04-18T16:47:07.119563"
+      "timestamp": "2026-04-18T20:44:06.966328"
     },
     {
       "skill_name": "parameter_sensitivity",
       "skill_display_name": "参数灵敏度分析",
       "category": "模型与拓扑",
       "status": "failed",
-      "duration": 15.009190320968628,
+      "duration": 14.89574646949768,
       "error_message": "配置验证未通过: ❌配置验证失败 (6 个错误):",
       "has_output_files": false,
       "execution_time": null,
-      "timestamp": "2026-04-18T16:47:22.128800"
+      "timestamp": "2026-04-18T20:44:21.862117"
     },
     {
       "skill_name": "auto_channel_setup",
       "skill_display_name": "自动量测配置",
       "category": "模型与拓扑",
       "status": "success",
-      "duration": 23.203322410583496,
+      "duration": 21.1868896484375,
       "error_message": null,
       "has_output_files": true,
       "execution_time": "耗时",
-      "timestamp": "2026-04-18T16:47:45.332173"
+      "timestamp": "2026-04-18T20:44:43.049055"
     },
     {
       "skill_name": "auto_loop_breaker",
       "skill_display_name": "模型自动解环",
       "category": "模型与拓扑",
       "status": "failed",
-      "duration": 14.960464000701904,
+      "duration": 15.00854229927063,
       "error_message": "配置验证未通过: ❌配置验证失败 (1 个错误):",
       "has_output_files": false,
       "execution_time": null,
-      "timestamp": "2026-04-18T16:48:00.292703"
+      "timestamp": "2026-04-18T20:44:58.057647"
     },
     {
       "skill_name": "model_parameter_extractor",
       "skill_display_name": "模型参数提取",
       "category": "模型与拓扑",
       "status": "failed",
-      "duration": 14.949716329574585,
+      "duration": 14.983234882354736,
       "error_message": "配置验证未通过: ❌配置验证失败 (1 个错误):",
       "has_output_files": false,
       "execution_time": null,
-      "timestamp": "2026-04-18T16:48:15.242470"
+      "timestamp": "2026-04-18T20:45:13.040930"
     },
     {
       "skill_name": "model_builder",
       "skill_display_name": "模型构建",
       "category": "模型与拓扑",
       "status": "failed",
-      "duration": 14.998542785644531,
+      "duration": 15.098491668701172,
       "error_message": "配置验证未通过: ❌配置验证失败 (1 个错误):",
       "has_output_files": false,
       "execution_time": null,
-      "timestamp": "2026-04-18T16:48:30.241066"
+      "timestamp": "2026-04-18T20:45:28.139471"
     },
     {
       "skill_name": "model_validator",
       "skill_display_name": "模型验证",
       "category": "模型与拓扑",
       "status": "failed",
-      "duration": 14.967787265777588,
+      "duration": 14.933551788330078,
       "error_message": "配置验证未通过: ❌配置验证失败 (1 个错误):",
       "has_output_files": false,
       "execution_time": null,
-      "timestamp": "2026-04-18T16:48:45.208905"
+      "timestamp": "2026-04-18T20:45:43.073071"
     },
     {
       "skill_name": "component_catalog",
       "skill_display_name": "元件目录",
       "category": "模型与拓扑",
       "status": "failed",
-      "duration": 76.1276159286499,
+      "duration": 43.4289767742157,
       "error_message": "执行失败: ❌执行失败: 权限不足",
       "has_output_files": false,
       "execution_time": null,
-      "timestamp": "2026-04-18T16:50:01.336787"
+      "timestamp": "2026-04-18T20:46:26.502099"
     },
     {
       "skill_name": "thevenin_equivalent",
       "skill_display_name": "戴维南等值",
       "category": "模型与拓扑",
       "status": "success",
-      "duration": 21.101433277130127,
+      "duration": 23.198731660842896,
       "error_message": null,
       "has_output_files": true,
       "execution_time": "耗时",
-      "timestamp": "2026-04-18T16:50:22.438263"
+      "timestamp": "2026-04-18T20:46:49.700876"
     },
     {
       "skill_name": "model_hub",
       "skill_display_name": "算例中心",
       "category": "模型与拓扑",
       "status": "success",
-      "duration": 19.07848334312439,
+      "duration": 19.12711787223816,
       "error_message": null,
       "has_output_files": false,
       "execution_time": "耗时",
-      "timestamp": "2026-04-18T16:50:41.516790"
+      "timestamp": "2026-04-18T20:47:08.828036"
     },
     {
       "skill_name": "loss_analysis",
       "skill_display_name": "网损分析",
       "category": "分析报告",
       "status": "success",
-      "duration": 25.29655122756958,
+      "duration": 25.31553554534912,
       "error_message": null,
       "has_output_files": true,
       "execution_time": "耗时",
-      "timestamp": "2026-04-18T16:51:06.813384"
+      "timestamp": "2026-04-18T20:47:34.143614"
     },
     {
       "skill_name": "protection_coordination",
       "skill_display_name": "保护整定",
       "category": "分析报告",
       "status": "success",
-      "duration": 21.156954526901245,
+      "duration": 21.159051179885864,
       "error_message": null,
       "has_output_files": true,
       "execution_time": "耗时",
-      "timestamp": "2026-04-18T16:51:27.970380"
+      "timestamp": "2026-04-18T20:47:55.302709"
     },
     {
       "skill_name": "report_generator",
       "skill_display_name": "报告生成",
       "category": "分析报告",
       "status": "failed",
-      "duration": 15.050873756408691,
+      "duration": 14.930341482162476,
       "error_message": "配置验证未通过: ❌配置验证失败 (1 个错误):",
       "has_output_files": false,
       "execution_time": null,
-      "timestamp": "2026-04-18T16:51:43.021325"
+      "timestamp": "2026-04-18T20:48:10.233091"
     },
     {
       "skill_name": "study_pipeline",
       "skill_display_name": "流水线",
       "category": "流程编排",
       "status": "timeout",
-      "duration": 106.64726734161377,
-      "error_message": "执行超时 (>90s)",
+      "duration": 197.99599385261536,
+      "error_message": "执行超时 (>180s)",
       "has_output_files": false,
       "execution_time": null,
-      "timestamp": "2026-04-18T16:53:29.668745"
+      "timestamp": "2026-04-18T20:51:28.229137"
     }
   ]
 }
