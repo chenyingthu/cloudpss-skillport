@@ -493,10 +493,38 @@ class SmartConfigGenerator:
                 "lvrt_compliance": {"enabled": True, "standard": "gb"},
                 "stability_impact": {"enabled": True}
             }
+            # 修复：确保输出路径是文件而非目录
+            config["output"] = {
+                "format": "json",
+                "path": "./results/renewable_integration_result.json",
+                "prefix": "renewable",
+                "timestamp": True
+            }
 
         elif skill == "vsi_weak_bus":
             config["analysis"] = {
-                "voltage_threshold": self.extract_threshold(prompt, "voltage")
+                "voltage_threshold": self.extract_threshold(prompt, "voltage"),
+                "target_buses": ["Bus1", "Bus8", "Bus16"],
+                "vsi_method": "p-q-v"
+            }
+
+        elif skill == "dudv_curve":
+            config["analysis"] = {
+                "target_buses": ["Bus1", "Bus8", "Bus16"],
+                "voltage_range": [0.8, 1.2],
+                "steps": 20,
+                "reactive_power_range": [-100, 100]
+            }
+            config["curve"] = {
+                "type": "dudv",
+                "plot": True,
+                "save_data": True
+            }
+            config["output"] = {
+                "format": "json",
+                "path": "./results/",
+                "prefix": "dudv_curve",
+                "timestamp": True
             }
 
         elif skill == "model_builder":
@@ -564,20 +592,53 @@ class SmartConfigGenerator:
                 "timestamp": True
             }
 
+        elif skill == "parameter_sensitivity":
+            config["analysis"] = {
+                "target_parameters": [
+                    {"component": "Load_1", "parameter": "P", "variation": 0.1},
+                    {"component": "Load_2", "parameter": "Q", "variation": 0.1}
+                ],
+                "metrics": ["voltage_magnitude", "power_flow"],
+                "method": "perturbation",
+                "perturbation_size": 0.01
+            }
+            config["output"] = {
+                "format": "json",
+                "path": "./results/",
+                "prefix": "sensitivity",
+                "timestamp": True
+            }
+
         elif skill == "result_compare":
             config["sources"] = [
-                {"job_id": "placeholder-job-1", "label": "场景1"},
-                {"job_id": "placeholder-job-2", "label": "场景2"}
+                {"job_id": "placeholder-job-1", "label": "场景1", "data_file": "results/job1_result.json"},
+                {"job_id": "placeholder-job-2", "label": "场景2", "data_file": "results/job2_result.json"}
             ]
             config["comparison"] = {
-                "channels": self.extract_channels_from_prompt(prompt)
+                "channels": self.extract_channels_from_prompt(prompt) or ["Bus8_Va", "Bus8_Vb", "Bus8_Vc"],
+                "metrics": ["max", "min", "mean", "rms"]
+            }
+            config["output"] = {
+                "format": "json",
+                "path": "./results/",
+                "prefix": "comparison",
+                "timestamp": True
             }
 
         elif skill == "visualize":
-            config["source"] = {"data_file": "results/xxx.json"}
+            config["source"] = {"data_file": "results/power_flow_result.json"}
             config["visualization"] = {
-                "plot_type": "bar",
-                "channels": self.extract_channels_from_prompt(prompt)
+                "plot_type": "line",
+                "channels": self.extract_channels_from_prompt(prompt) or ["Bus8_Va", "Bus8_Vb", "Bus8_Vc"],
+                "time_range": [0, 5],
+                "figsize": [10, 6],
+                "save_plot": True
+            }
+            config["output"] = {
+                "format": "png",
+                "path": "./results/",
+                "prefix": "visualization",
+                "timestamp": True
             }
 
         elif skill == "reactive_compensation_design":
@@ -605,10 +666,18 @@ class SmartConfigGenerator:
             }
 
         elif skill == "waveform_export":
-            config["source"] = {"job_id": "placeholder-job-xxx"}
+            config["source"] = {"job_id": "placeholder-job-xxx", "data_file": "results/emt_simulation_result.hdf5"}
             config["export"] = {
-                "channels": self.extract_channels_from_prompt(prompt),
-                "plots": []
+                "channels": self.extract_channels_from_prompt(prompt) or ["Bus8_Va", "Bus8_Vb", "Bus8_Vc", "Bus8_Ia", "Bus8_Ib", "Bus8_Ic"],
+                "format": "csv",
+                "time_range": [0, 5],
+                "resample": None
+            }
+            config["output"] = {
+                "format": "csv",
+                "path": "./results/",
+                "prefix": "waveform",
+                "timestamp": True
             }
 
         elif skill == "auto_channel_setup":
@@ -617,6 +686,24 @@ class SmartConfigGenerator:
                 "current": {"enabled": True},
                 "power": {"enabled": True},
                 "frequency": {"enabled": False}
+            }
+
+        elif skill == "auto_loop_breaker":
+            config["loop_breaker"] = {
+                "enabled": True,
+                "method": "state_space",
+                "target_loops": [],
+                "break_resistance": 1e6
+            }
+            config["analysis"] = {
+                "detect_loops": True,
+                "analyze_coupling": True
+            }
+            config["output"] = {
+                "format": "json",
+                "path": "./results/",
+                "prefix": "loop_breaker",
+                "timestamp": True
             }
 
         elif skill == "batch_powerflow":
@@ -634,12 +721,37 @@ class SmartConfigGenerator:
 
         elif skill == "compare_visualization":
             config["sources"] = [
-                {"job_id": "placeholder-job-1", "label": "基态"},
-                {"job_id": "placeholder-job-2", "label": "故障态"}
+                {"job_id": "placeholder-job-1", "label": "基态", "data_file": "results/baseline_result.json"},
+                {"job_id": "placeholder-job-2", "label": "故障态", "data_file": "results/fault_result.json"}
             ]
+            config["visualization"] = {
+                "plot_type": "comparison",
+                "channels": ["Bus8_Va", "Bus8_Vb", "Bus8_Vc"],
+                "metrics": ["voltage_magnitude", "voltage_angle"],
+                "figsize": [12, 8]
+            }
+            config["output"] = {
+                "format": "png",
+                "path": "./results/",
+                "prefix": "compare_viz",
+                "timestamp": True
+            }
 
         elif skill == "comtrade_export":
-            config["source"] = {"job_id": "placeholder-job-xxx"}
+            config["source"] = {"job_id": "placeholder-job-xxx", "data_file": "results/emt_simulation_result.hdf5"}
+            config["export"] = {
+                "channels": ["Bus8_Va", "Bus8_Vb", "Bus8_Vc", "Bus8_Ia", "Bus8_Ib", "Bus8_Ic"],
+                "format": "comtrade",
+                "station_name": "TestStation",
+                "analog_channels": 6,
+                "digital_channels": 0
+            }
+            config["output"] = {
+                "format": "comtrade",
+                "path": "./results/",
+                "prefix": "comtrade",
+                "timestamp": True
+            }
 
         elif skill == "orthogonal_sensitivity":
             config["parameters"] = [

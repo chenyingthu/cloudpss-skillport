@@ -304,10 +304,18 @@ class SkillTester:
 
             # 5. 等待执行完成
             # 根据技能类型设置不同的超时时间
+            very_long_skills = ["n1_security", "n2_security"]  # 需要300s
             long_running_skills = ["emt_simulation", "emt_n1_screening", "emt_fault_study",
-                                   "n1_security", "n2_security", "transient_stability",
-                                   "transient_stability_margin", "voltage_stability"]
-            max_wait = 180 if skill_name in long_running_skills else 90
+                                   "transient_stability", "transient_stability_margin", "voltage_stability",
+                                   "short_circuit", "contingency_analysis", "fault_clearing_scan",
+                                   "fault_severity_scan", "power_quality_analysis", "study_pipeline"]
+
+            if skill_name in very_long_skills:
+                max_wait = 300
+            elif skill_name in long_running_skills:
+                max_wait = 180
+            else:
+                max_wait = 90
             elapsed = 0
             check_interval = 2
             completed = False
