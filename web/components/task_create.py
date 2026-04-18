@@ -52,14 +52,25 @@ def _normalize_model_rid(config: dict, user: str = None) -> dict:
         user = _get_current_user()
     model = config.get("model", {})
     rid = model.get("rid", "")
-    if rid.startswith("model/holdme/"):
+
+    # 如果 rid 为空，设置默认模型
+    if not rid:
+        model["rid"] = f"model/{user}/IEEE39"
+        model["source"] = "cloud"
+        config["model"] = model
+    elif rid.startswith("model/holdme/"):
         model["rid"] = rid.replace("model/holdme/", f"model/{user}/")
         config["model"] = model
+
     # Also fix pipeline steps if present
     for step in config.get("pipeline", []):
         step_model = step.get("model", {})
         step_rid = step_model.get("rid", "")
-        if step_rid.startswith("model/holdme/"):
+        if not step_rid:
+            step_model["rid"] = f"model/{user}/IEEE39"
+            step_model["source"] = "cloud"
+            step["model"] = step_model
+        elif step_rid.startswith("model/holdme/"):
             step_model["rid"] = step_rid.replace("model/holdme/", f"model/{user}/")
             step["model"] = step_model
     return config
@@ -382,10 +393,17 @@ def _edit_config(skill_name: str):
     # Output section
     with st.expander("📤 输出配置", expanded=False):
         output = config.get("output", {})
+        format_options = ["json", "csv", "yaml"]
+        current_format = output.get("format", "json")
+        # 安全获取索引，如果格式不在选项中则默认使用 json (index 0)
+        try:
+            format_index = format_options.index(current_format)
+        except ValueError:
+            format_index = 0
         output["format"] = st.selectbox(
             "输出格式",
-            options=["json", "csv", "yaml"],
-            index=["json", "csv", "yaml"].index(output.get("format", "json")),
+            options=format_options,
+            index=format_index,
             key="edit_output_format",
         )
         config["output"] = output
@@ -568,12 +586,17 @@ def _edit_skill_params(config: dict, skill_name: str):
                 value=fault.get("location", ""),
                 key="edit_fault_location",
             )
+            fault_type_options = ["three_phase", "line_to_ground", "line_to_line"]
+            current_fault_type = fault.get("type", "three_phase")
+            # 安全获取索引，如果类型不在选项中则默认使用 three_phase (index 0)
+            try:
+                fault_type_index = fault_type_options.index(current_fault_type)
+            except ValueError:
+                fault_type_index = 0
             fault["type"] = col2.selectbox(
                 "短路类型",
-                options=["three_phase", "line_to_ground", "line_to_line"],
-                index=["three_phase", "line_to_ground", "line_to_line"].index(
-                    fault.get("type", "three_phase")
-                ),
+                options=fault_type_options,
+                index=fault_type_index,
                 key="edit_fault_type",
             )
             col3, col4 = st.columns(2)

@@ -1,0 +1,497 @@
+{
+  "timestamp": "2026-04-18T16:34:31.189622",
+  "summary": {
+    "total": 48,
+    "success": 0,
+    "failed": 0,
+    "timeout": 0,
+    "config_invalid": 0,
+    "navigation_failed": 46,
+    "error": 2,
+    "success_rate": 0.0,
+    "critical_fixes": 0,
+    "high_fixes": 0
+  },
+  "results": [
+    {
+      "skill_name": "power_flow",
+      "category": "仿真执行",
+      "status": "navigation_failed",
+      "duration": 7.228596448898315,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "emt_simulation",
+      "category": "仿真执行",
+      "status": "navigation_failed",
+      "duration": 7.137969255447388,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "emt_fault_study",
+      "category": "仿真执行",
+      "status": "navigation_failed",
+      "duration": 7.165510892868042,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "short_circuit",
+      "category": "仿真执行",
+      "status": "error",
+      "duration": 10.38184118270874,
+      "error_message": "未找到确认执行按钮",
+      "error_type": "UI_MISSING_ELEMENT",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "n1_security",
+      "category": "N-1/N-2安全",
+      "status": "error",
+      "duration": 10.378584146499634,
+      "error_message": "未找到确认执行按钮",
+      "error_type": "UI_MISSING_ELEMENT",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "n2_security",
+      "category": "N-1/N-2安全",
+      "status": "navigation_failed",
+      "duration": 7.1423797607421875,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "emt_n1_screening",
+      "category": "N-1/N-2安全",
+      "status": "navigation_failed",
+      "duration": 7.110833406448364,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "contingency_analysis",
+      "category": "N-1/N-2安全",
+      "status": "navigation_failed",
+      "duration": 7.129628658294678,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "maintenance_security",
+      "category": "N-1/N-2安全",
+      "status": "navigation_failed",
+      "duration": 7.144189834594727,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "batch_powerflow",
+      "category": "批量与扫描",
+      "status": "navigation_failed",
+      "duration": 7.094823360443115,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "param_scan",
+      "category": "批量与扫描",
+      "status": "navigation_failed",
+      "duration": 7.129744529724121,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "fault_clearing_scan",
+      "category": "批量与扫描",
+      "status": "navigation_failed",
+      "duration": 7.083361864089966,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "fault_severity_scan",
+      "category": "批量与扫描",
+      "status": "navigation_failed",
+      "duration": 7.088247299194336,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "batch_task_manager",
+      "category": "批量与扫描",
+      "status": "navigation_failed",
+      "duration": 7.117144823074341,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "config_batch_runner",
+      "category": "批量与扫描",
+      "status": "navigation_failed",
+      "duration": 7.115962028503418,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "orthogonal_sensitivity",
+      "category": "批量与扫描",
+      "status": "navigation_failed",
+      "duration": 7.130798101425171,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "voltage_stability",
+      "category": "稳定性分析",
+      "status": "navigation_failed",
+      "duration": 7.062965393066406,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "transient_stability",
+      "category": "稳定性分析",
+      "status": "navigation_failed",
+      "duration": 7.07570219039917,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "transient_stability_margin",
+      "category": "稳定性分析",
+      "status": "navigation_failed",
+      "duration": 7.053678512573242,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "small_signal_stability",
+      "category": "稳定性分析",
+      "status": "navigation_failed",
+      "duration": 7.078804016113281,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "frequency_response",
+      "category": "稳定性分析",
+      "status": "navigation_failed",
+      "duration": 6.971752166748047,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "vsi_weak_bus",
+      "category": "稳定性分析",
+      "status": "navigation_failed",
+      "duration": 7.103253364562988,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "dudv_curve",
+      "category": "稳定性分析",
+      "status": "navigation_failed",
+      "duration": 7.108947277069092,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "result_compare",
+      "category": "结果处理",
+      "status": "navigation_failed",
+      "duration": 7.13624906539917,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "visualize",
+      "category": "结果处理",
+      "status": "navigation_failed",
+      "duration": 7.113890886306763,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "waveform_export",
+      "category": "结果处理",
+      "status": "navigation_failed",
+      "duration": 7.129913330078125,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "hdf5_export",
+      "category": "结果处理",
+      "status": "navigation_failed",
+      "duration": 7.085537672042847,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "disturbance_severity",
+      "category": "结果处理",
+      "status": "navigation_failed",
+      "duration": 7.098423004150391,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "compare_visualization",
+      "category": "结果处理",
+      "status": "navigation_failed",
+      "duration": 7.033846378326416,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "comtrade_export",
+      "category": "结果处理",
+      "status": "navigation_failed",
+      "duration": 7.11767315864563,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "harmonic_analysis",
+      "category": "电能质量",
+      "status": "navigation_failed",
+      "duration": 7.1208014488220215,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "power_quality_analysis",
+      "category": "电能质量",
+      "status": "navigation_failed",
+      "duration": 7.0708839893341064,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "reactive_compensation_design",
+      "category": "电能质量",
+      "status": "navigation_failed",
+      "duration": 7.070244073867798,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "renewable_integration",
+      "category": "新能源",
+      "status": "navigation_failed",
+      "duration": 7.04673957824707,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "topology_check",
+      "category": "模型与拓扑",
+      "status": "navigation_failed",
+      "duration": 6.903641223907471,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "parameter_sensitivity",
+      "category": "模型与拓扑",
+      "status": "navigation_failed",
+      "duration": 7.049106597900391,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "auto_channel_setup",
+      "category": "模型与拓扑",
+      "status": "navigation_failed",
+      "duration": 7.013268709182739,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "auto_loop_breaker",
+      "category": "模型与拓扑",
+      "status": "navigation_failed",
+      "duration": 7.00590968132019,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "model_parameter_extractor",
+      "category": "模型与拓扑",
+      "status": "navigation_failed",
+      "duration": 7.108753442764282,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "model_builder",
+      "category": "模型与拓扑",
+      "status": "navigation_failed",
+      "duration": 7.121044635772705,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "model_validator",
+      "category": "模型与拓扑",
+      "status": "navigation_failed",
+      "duration": 7.097163438796997,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "component_catalog",
+      "category": "模型与拓扑",
+      "status": "navigation_failed",
+      "duration": 6.994390249252319,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "thevenin_equivalent",
+      "category": "模型与拓扑",
+      "status": "navigation_failed",
+      "duration": 7.117499828338623,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "model_hub",
+      "category": "模型与拓扑",
+      "status": "navigation_failed",
+      "duration": 7.1266093254089355,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "loss_analysis",
+      "category": "分析报告",
+      "status": "navigation_failed",
+      "duration": 7.127907991409302,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "protection_coordination",
+      "category": "分析报告",
+      "status": "navigation_failed",
+      "duration": 7.108991861343384,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "report_generator",
+      "category": "分析报告",
+      "status": "navigation_failed",
+      "duration": 7.112016677856445,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    },
+    {
+      "skill_name": "study_pipeline",
+      "category": "流程编排",
+      "status": "navigation_failed",
+      "duration": 7.109882593154907,
+      "error_message": "无法找到技能按钮",
+      "error_type": "UI_NAVIGATION",
+      "fix_required": true,
+      "fix_priority": "medium"
+    }
+  ]
+}
