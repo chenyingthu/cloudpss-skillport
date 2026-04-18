@@ -344,15 +344,22 @@ def _render_profile_editor(settings: dict, profile_id: str) -> dict:
         name = st.text_input("方案名称", value=profile.get("name", ""), key=f"prof_name_{profile_id}")
 
         # Server preset
+        preset_options = ["internal", "public", "custom"]
+        current_preset = profile.get("server_preset", "public")
+        # 安全获取索引，如果预设不在选项中则默认使用 public (index 1)
+        try:
+            preset_index = preset_options.index(current_preset)
+        except ValueError:
+            preset_index = 1  # 默认 public
         preset = st.selectbox(
             "服务器预设",
-            options=["internal", "public", "custom"],
+            options=preset_options,
             format_func=lambda x: {
                 "internal": "内部服务器 (http://166.111.60.76:50001)",
                 "public": "公共服务器 (https://cloudpss.net/)",
                 "custom": "自定义地址",
             }.get(x, x),
-            index=["internal", "public", "custom"].index(profile.get("server_preset", "public")),
+            index=preset_index,
             key=f"prof_preset_{profile_id}",
         )
 

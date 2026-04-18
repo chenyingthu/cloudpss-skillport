@@ -548,11 +548,20 @@ class SmartConfigGenerator:
                     component = "Load_1"
                 elif "发电" in prompt or "generator" in prompt.lower():
                     component = "Generator_1"
+                else:
+                    component = "Load_1"  # 默认组件
             config["scan"] = {
                 "component": component,
-                "parameter": self.extract_parameter_name(prompt),
-                "values": self.extract_scan_values(prompt),
+                "parameter": self.extract_parameter_name(prompt) or "P",
+                "values": self.extract_scan_values(prompt) or [0.8, 0.9, 1.0, 1.1, 1.2],
                 "simulation_type": "power_flow"
+            }
+            # 确保输出配置完整
+            config["output"] = {
+                "format": "json",
+                "path": "./results/",
+                "prefix": "param_scan",
+                "timestamp": True
             }
 
         elif skill == "result_compare":
@@ -572,8 +581,27 @@ class SmartConfigGenerator:
             }
 
         elif skill == "reactive_compensation_design":
+            # 无功补偿设计需要基于 VSI 分析结果
             config["vsi_input"] = {
-                "target_buses": ["Bus1"]
+                "target_buses": ["Bus1"],
+                "vsi_threshold": 0.01
+            }
+            config["compensation"] = {
+                "type": "shunt_capacitor",
+                "step_size": 0.1,
+                "max_mvar": 100.0,
+                "target_voltage": 1.0
+            }
+            config["constraints"] = {
+                "max_compensation_per_bus": 50.0,
+                "total_budget": 500.0
+            }
+            # 确保输出配置完整
+            config["output"] = {
+                "format": "json",
+                "path": "./results/",
+                "prefix": "compensation_design",
+                "timestamp": True
             }
 
         elif skill == "waveform_export":
