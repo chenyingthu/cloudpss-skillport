@@ -407,23 +407,26 @@ def _enhance_config_for_skill(config: dict, skill_name: str, user: str) -> dict:
         config["constraints"] = {"max_compensation_per_bus": 50.0}
 
     elif skill_name == "auto_loop_breaker":
-        # 需要 model 字段
-        config["model"] = {"rid": f"model/{user}/IEEE39", "source": "cloud"}
-        config["loop_breaker"] = {"enabled": True, "method": "state_space", "target_loops": []}
-        config["analysis"] = {"detect_loops": True}
+        # 需要 model 字段 - 使用包含控制环路的模型
+        config["model"] = {"rid": "model/open-cloudpss/WTG_PMSG_01-avm-stdm-v2b5", "source": "cloud"}
+        config["algorithm"] = {"max_iterations": 500, "strategy": "degree"}
+        config["loop_node"] = {"init_value": "0", "name_prefix": "LoopBreaker"}
+        config["output"] = {"save_model": False, "dry_run": False}
 
     elif skill_name == "model_parameter_extractor":
-        # 需要 model 字段
+        # 需要 model 字段 - 使用标准模型
         config["model"] = {"rid": f"model/{user}/IEEE39", "source": "cloud"}
         config["extraction"] = {"component_types": ["load", "generator"], "include_parameters": True}
 
     elif skill_name == "model_builder":
         # model_builder 的 schema 特殊：需要 workflow.name 和 base_model.rid
-        # 默认配置中没有 model.rid，需要特殊处理
+        # 使用 open-cloudpss 的 WTG 模型作为基础（包含 component_vrt_fault_1 组件）
         config["workflow"] = {"name": "open_cloudpss_wind_lvrt_case"}
-        config["base_model"] = {"rid": f"model/{user}/IEEE39"}
-        config["modifications"] = [{"action": "add_component", "component_type": "Load", "label": "Load_New"}]
-        config["output"] = {"save": True, "path": "./results/"}
+        config["base_model"] = {"rid": "model/open-cloudpss/WTG_PMSG_01-avm-stdm-v2b5"}
+        config["modifications"] = [
+            {"action": "modify_component", "selector": {"key": "component_vrt_fault_1"}, "parameters": {"Fault_VRT": {"source": "1", "ɵexp": ""}}}
+        ]
+        config["output"] = {"save": False, "path": "./results/"}
 
     elif skill_name == "model_validator":
         # model_validator 的 schema 要求 models 数组，不是单数 model
