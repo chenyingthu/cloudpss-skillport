@@ -25,7 +25,7 @@
         .status-timeout { color: #ff9800; font-weight: 600; }
         .status-error { color: #9c27b0; font-weight: 600; }
         .progress-bar { width: 100%; height: 20px; background: #e0e0e0; border-radius: 10px; overflow: hidden; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, #4CAF50, #8BC34A); width: 58.333333333333336%; transition: width 0.3s; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #4CAF50, #8BC34A); width: 66.66666666666666%; transition: width 0.3s; }
         .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; font-size: 12px; }
         .error-msg { color: #f44336; font-size: 12px; max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     </style>
@@ -40,15 +40,15 @@
                 <div class="stat-label">总测试数</div>
             </div>
             <div class="stat-box success">
-                <div class="stat-number">28</div>
+                <div class="stat-number">32</div>
                 <div class="stat-label">通过</div>
             </div>
             <div class="stat-box failed">
-                <div class="stat-number">18</div>
+                <div class="stat-number">13</div>
                 <div class="stat-label">失败</div>
             </div>
             <div class="stat-box timeout">
-                <div class="stat-number">2</div>
+                <div class="stat-number">3</div>
                 <div class="stat-label">超时</div>
             </div>
         </div>
@@ -56,15 +56,15 @@
         <div style="margin: 20px 0;">
             <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
                 <span>成功率</span>
-                <span>58.3%</span>
+                <span>66.7%</span>
             </div>
             <div class="progress-bar">
                 <div class="progress-fill"></div>
             </div>
         </div>
 
-        <p><strong>测试时间:</strong> 2026-04-18T20:14:31.027853 ~ 2026-04-18T20:51:28.229181</p>
-        <p><strong>总耗时:</strong> 2217.2 秒</p>
+        <p><strong>测试时间:</strong> 2026-04-18T23:07:25.009287 ~ 2026-04-18T23:50:10.579014</p>
+        <p><strong>总耗时:</strong> 2565.6 秒</p>
         <p><strong>测试地址:</strong> http://127.0.0.1:8702</p>
 
         <h2>详细结果</h2>
@@ -89,7 +89,7 @@
                     <td>潮流计算</td>
                     <td>仿真执行</td>
                     <td class="status-success">SUCCESS</td>
-                    <td>27.7s</td>
+                    <td>27.5s</td>
                     <td>耗时</td>
                     <td class="error-msg" title="-">-</td>
                 </tr>
@@ -100,7 +100,7 @@
                     <td>EMT暂态仿真</td>
                     <td>仿真执行</td>
                     <td class="status-success">SUCCESS</td>
-                    <td>33.2s</td>
+                    <td>33.1s</td>
                     <td>耗时</td>
                     <td class="error-msg" title="-">-</td>
                 </tr>
@@ -111,7 +111,7 @@
                     <td>EMT故障研究</td>
                     <td>仿真执行</td>
                     <td class="status-success">SUCCESS</td>
-                    <td>29.3s</td>
+                    <td>29.4s</td>
                     <td>耗时</td>
                     <td class="error-msg" title="-">-</td>
                 </tr>
@@ -122,7 +122,7 @@
                     <td>短路电流计算</td>
                     <td>仿真执行</td>
                     <td class="status-success">SUCCESS</td>
-                    <td>51.6s</td>
+                    <td>52.0s</td>
                     <td>耗时</td>
                     <td class="error-msg" title="-">-</td>
                 </tr>
@@ -133,7 +133,7 @@
                     <td>N-1安全校核</td>
                     <td>N-1/N-2安全</td>
                     <td class="status-success">SUCCESS</td>
-                    <td>311.8s</td>
+                    <td>308.1s</td>
                     <td>耗时</td>
                     <td class="error-msg" title="-">-</td>
                 </tr>
@@ -144,7 +144,7 @@
                     <td>N-2安全分析</td>
                     <td>N-1/N-2安全</td>
                     <td class="status-success">SUCCESS</td>
-                    <td>311.9s</td>
+                    <td>307.4s</td>
                     <td>耗时</td>
                     <td class="error-msg" title="-">-</td>
                 </tr>
@@ -165,10 +165,10 @@
                     <td><code>contingency_analysis</code></td>
                     <td>预想事故分析</td>
                     <td>N-1/N-2安全</td>
-                    <td class="status-timeout">TIMEOUT</td>
-                    <td>198.0s</td>
-                    <td>-</td>
-                    <td class="error-msg" title="执行超时 (>180s)">执行超时 (>180s)</td>
+                    <td class="status-success">SUCCESS</td>
+                    <td>240.3s</td>
+                    <td>耗时</td>
+                    <td class="error-msg" title="-">-</td>
                 </tr>
         
                 <tr>
@@ -176,10 +176,10 @@
                     <td><code>maintenance_security</code></td>
                     <td>检修安全校核</td>
                     <td>N-1/N-2安全</td>
-                    <td class="status-failed">FAILED</td>
-                    <td>15.0s</td>
+                    <td class="status-timeout">TIMEOUT</td>
+                    <td>106.4s</td>
                     <td>-</td>
-                    <td class="error-msg" title="配置验证未通过: ❌配置验证失败 (1 个错误):">配置验证未通过: ❌配置验证失败 (1 个错误):</td>
+                    <td class="error-msg" title="执行超时 (>90s)">执行超时 (>90s)</td>
                 </tr>
         
                 <tr>
@@ -188,7 +188,7 @@
                     <td>批量潮流计算</td>
                     <td>批量与扫描</td>
                     <td class="status-success">SUCCESS</td>
-                    <td>27.3s</td>
+                    <td>29.3s</td>
                     <td>耗时</td>
                     <td class="error-msg" title="-">-</td>
                 </tr>
@@ -198,10 +198,10 @@
                     <td><code>param_scan</code></td>
                     <td>参数扫描分析</td>
                     <td>批量与扫描</td>
-                    <td class="status-failed">FAILED</td>
-                    <td>15.1s</td>
-                    <td>-</td>
-                    <td class="error-msg" title="配置验证未通过: ❌配置验证失败 (6 个错误):">配置验证未通过: ❌配置验证失败 (6 个错误):</td>
+                    <td class="status-success">SUCCESS</td>
+                    <td>21.2s</td>
+                    <td>耗时</td>
+                    <td class="error-msg" title="-">-</td>
                 </tr>
         
                 <tr>
@@ -210,7 +210,7 @@
                     <td>故障清除扫描</td>
                     <td>批量与扫描</td>
                     <td class="status-success">SUCCESS</td>
-                    <td>49.7s</td>
+                    <td>49.6s</td>
                     <td>耗时</td>
                     <td class="error-msg" title="-">-</td>
                 </tr>
@@ -221,7 +221,7 @@
                     <td>故障严重度扫描</td>
                     <td>批量与扫描</td>
                     <td class="status-success">SUCCESS</td>
-                    <td>49.6s</td>
+                    <td>47.9s</td>
                     <td>耗时</td>
                     <td class="error-msg" title="-">-</td>
                 </tr>
@@ -243,7 +243,7 @@
                     <td>配置批量运行</td>
                     <td>批量与扫描</td>
                     <td class="status-success">SUCCESS</td>
-                    <td>55.7s</td>
+                    <td>49.9s</td>
                     <td>耗时</td>
                     <td class="error-msg" title="-">-</td>
                 </tr>
@@ -253,10 +253,10 @@
                     <td><code>orthogonal_sensitivity</code></td>
                     <td>正交敏感性分析</td>
                     <td>批量与扫描</td>
-                    <td class="status-failed">FAILED</td>
-                    <td>15.0s</td>
-                    <td>-</td>
-                    <td class="error-msg" title="配置验证未通过: ❌配置验证失败 (1 个错误):">配置验证未通过: ❌配置验证失败 (1 个错误):</td>
+                    <td class="status-success">SUCCESS</td>
+                    <td>21.2s</td>
+                    <td>耗时</td>
+                    <td class="error-msg" title="-">-</td>
                 </tr>
         
                 <tr>
@@ -265,7 +265,7 @@
                     <td>电压稳定分析</td>
                     <td>稳定性分析</td>
                     <td class="status-success">SUCCESS</td>
-                    <td>57.9s</td>
+                    <td>57.7s</td>
                     <td>耗时</td>
                     <td class="error-msg" title="-">-</td>
                 </tr>
@@ -309,7 +309,7 @@
                     <td>频率响应分析</td>
                     <td>稳定性分析</td>
                     <td class="status-success">SUCCESS</td>
-                    <td>51.8s</td>
+                    <td>51.9s</td>
                     <td>耗时</td>
                     <td class="error-msg" title="-">-</td>
                 </tr>
@@ -320,7 +320,7 @@
                     <td>VSI弱母线分析</td>
                     <td>稳定性分析</td>
                     <td class="status-success">SUCCESS</td>
-                    <td>57.8s</td>
+                    <td>55.9s</td>
                     <td>耗时</td>
                     <td class="error-msg" title="-">-</td>
                 </tr>
@@ -333,7 +333,7 @@
                     <td class="status-failed">FAILED</td>
                     <td>15.0s</td>
                     <td>-</td>
-                    <td class="error-msg" title="配置验证未通过: ❌配置验证失败 (1 个错误):">配置验证未通过: ❌配置验证失败 (1 个错误):</td>
+                    <td class="error-msg" title="配置验证未通过: ❌ 配置验证失败 (1 个错误):">配置验证未通过: ❌ 配置验证失败 (1 个错误):</td>
                 </tr>
         
                 <tr>
@@ -342,9 +342,9 @@
                     <td>结果对比分析</td>
                     <td>结果处理</td>
                     <td class="status-failed">FAILED</td>
-                    <td>15.0s</td>
+                    <td>17.1s</td>
                     <td>-</td>
-                    <td class="error-msg" title="配置验证未通过: ❌配置验证失败 (2 个错误):">配置验证未通过: ❌配置验证失败 (2 个错误):</td>
+                    <td class="error-msg" title="执行失败: ❌ 执行失败: Execution error: Exception: [{'message': 'Not Found', 'path': ['job'], 'extensions': {'code': 'INTERNAL_SERVER_ERROR', 'status': 404, 'originalError': {'message': 'Not Found', 'statusCode': 404}, 'serviceName': 'job'}}]">执行失败: ❌ 执行失败: Execution error: Exception: [{'message': 'Not Found', 'path': ['job'], 'extensions': {'code': 'INTERNAL_SERVER_ERROR', 'status': 404, 'originalError': {'message': 'Not Found', 'statusCode': 404}, 'serviceName': 'job'}}]</td>
                 </tr>
         
                 <tr>
@@ -353,9 +353,9 @@
                     <td>结果可视化</td>
                     <td>结果处理</td>
                     <td class="status-failed">FAILED</td>
-                    <td>15.0s</td>
+                    <td>17.1s</td>
                     <td>-</td>
-                    <td class="error-msg" title="配置验证未通过: ❌配置验证失败 (2 个错误):">配置验证未通过: ❌配置验证失败 (2 个错误):</td>
+                    <td class="error-msg" title="执行失败: ❌ 执行失败: Execution error: Exception: [{'message': 'Not Found', 'path': ['job'], 'extensions': {'code': 'INTERNAL_SERVER_ERROR', 'status': 404, 'originalError': {'message': 'Not Found', 'statusCode': 404}, 'serviceName': 'job'}}]">执行失败: ❌ 执行失败: Execution error: Exception: [{'message': 'Not Found', 'path': ['job'], 'extensions': {'code': 'INTERNAL_SERVER_ERROR', 'status': 404, 'originalError': {'message': 'Not Found', 'statusCode': 404}, 'serviceName': 'job'}}]</td>
                 </tr>
         
                 <tr>
@@ -364,9 +364,9 @@
                     <td>波形数据导出</td>
                     <td>结果处理</td>
                     <td class="status-failed">FAILED</td>
-                    <td>15.0s</td>
+                    <td>17.1s</td>
                     <td>-</td>
-                    <td class="error-msg" title="配置验证未通过: ❌配置验证失败 (2 个错误):">配置验证未通过: ❌配置验证失败 (2 个错误):</td>
+                    <td class="error-msg" title="执行失败: ❌ 执行失败: Execution error: Exception: [{'message': 'Not Found', 'path': ['job'], 'extensions': {'code': 'INTERNAL_SERVER_ERROR', 'status': 404, 'originalError': {'message': 'Not Found', 'statusCode': 404}, 'serviceName': 'job'}}]">执行失败: ❌ 执行失败: Execution error: Exception: [{'message': 'Not Found', 'path': ['job'], 'extensions': {'code': 'INTERNAL_SERVER_ERROR', 'status': 404, 'originalError': {'message': 'Not Found', 'statusCode': 404}, 'serviceName': 'job'}}]</td>
                 </tr>
         
                 <tr>
@@ -397,9 +397,9 @@
                     <td>对比可视化</td>
                     <td>结果处理</td>
                     <td class="status-failed">FAILED</td>
-                    <td>15.0s</td>
+                    <td>17.1s</td>
                     <td>-</td>
-                    <td class="error-msg" title="配置验证未通过: ❌配置验证失败 (2 个错误):">配置验证未通过: ❌配置验证失败 (2 个错误):</td>
+                    <td class="error-msg" title="执行失败: ❌ 执行失败: Execution error: Exception: [{'message': 'Not Found', 'path': ['job'], 'extensions': {'code': 'INTERNAL_SERVER_ERROR', 'status': 404, 'originalError': {'message': 'Not Found', 'statusCode': 404}, 'serviceName': 'job'}}]">执行失败: ❌ 执行失败: Execution error: Exception: [{'message': 'Not Found', 'path': ['job'], 'extensions': {'code': 'INTERNAL_SERVER_ERROR', 'status': 404, 'originalError': {'message': 'Not Found', 'statusCode': 404}, 'serviceName': 'job'}}]</td>
                 </tr>
         
                 <tr>
@@ -408,9 +408,9 @@
                     <td>COMTRADE导出</td>
                     <td>结果处理</td>
                     <td class="status-failed">FAILED</td>
-                    <td>15.0s</td>
+                    <td>17.0s</td>
                     <td>-</td>
-                    <td class="error-msg" title="配置验证未通过: ❌配置验证失败 (2 个错误):">配置验证未通过: ❌配置验证失败 (2 个错误):</td>
+                    <td class="error-msg" title="执行失败: ❌ 执行失败: Execution error: Exception: [{'message': 'Not Found', 'path': ['job'], 'extensions': {'code': 'INTERNAL_SERVER_ERROR', 'status': 404, 'originalError': {'message': 'Not Found', 'statusCode': 404}, 'serviceName': 'job'}}]">执行失败: ❌ 执行失败: Execution error: Exception: [{'message': 'Not Found', 'path': ['job'], 'extensions': {'code': 'INTERNAL_SERVER_ERROR', 'status': 404, 'originalError': {'message': 'Not Found', 'statusCode': 404}, 'serviceName': 'job'}}]</td>
                 </tr>
         
                 <tr>
@@ -419,7 +419,7 @@
                     <td>谐波分析</td>
                     <td>电能质量</td>
                     <td class="status-success">SUCCESS</td>
-                    <td>53.7s</td>
+                    <td>49.9s</td>
                     <td>耗时</td>
                     <td class="error-msg" title="-">-</td>
                 </tr>
@@ -430,7 +430,7 @@
                     <td>电能质量分析</td>
                     <td>电能质量</td>
                     <td class="status-success">SUCCESS</td>
-                    <td>52.0s</td>
+                    <td>52.1s</td>
                     <td>耗时</td>
                     <td class="error-msg" title="-">-</td>
                 </tr>
@@ -440,10 +440,10 @@
                     <td><code>reactive_compensation_design</code></td>
                     <td>无功补偿设计</td>
                     <td>电能质量</td>
-                    <td class="status-failed">FAILED</td>
-                    <td>15.0s</td>
+                    <td class="status-timeout">TIMEOUT</td>
+                    <td>106.4s</td>
                     <td>-</td>
-                    <td class="error-msg" title="配置验证未通过: ❌配置验证失败 (1 个错误):">配置验证未通过: ❌配置验证失败 (1 个错误):</td>
+                    <td class="error-msg" title="执行超时 (>90s)">执行超时 (>90s)</td>
                 </tr>
         
                 <tr>
@@ -452,9 +452,9 @@
                     <td>新能源接入分析</td>
                     <td>新能源</td>
                     <td class="status-failed">FAILED</td>
-                    <td>21.1s</td>
+                    <td>19.1s</td>
                     <td>-</td>
-                    <td class="error-msg" title="执行失败: ❌执行失败: Execution error: IsADirectoryError: [Errno 21] Is a directory: './results/'">执行失败: ❌执行失败: Execution error: IsADirectoryError: [Errno 21] Is a directory: './results/'</td>
+                    <td class="error-msg" title="执行失败: ❌ 执行失败: 分析包含估算或假设结果，当前不能作为已验证的新能源接入评估结论">执行失败: ❌ 执行失败: 分析包含估算或假设结果，当前不能作为已验证的新能源接入评估结论</td>
                 </tr>
         
                 <tr>
@@ -473,10 +473,10 @@
                     <td><code>parameter_sensitivity</code></td>
                     <td>参数灵敏度分析</td>
                     <td>模型与拓扑</td>
-                    <td class="status-failed">FAILED</td>
-                    <td>14.9s</td>
-                    <td>-</td>
-                    <td class="error-msg" title="配置验证未通过: ❌配置验证失败 (6 个错误):">配置验证未通过: ❌配置验证失败 (6 个错误):</td>
+                    <td class="status-success">SUCCESS</td>
+                    <td>21.1s</td>
+                    <td>耗时</td>
+                    <td class="error-msg" title="-">-</td>
                 </tr>
         
                 <tr>
@@ -498,7 +498,7 @@
                     <td class="status-failed">FAILED</td>
                     <td>15.0s</td>
                     <td>-</td>
-                    <td class="error-msg" title="配置验证未通过: ❌配置验证失败 (1 个错误):">配置验证未通过: ❌配置验证失败 (1 个错误):</td>
+                    <td class="error-msg" title="配置验证未通过: ❌ 配置验证失败 (1 个错误):">配置验证未通过: ❌ 配置验证失败 (1 个错误):</td>
                 </tr>
         
                 <tr>
@@ -509,7 +509,7 @@
                     <td class="status-failed">FAILED</td>
                     <td>15.0s</td>
                     <td>-</td>
-                    <td class="error-msg" title="配置验证未通过: ❌配置验证失败 (1 个错误):">配置验证未通过: ❌配置验证失败 (1 个错误):</td>
+                    <td class="error-msg" title="配置验证未通过: ❌ 配置验证失败 (1 个错误):">配置验证未通过: ❌ 配置验证失败 (1 个错误):</td>
                 </tr>
         
                 <tr>
@@ -518,9 +518,9 @@
                     <td>模型构建</td>
                     <td>模型与拓扑</td>
                     <td class="status-failed">FAILED</td>
-                    <td>15.1s</td>
+                    <td>15.0s</td>
                     <td>-</td>
-                    <td class="error-msg" title="配置验证未通过: ❌配置验证失败 (1 个错误):">配置验证未通过: ❌配置验证失败 (1 个错误):</td>
+                    <td class="error-msg" title="配置验证未通过: ❌ 配置验证失败 (1 个错误):">配置验证未通过: ❌ 配置验证失败 (1 个错误):</td>
                 </tr>
         
                 <tr>
@@ -529,9 +529,9 @@
                     <td>模型验证</td>
                     <td>模型与拓扑</td>
                     <td class="status-failed">FAILED</td>
-                    <td>14.9s</td>
+                    <td>15.0s</td>
                     <td>-</td>
-                    <td class="error-msg" title="配置验证未通过: ❌配置验证失败 (1 个错误):">配置验证未通过: ❌配置验证失败 (1 个错误):</td>
+                    <td class="error-msg" title="配置验证未通过: ❌ 配置验证失败 (1 个错误):">配置验证未通过: ❌ 配置验证失败 (1 个错误):</td>
                 </tr>
         
                 <tr>
@@ -540,9 +540,9 @@
                     <td>元件目录</td>
                     <td>模型与拓扑</td>
                     <td class="status-failed">FAILED</td>
-                    <td>43.4s</td>
+                    <td>37.4s</td>
                     <td>-</td>
-                    <td class="error-msg" title="执行失败: ❌执行失败: 权限不足">执行失败: ❌执行失败: 权限不足</td>
+                    <td class="error-msg" title="执行失败: ❌ 执行失败: 权限不足">执行失败: ❌ 执行失败: 权限不足</td>
                 </tr>
         
                 <tr>
@@ -551,7 +551,7 @@
                     <td>戴维南等值</td>
                     <td>模型与拓扑</td>
                     <td class="status-success">SUCCESS</td>
-                    <td>23.2s</td>
+                    <td>21.2s</td>
                     <td>耗时</td>
                     <td class="error-msg" title="-">-</td>
                 </tr>
@@ -584,7 +584,7 @@
                     <td>保护整定</td>
                     <td>分析报告</td>
                     <td class="status-success">SUCCESS</td>
-                    <td>21.2s</td>
+                    <td>21.3s</td>
                     <td>耗时</td>
                     <td class="error-msg" title="-">-</td>
                 </tr>
@@ -595,9 +595,9 @@
                     <td>报告生成</td>
                     <td>分析报告</td>
                     <td class="status-failed">FAILED</td>
-                    <td>14.9s</td>
+                    <td>17.0s</td>
                     <td>-</td>
-                    <td class="error-msg" title="配置验证未通过: ❌配置验证失败 (1 个错误):">配置验证未通过: ❌配置验证失败 (1 个错误):</td>
+                    <td class="error-msg" title="执行失败: ❌ 执行失败: 未提供真实的skill_results，不能基于占位结果生成正式报告">执行失败: ❌ 执行失败: 未提供真实的skill_results，不能基于占位结果生成正式报告</td>
                 </tr>
         
                 <tr>
@@ -606,9 +606,9 @@
                     <td>流水线</td>
                     <td>流程编排</td>
                     <td class="status-timeout">TIMEOUT</td>
-                    <td>198.0s</td>
+                    <td>319.4s</td>
                     <td>-</td>
-                    <td class="error-msg" title="执行超时 (>180s)">执行超时 (>180s)</td>
+                    <td class="error-msg" title="执行超时 (>300s)">执行超时 (>300s)</td>
                 </tr>
         
             </tbody>

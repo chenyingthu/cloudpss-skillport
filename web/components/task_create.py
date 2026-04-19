@@ -344,8 +344,9 @@ def _enhance_config_for_skill(config: dict, skill_name: str, user: str) -> dict:
         }
 
     elif skill_name == "dudv_curve":
+        # dudv_curve 需要 buses 字段（必需）
+        config["buses"] = ["Bus1", "Bus8", "Bus16"]
         config["analysis"] = {
-            "target_buses": ["Bus1", "Bus8"],
             "voltage_range": [0.8, 1.2],
             "steps": 20,
             "reactive_power_range": [-100, 100]
@@ -406,18 +407,25 @@ def _enhance_config_for_skill(config: dict, skill_name: str, user: str) -> dict:
         config["constraints"] = {"max_compensation_per_bus": 50.0}
 
     elif skill_name == "auto_loop_breaker":
+        # 需要 model 字段
+        config["model"] = {"rid": f"model/{user}/IEEE39", "source": "cloud"}
         config["loop_breaker"] = {"enabled": True, "method": "state_space", "target_loops": []}
         config["analysis"] = {"detect_loops": True}
 
     elif skill_name == "model_parameter_extractor":
+        # 需要 model 字段
+        config["model"] = {"rid": f"model/{user}/IEEE39", "source": "cloud"}
         config["extraction"] = {"component_types": ["load", "generator"], "include_parameters": True}
 
     elif skill_name == "model_builder":
+        # 需要 base_model.rid 和 workflow.name
         config["base_model"] = {"rid": f"model/{user}/IEEE39"}
+        config["workflow"] = {"name": "model_build_workflow"}
         config["modifications"] = [{"action": "add", "component_type": "Load", "params": {}}]
 
     elif skill_name == "model_validator":
-        config["models"] = [{"rid": f"model/{user}/IEEE39"}]
+        # 需要 models 字段（不是单数 model）
+        config["models"] = [{"rid": f"model/{user}/IEEE39", "source": "cloud"}]
         config["validation"] = {"phases": ["topology", "powerflow"], "timeout": 300}
 
     elif skill_name == "report_generator":
