@@ -1,56 +1,23 @@
 {
-  "total_tests": 4,
-  "passed": 4,
+  "total_tests": 1,
+  "passed": 1,
   "failed": 0,
   "timeout": 0,
-  "total_duration": 81.168123960495,
-  "start_time": "2026-04-19T12:35:12.008976",
-  "end_time": "2026-04-19T12:36:33.177109",
+  "total_duration": 27.674615621566772,
+  "start_time": "2026-04-19T22:21:38.522480",
+  "end_time": "2026-04-19T22:22:06.197124",
   "base_url": "http://127.0.0.1:8502",
   "results": [
     {
-      "skill_name": "auto_loop_breaker",
-      "skill_display_name": "模型自动解环",
-      "category": "模型与拓扑",
+      "skill_name": "batch_powerflow",
+      "skill_display_name": "批量潮流计算",
+      "category": "批量与扫描",
       "status": "success",
-      "duration": 19.469603776931763,
+      "duration": 27.674527168273926,
       "error_message": null,
       "has_output_files": true,
       "execution_time": "耗时",
-      "timestamp": "2026-04-19T12:35:31.478656"
-    },
-    {
-      "skill_name": "model_parameter_extractor",
-      "skill_display_name": "模型参数提取",
-      "category": "模型与拓扑",
-      "status": "success",
-      "duration": 19.21888303756714,
-      "error_message": null,
-      "has_output_files": true,
-      "execution_time": "耗时",
-      "timestamp": "2026-04-19T12:35:50.697600"
-    },
-    {
-      "skill_name": "model_builder",
-      "skill_display_name": "模型构建",
-      "category": "模型与拓扑",
-      "status": "success",
-      "duration": 21.235910177230835,
-      "error_message": null,
-      "has_output_files": true,
-      "execution_time": "耗时",
-      "timestamp": "2026-04-19T12:36:11.933563"
-    },
-    {
-      "skill_name": "model_validator",
-      "skill_display_name": "模型验证",
-      "category": "模型与拓扑",
-      "status": "success",
-      "duration": 21.243265390396118,
-      "error_message": null,
-      "has_output_files": true,
-      "execution_time": "耗时",
-      "timestamp": "2026-04-19T12:36:33.176937"
+      "timestamp": "2026-04-19T22:22:06.197087"
     }
   ]
 }

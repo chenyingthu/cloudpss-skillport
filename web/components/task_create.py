@@ -312,7 +312,19 @@ def _enhance_config_for_skill(config: dict, skill_name: str, user: str) -> dict:
         config["output"] = {"format": "json", "path": "./results/", "timestamp": True}
 
     # 根据技能类型添加特定配置
-    if skill_name == "param_scan":
+    if skill_name == "batch_powerflow":
+        # batch_powerflow 需要 models 数组，替换默认模型为当前用户的模型
+        if "models" in config:
+            for model in config["models"]:
+                if model.get("rid", "").startswith("model/holdme/"):
+                    model["rid"] = model["rid"].replace("model/holdme/", f"model/{user}/")
+                elif not model.get("rid", "").strip():
+                    model["rid"] = f"model/{user}/IEEE39"
+                    model["source"] = "cloud"
+        else:
+            config["models"] = [{"rid": f"model/{user}/IEEE39", "name": "IEEE39", "source": "cloud"}]
+
+    elif skill_name == "param_scan":
         config["scan"] = {
             "component": "Load_1",
             "parameter": "P",
@@ -344,15 +356,15 @@ def _enhance_config_for_skill(config: dict, skill_name: str, user: str) -> dict:
         }
 
     elif skill_name == "dudv_curve":
-        # dudv_curve 需要 buses 字段（必需）
-        config["buses"] = ["Bus1", "Bus8", "Bus16"]
-        config["analysis"] = {
+        # Toolkit 已修复: dudv_curve 默认配置现在包含 buses: []
+        # 如果 buses 为空，提供默认母线列表
+        if not config.get("buses"):
+            config["buses"] = ["Bus1", "Bus8", "Bus16"]
+        config.setdefault("analysis", {
             "voltage_range": [0.8, 1.2],
             "steps": 20,
             "reactive_power_range": [-100, 100]
-        }
-        config["curve"] = {"type": "dudv", "plot": True, "save_data": True}
-        config["output"] = {"format": "json", "path": "./results/", "prefix": "dudv", "timestamp": True}
+        })
 
     elif skill_name == "result_compare":
         config["sources"] = [
