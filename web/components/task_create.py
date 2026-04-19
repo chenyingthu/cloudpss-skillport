@@ -418,15 +418,21 @@ def _enhance_config_for_skill(config: dict, skill_name: str, user: str) -> dict:
         config["extraction"] = {"component_types": ["load", "generator"], "include_parameters": True}
 
     elif skill_name == "model_builder":
-        # 需要 base_model.rid 和 workflow.name
+        # model_builder 的 schema 特殊：需要 workflow.name 和 base_model.rid
+        # 默认配置中没有 model.rid，需要特殊处理
+        config["workflow"] = {"name": "open_cloudpss_wind_lvrt_case"}
         config["base_model"] = {"rid": f"model/{user}/IEEE39"}
-        config["workflow"] = {"name": "model_build_workflow"}
-        config["modifications"] = [{"action": "add", "component_type": "Load", "params": {}}]
+        config["modifications"] = [{"action": "add_component", "component_type": "Load", "label": "Load_New"}]
+        config["output"] = {"save": True, "path": "./results/"}
 
     elif skill_name == "model_validator":
-        # 需要 models 字段（不是单数 model）
-        config["models"] = [{"rid": f"model/{user}/IEEE39", "source": "cloud"}]
+        # model_validator 的 schema 要求 models 数组，不是单数 model
+        # 需要删除默认的 model 字段（如果有）
+        if "model" in config:
+            del config["model"]
+        config["models"] = [{"rid": f"model/{user}/IEEE39"}]
         config["validation"] = {"phases": ["topology", "powerflow"], "timeout": 300}
+        config["output"] = {"format": "json", "path": "./results/"}
 
     elif skill_name == "report_generator":
         config["report"] = {"title": "仿真分析报告", "skills": ["power_flow"], "format": "docx"}
