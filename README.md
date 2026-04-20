@@ -6,8 +6,8 @@ Claude Code Skill - 通过自然语言交互进行电力系统仿真
 
 ```bash
 # 1. 先安装 cloudpss-toolkit（必须！）
-git clone https://git.tsinghua.edu.cn/chen_ying/cloudpss-toolkit.git
-cd cloudpss-toolkit
+git clone https://github.com/chenyingthu/CloudPSS_skillhub.git
+cd CloudPSS_skillhub
 pip install -e .
 
 # 2. 克隆本项目
@@ -51,7 +51,7 @@ python scripts/smart_config.py "帮我跑IEEE39潮流计算"
 **cloudpss-sim-skill 依赖 cloudpss-toolkit，必须先安装 toolkit！**
 
 安装顺序：
-1. 先安装 [cloudpss-toolkit](https://git.tsinghua.edu.cn/chen_ying/cloudpss-toolkit)
+1. 先安装 [cloudpss-toolkit](https://github.com/chenyingthu/CloudPSS_skillhub)
 2. 再使用 cloudpss-sim-skill
 
 ---
@@ -60,8 +60,8 @@ python scripts/smart_config.py "帮我跑IEEE39潮流计算"
 
 ```bash
 # 克隆 toolkit
-git clone https://git.tsinghua.edu.cn/chen_ying/cloudpss-toolkit.git
-cd cloudpss-toolkit
+git clone https://github.com/chenyingthu/CloudPSS_skillhub.git
+cd CloudPSS_skillhub
 
 # 安装依赖
 pip install -e .
@@ -70,7 +70,7 @@ pip install -e .
 pip install -e ".[dev]"
 ```
 
-详细安装说明请参考 [cloudpss-toolkit README](https://git.tsinghua.edu.cn/chen_ying/cloudpss-toolkit/-/blob/main/README.md)
+详细安装说明请参考 [cloudpss-toolkit README](https://github.com/chenyingthu/CloudPSS_skillhub/-/blob/main/README.md)
 
 ---
 
@@ -284,7 +284,7 @@ python scripts/interactive_wizard.py
 
 | 依赖 | 版本 | 说明 | 安装 |
 |------|------|------|------|
-| **cloudpss-toolkit** | >= 0.2.0 | **必须** - 核心 API 封装和50个技能 | [安装指南](https://git.tsinghua.edu.cn/chen_ying/cloudpss-toolkit/-/blob/main/README.md) |
+| **cloudpss-toolkit** | >= 0.2.0 | **必须** - 核心 API 封装和50个技能 | [安装指南](https://github.com/chenyingthu/CloudPSS_skillhub/-/blob/main/README.md) |
 | cloudpss | >= 4.5.28 | **必须** - CloudPSS 官方 SDK | `pip install cloudpss>=4.5.28` |
 | pyyaml | >= 5.4 | 必须 - YAML 配置解析 | `pip install pyyaml>=5.4` |
 | numpy | >= 1.20 | 可选 - 数值计算 | 随 toolkit 安装 |
@@ -340,7 +340,7 @@ pytest tests/ -v --run-integration
 
 ## 相关项目
 
-- [cloudpss-toolkit](https://git.tsinghua.edu.cn/chen_ying/cloudpss-toolkit) - 底层 API 增强库（50+内置技能）
+- [cloudpss-toolkit](https://github.com/chenyingthu/CloudPSS_skillhub) - 底层 API 增强库（50+内置技能）
 
 ## 许可证
 

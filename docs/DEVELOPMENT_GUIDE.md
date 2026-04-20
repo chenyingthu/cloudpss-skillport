@@ -23,8 +23,8 @@ git clone https://git.tsinghua.edu.cn/chen_ying/cloudpss-sim-skill.git
 cd cloudpss-sim-skill
 
 # 2. 安装 cloudpss-toolkit（必须先装！）
-git clone https://git.tsinghua.edu.cn/chen_ying/cloudpss-toolkit.git ../cloudpss-toolkit
-cd ../cloudpss-toolkit
+git clone https://github.com/chenyingthu/CloudPSS_skillhub.git ../CloudPSS_skillhub
+cd ../CloudPSS_skillhub
 pip install -e .
 
 # 3. 返回项目目录并安装依赖

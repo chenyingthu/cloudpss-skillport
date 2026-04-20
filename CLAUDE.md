@@ -17,7 +17,7 @@ This project depends on `cloudpss-toolkit` which must be installed **before** us
 
 ```bash
 # Clone and setup toolkit (must be done first)
-git clone https://git.tsinghua.edu.cn/chen_ying/cloudpss-toolkit.git
+git clone https://github.com/chenyingthu/CloudPSS_skillhub.git
 cd cloudpss-toolkit
 pip install -e .
 
@@ -239,7 +239,7 @@ result = emt_skill.run(
 
 ## Testing
 
-Tests in cloudpss-toolkit (`../cloudpss-toolkit/tests/`):
+Tests in cloudpss-toolkit (`../CloudPSS_skillhub/tests/`):
 
 ```bash
 # Unit tests (no network)
@@ -319,4 +319,4 @@ cloudpss-sim-skill/
 - **Results Directory**: Simulation outputs go to `results/` (gitignored)
 - **External Dependency**: This skill does NOT work without cloudpss-toolkit - always verify toolkit is accessible via PYTHONPATH
 - **Skill File**: `cloudpss-sim-v2.skill` is the Claude Code skill manifest that defines triggers and capabilities
-- **New Skills**: cloudpss-toolkit now has 50 skills - when adding support for new skills in smart_config.py, refer to the toolkit's builtin skills in `../cloudpss-toolkit/cloudpss_skills/builtin/`
+- **New Skills**: cloudpss-toolkit now has 50 skills - when adding support for new skills in smart_config.py, refer to the toolkit's builtin skills in `../CloudPSS_skillhub/cloudpss_skills/builtin/`
