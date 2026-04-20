@@ -10,9 +10,19 @@ git clone https://git.tsinghua.edu.cn/chen_ying/cloudpss-toolkit.git
 cd cloudpss-toolkit
 pip install -e .
 
-# 2. 再使用 cloudpss-sim-skill
+# 2. 克隆本项目
 git clone https://git.tsinghua.edu.cn/chen_ying/cloudpss-sim-skill.git
 cd cloudpss-sim-skill
+
+# 3. 配置 CloudPSS Token（必须！）
+# 访问 https://www.cloudpss.net → 个人中心 → API Token
+echo "你的token" > .cloudpss_token
+
+# 4. 启动 Web 界面（可选）
+streamlit run web/app.py --server.port=8502
+# 然后浏览器访问 http://localhost:8502
+
+# 5. 或使用命令行
 python scripts/smart_config.py "帮我跑IEEE39潮流计算"
 ```
 
@@ -64,7 +74,39 @@ pip install -e ".[dev]"
 
 ---
 
-### 步骤2: 使用 cloudpss-sim-skill
+### 步骤2: 克隆并配置 cloudpss-sim-skill
+
+```bash
+# 克隆项目
+git clone https://git.tsinghua.edu.cn/chen_ying/cloudpss-sim-skill.git
+cd cloudpss-sim-skill
+
+# 配置 CloudPSS Token（必须！）
+# 访问 https://www.cloudpss.net → 个人中心 → API Token
+echo "你的token" > .cloudpss_token
+
+# 安装开发依赖（可选）
+pip install -e ".[dev]"
+
+# 安装 Playwright 用于 E2E 测试（可选）
+pip install playwright pytest-playwright
+playwright install chromium
+```
+
+---
+
+### 步骤3: 使用方式
+
+#### 方式A: Web 界面（推荐）
+
+```bash
+# 启动 Web 应用
+streamlit run web/app.py --server.port=8502
+
+# 浏览器访问 http://localhost:8502
+```
+
+#### 方式B: 命令行工具
 
 #### 方式A: 通过 Claude Code 使用（推荐）
 
@@ -76,21 +118,23 @@ pip install -e ".[dev]"
 curl -O https://git.tsinghua.edu.cn/chen_ying/cloudpss-sim-skill/-/raw/main/cloudpss-sim-v2.skill
 ```
 
-#### 方式B: 命令行使用
+#### 方式B: 命令行工具
 
 ```bash
-# 克隆 skill 项目
-git clone https://git.tsinghua.edu.cn/chen_ying/cloudpss-sim-skill.git
-cd cloudpss-sim-skill
-
-# 确保 toolkit 在 Python 路径中
-export PYTHONPATH="${PYTHONPATH}:/path/to/cloudpss-toolkit"
-
 # 列出所有50个技能
 python -m cloudpss_skills list
 
-# 运行脚本
+# 初始化配置
+python -m cloudpss_skills init power_flow --output pf.yaml
+
+# 运行技能
+python -m cloudpss_skills run --config pf.yaml
+
+# 自然语言生成配置
 python scripts/smart_config.py "帮我跑IEEE39潮流计算"
+
+# 交互式向导
+python scripts/interactive_wizard.py
 ```
 
 ## 使用示例
