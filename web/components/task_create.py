@@ -466,7 +466,32 @@ def _enhance_config_for_skill(config: dict, skill_name: str, user: str) -> dict:
         config["options"] = {"page_size": 100, "include_details": True}
 
     elif skill_name == "contingency_analysis":
-        config["analysis"] = {"contingencies": [], "check_voltage": True, "check_thermal": True}
+        # contingency_analysis 需要完整的分析配置
+        config["analysis"] = {
+            "contingencies": [],
+            "check_voltage": True,
+            "check_thermal": True,
+            "voltage_threshold": 0.05,
+            "thermal_threshold": 1.0,
+            "max_contingencies": 10
+        }
+        # 添加输出配置
+        config["output"] = {"format": "json", "path": "./results/", "timestamp": True}
+
+    elif skill_name == "batch_task_manager":
+        # batch_task_manager 需要 tasks 字段
+        config["tasks"] = [
+            {
+                "skill": "power_flow",
+                "name": "潮流计算任务1",
+                "config": {
+                    "model": {"rid": f"model/{user}/IEEE39", "source": "cloud"},
+                    "algorithm": {"type": "newton_raphson", "tolerance": 1e-06, "max_iterations": 100}
+                }
+            }
+        ]
+        config["execution"] = {"max_workers": 2, "continue_on_failure": True, "timeout": 300}
+        config["output"] = {"format": "json", "path": "./results/", "timestamp": True}
 
     return config
 
@@ -513,6 +538,31 @@ def _load_example(skill_name: str):
 
         # Also update pipeline_editor's session state
         st.session_state.pipeline_steps = injected_steps
+    elif skill_name == "batch_task_manager":
+        # batch_task_manager 需要特殊的任务列表配置
+        model_config = {"rid": f"model/{user}/IEEE39", "source": "cloud"}
+        profile = settings_mod.get_profile_by_id(settings_mod.load_settings(), profile_id) if profile_id else None
+        token_path = str(settings_mod.TOKEN_FILE)
+        auth_config = {"token_file": token_path, "server": profile.get("server_preset", "public") if profile else "public"}
+
+        config = {
+            "skill": "batch_task_manager",
+            "auth": auth_config,
+            "model": model_config,
+            "tasks": [
+                {
+                    "type": "skill",
+                    "skill": "power_flow",
+                    "name": "潮流计算任务1",
+                    "config": {
+                        "model": {"rid": f"model/{user}/IEEE39", "source": "cloud"},
+                        "algorithm": {"type": "newton_raphson", "tolerance": 1e-06, "max_iterations": 100}
+                    }
+                }
+            ],
+            "execution": {"max_workers": 2, "continue_on_failure": True, "timeout": 300},
+            "output": {"format": "json", "path": "./results/", "timestamp": True},
+        }
     else:
         skill = skill_catalog.get_skill(skill_name)
         if skill is None:

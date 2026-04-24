@@ -270,11 +270,26 @@ def _render_profile_list(settings: dict) -> Optional[str]:
     active_id = settings.get("active_profile_id")
     default_id = get_default_profile_id(settings)
 
+    # Initialize selected profile in session state (persist across reruns)
+    if "settings_selected_profile" not in st.session_state:
+        # Default to active profile, or first profile, or None
+        st.session_state.settings_selected_profile = (
+            active_id or (profiles[0]["id"] if profiles else None)
+        )
+
+    # Update if the current selection no longer exists (profile was deleted)
+    current_selection = st.session_state.settings_selected_profile
+    if current_selection and not get_profile_by_id(settings, current_selection):
+        st.session_state.settings_selected_profile = (
+            active_id or (profiles[0]["id"] if profiles else None)
+        )
+
     st.markdown("**📂 配置方案**")
 
     for p in profiles:
         is_active = p["id"] == active_id
         is_default = p["id"] == default_id
+        is_selected = p["id"] == st.session_state.settings_selected_profile
         preset = p.get("server_preset", "public")
 
         # Build label with badges
@@ -294,24 +309,26 @@ def _render_profile_list(settings: dict) -> Optional[str]:
 
         col1, col2 = st.columns([4, 1])
         with col1:
-            selected = st.button(
+            if st.button(
                 label,
                 key=f"select_{p['id']}",
                 use_container_width=True,
-                type="primary" if is_active else "secondary",
-            )
+                type="primary" if is_selected else "secondary",
+            ):
+                st.session_state.settings_selected_profile = p["id"]
+                st.rerun()
             st.caption(server_hint)
         with col2:
             if st.button("🗑️", key=f"del_{p['id']}", help="删除此方案"):
                 if len(profiles) > 1:
                     settings = delete_profile(settings, p["id"])
                     save_settings(settings)
+                    # Clear selection if we deleted the selected profile
+                    if st.session_state.settings_selected_profile == p["id"]:
+                        st.session_state.settings_selected_profile = None
                     st.rerun()
                 else:
                     st.warning("至少保留一个方案")
-
-        if selected:
-            return p["id"]
 
     # Add new profile button
     if st.button("➕ 新增方案", use_container_width=True, type="secondary"):
@@ -467,12 +484,13 @@ def render():
     col_list, col_editor = st.columns([1, 2])
 
     with col_list:
-        selected_id = _render_profile_list(settings)
+        _render_profile_list(settings)
 
     with col_editor:
-        # Determine which profile to edit: selected, then active, then default
+        # Determine which profile to edit: use session state selection
         active_id = settings.get("active_profile_id")
         default_id = get_default_profile_id(settings)
+        selected_id = st.session_state.get("settings_selected_profile")
 
         if selected_id and get_profile_by_id(settings, selected_id):
             edit_id = selected_id

@@ -11,14 +11,26 @@ from pathlib import Path
 # Ensure smart_config is importable
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 SCRIPTS_DIR = PROJECT_ROOT / "scripts"
+STYLES_DIR = Path(__file__).resolve().parent / "styles"
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
 import streamlit as st
-
 from web.core import task_store, skill_catalog, favorites
+
+
+# ─── Inject Linear Theme CSS ───────────────────────────────────────
+def inject_linear_theme():
+    """Inject Linear-inspired design system CSS."""
+    css_file = STYLES_DIR / "linear_theme.css"
+    if css_file.exists():
+        css_content = css_file.read_text()
+        st.markdown(f"<style>{css_content}</style>", unsafe_allow_html=True)
+
+
+inject_linear_theme()
 
 
 # ─── Page Config ───────────────────────────────────────────────────────
