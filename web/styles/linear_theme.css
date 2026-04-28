@@ -1,0 +1,383 @@
+/* CloudPSS Sim Skill - Linear-inspired Design System */
+
+/* ──────────────────────────────────────────────────────────────────
+   CSS Custom Properties (Design Tokens)
+   ────────────────────────────────────────────────────────────────── */
+
+/* Import Inter font with OpenType features */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;510;590&display=swap');
+
+:root {
+    /* ─── Background Surfaces ─── */
+    --bg-marketing: #08090a;
+    --bg-panel: #0f1011;
+    --bg-surface: #191a1b;
+    --bg-elevated: #28282c;
+
+    /* ─── Text Colors ─── */
+    --text-primary: #f7f8f8;
+    --text-secondary: #d0d6e0;
+    --text-tertiary: #8a8f98;
+    --text-quaternary: #62666d;
+
+    /* ─── Brand & Accent ─── */
+    --brand-indigo: #5e6ad2;
+    --accent-violet: #7170ff;
+    --accent-hover: #828fff;
+    --security-lavender: #7a7fad;
+
+    /* ─── Status Colors ─── */
+    --status-green: #27a644;
+    --status-emerald: #10b981;
+
+    /* ─── Borders ─── */
+    --border-subtle: rgba(255, 255, 255, 0.05);
+    --border-standard: rgba(255, 255, 255, 0.08);
+    --border-primary: #23252a;
+    --border-secondary: #34343a;
+    --border-tertiary: #3e3e44;
+
+    /* ─── Shadows ─── */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+    --shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+
+    /* ─── Typography ─── */
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'SF Mono', 'Berkeley Mono', ui-monospace, Menlo, monospace;
+
+    /* ─── Spacing ─── */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-10: 40px;
+    --space-12: 48px;
+
+    /* ─── Border Radius ─── */
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+    --radius-xl: 12px;
+    --radius-full: 9999px;
+
+    /* ─── Transitions ─── */
+    --transition-fast: 150ms ease;
+    --transition-normal: 200ms ease;
+    --transition-slow: 300ms ease;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   Base Styles - Dark Mode First
+   ────────────────────────────────────────────────────────────────── */
+
+html, body, .stApp {
+    background-color: var(--bg-marketing) !important;
+    color: var(--text-primary) !important;
+    font-family: var(--font-sans) !important;
+}
+
+/* ─── Typography ─── */
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary) !important;
+    font-weight: 510 !important;
+    letter-spacing: -0.02em;
+}
+
+h1 {
+    font-size: 32px;
+    line-height: 1.13;
+    letter-spacing: -0.704px;
+}
+
+h2 {
+    font-size: 24px;
+    line-height: 1.33;
+    letter-spacing: -0.288px;
+}
+
+h3 {
+    font-size: 20px;
+    line-height: 1.33;
+    letter-spacing: -0.24px;
+    font-weight: 590 !important;
+}
+
+p, div, span {
+    color: var(--text-secondary) !important;
+    font-weight: 400;
+}
+
+/* ─── Streamlit Overrides ─── */
+
+/* Sidebar */
+section[data-testid="stSidebar"] {
+    background-color: var(--bg-panel) !important;
+    border-right: 1px solid var(--border-subtle) !important;
+}
+
+/* Main content area */
+div[data-testid="stMain"] {
+    background-color: var(--bg-marketing) !important;
+}
+
+/* Cards and containers */
+div[data-testid="stVerticalBlock"] > div {
+    background-color: transparent;
+}
+
+/* Buttons */
+button[kind="primary"] {
+    background-color: var(--brand-indigo) !important;
+    color: var(--text-primary) !important;
+    font-weight: 510 !important;
+    border: none !important;
+    border-radius: var(--radius-md) !important;
+    transition: background-color var(--transition-fast) !important;
+}
+
+button[kind="primary"]:hover {
+    background-color: var(--accent-violet) !important;
+}
+
+button[kind="secondary"] {
+    background-color: rgba(255, 255, 255, 0.02) !important;
+    color: var(--text-primary) !important;
+    font-weight: 510 !important;
+    border: 1px solid var(--border-standard) !important;
+    border-radius: var(--radius-md) !important;
+    transition: all var(--transition-fast) !important;
+}
+
+button[kind="secondary"]:hover {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-color: var(--border-secondary) !important;
+}
+
+/* Inputs */
+input, textarea, select {
+    background-color: var(--bg-surface) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-standard) !important;
+    border-radius: var(--radius-md) !important;
+    padding: var(--space-3) var(--space-4) !important;
+    font-family: var(--font-sans) !important;
+    transition: border-color var(--transition-fast) !important;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: var(--accent-violet) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(113, 112, 255, 0.2) !important;
+}
+
+input::placeholder, textarea::placeholder {
+    color: var(--text-quaternary) !important;
+}
+
+/* Select dropdown */
+div[data-baseweb="select"] > div {
+    background-color: var(--bg-surface) !important;
+    border: 1px solid var(--border-standard) !important;
+    border-radius: var(--radius-md) !important;
+}
+
+/* Labels */
+label {
+    color: var(--text-secondary) !important;
+    font-weight: 510 !important;
+    font-size: 14px !important;
+}
+
+/* Dividers */
+hr {
+    border-color: var(--border-subtle) !important;
+}
+
+/* Expanders */
+div[data-testid="stExpander"] {
+    background-color: transparent !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-lg) !important;
+}
+
+div[data-testid="stExpander"] > summary {
+    color: var(--text-secondary) !important;
+    font-weight: 510 !important;
+}
+
+div[data-testid="stExpander"] > summary:hover {
+    background-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* Tabs */
+button[data-baseweb="tab"] {
+    color: var(--text-tertiary) !important;
+    font-weight: 510 !important;
+    border-bottom: 2px solid transparent !important;
+    transition: all var(--transition-fast) !important;
+}
+
+button[data-baseweb="tab"][aria-selected="true"] {
+    color: var(--text-primary) !important;
+    border-bottom-color: var(--accent-violet) !important;
+}
+
+/* Progress bar */
+div[data-testid="stProgress"] > div > div > div {
+    background-color: var(--accent-violet) !important;
+}
+
+/* Spinner */
+div[data-testid="stSpinner"] > div {
+    border-color: var(--border-secondary) !important;
+    border-top-color: var(--accent-violet) !important;
+}
+
+/* Toast/Alert messages */
+div[data-testid="stToast"] {
+    background-color: var(--bg-surface) !important;
+    border: 1px solid var(--border-standard) !important;
+    border-radius: var(--radius-lg) !important;
+}
+
+/* Error messages */
+div[data-testid="stException"] {
+    background-color: rgba(255, 100, 100, 0.1) !important;
+    border: 1px solid rgba(255, 100, 100, 0.2) !important;
+    border-radius: var(--radius-md) !important;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   Custom Component Styles
+   ────────────────────────────────────────────────────────────────── */
+
+/* Card component */
+.cloudpss-card {
+    background-color: var(--bg-surface) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-lg) !important;
+    padding: var(--space-5) !important;
+    transition: all var(--transition-normal) !important;
+}
+
+.cloudpss-card:hover {
+    border-color: var(--border-standard) !important;
+    box-shadow: var(--shadow-md) !important;
+}
+
+/* Skill button */
+.skill-button {
+    background-color: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-md) !important;
+    color: var(--text-secondary) !important;
+    padding: var(--space-3) var(--space-4) !important;
+    font-weight: 510 !important;
+    transition: all var(--transition-fast) !important;
+    text-align: left !important;
+}
+
+.skill-button:hover {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-color: var(--border-standard) !important;
+    color: var(--text-primary) !important;
+}
+
+.skill-button.active {
+    background-color: var(--brand-indigo) !important;
+    border-color: var(--brand-indigo) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Section header */
+.section-header {
+    font-size: 13px !important;
+    font-weight: 510 !important;
+    color: var(--text-tertiary) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    margin-bottom: var(--space-3) !important;
+}
+
+/* Status badge */
+.status-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    padding: 2px 8px !important;
+    border-radius: var(--radius-full) !important;
+    font-size: 12px !important;
+    font-weight: 510 !important;
+}
+
+.status-badge.success {
+    background-color: rgba(16, 185, 129, 0.15) !important;
+    color: var(--status-emerald) !important;
+}
+
+.status-badge.running {
+    background-color: rgba(94, 106, 210, 0.15) !important;
+    color: var(--brand-indigo) !important;
+}
+
+.status-badge.failed {
+    background-color: rgba(255, 100, 100, 0.15) !important;
+    color: #ff6464 !important;
+}
+
+/* Form field */
+.form-field {
+    background-color: var(--bg-surface) !important;
+    border: 1px solid var(--border-standard) !important;
+    border-radius: var(--radius-md) !important;
+    padding: var(--space-4) !important;
+    margin-bottom: var(--space-4) !important;
+}
+
+.form-field label {
+    display: block !important;
+    margin-bottom: var(--space-2) !important;
+}
+
+/* Empty state */
+.empty-state {
+    text-align: center !important;
+    padding: var(--space-12) var(--space-6) !important;
+    color: var(--text-quaternary) !important;
+}
+
+.empty-state svg {
+    width: 64px !important;
+    height: 64px !important;
+    margin-bottom: var(--space-4) !important;
+    opacity: 0.5 !important;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   Responsive Adjustments
+   ────────────────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+    :root {
+        --space-4: 12px;
+        --space-5: 16px;
+        --space-6: 20px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    h2 {
+        font-size: 20px;
+    }
+
+    .cloudpss-card {
+        padding: var(--space-4) !important;
+    }
+}
