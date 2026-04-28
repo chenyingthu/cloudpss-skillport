@@ -5,23 +5,48 @@ __pycache__/
 *.so
 .Python
 build/
+dist/
 *.egg-info/
+.pytest_cache/
 
-# Results
+# Results & Logs
 results/
 *.log
+logs/
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Token
+# Token & Secrets
 *.token
-.cloudpss_token
+.cloudpss_token*
+.secrets/
 
-# Web portal data
-web/data/
+# Cache & Temp
+.cache/
+temp/
+tmp/
+*.tmp
 
 # Playwright MCP temp files
 .playwright-mcp/
 tests/e2e/reports/
+tests/e2e/screenshots/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Web portal
+web/data/
+
+# Generated configs
+configs/generated/
+
+# Test artifacts
+*.yml.old
+*.yaml.old
+test_*.json
